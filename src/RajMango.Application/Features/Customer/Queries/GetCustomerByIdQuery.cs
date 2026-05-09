@@ -1,38 +1,51 @@
-﻿using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace RajMango.Application.Features.Queries
 {
-    public record GetCustomerByIdQuery : IRequest<Result<GetCustomerByIdDto>>
-    {
-        public int Id { get; set; }
-
-        public GetCustomerByIdQuery(int id)
-        {
-            Id = id;
-        }
-    }
+    public record GetCustomerByIdQuery(int Id) : IRequest<Result<GetCustomerByIdDto>>;
 
     public class GetCustomerInfoByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery, Result<GetCustomerByIdDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public GetCustomerInfoByIdQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetCustomerInfoByIdQueryHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<Result<GetCustomerByIdDto>> Handle(GetCustomerByIdQuery query, CancellationToken cancellationToken)
         {
-            var table = await _dataContext.Get<Customer>().FirstOrDefaultAsync(u => u.Id == query.Id);
-            var tableDto = _mapper.Map<GetCustomerByIdDto>(table);
-            return await Result<GetCustomerByIdDto>.SuccessAsync(tableDto);
+            var customer = await _dataContext.Get<Customer>()
+                .Where(c => c.Id == query.Id)
+                .Select(c => new GetCustomerByIdDto
+                {
+                    Id           = c.Id,
+                    UserId       = c.UserId,
+                    FirstName    = c.FirstName,
+                    LastName     = c.LastName,
+                    FullName     = c.FirstName + " " + c.LastName,
+                    PhoneNumber1 = c.PhoneNumber1,
+                    PhoneNumber2 = c.PhoneNumber2,
+                    Email        = c.Email,
+                    AddressLine1 = c.AddressLine1,
+                    AddressLine2 = c.AddressLine2,
+                    CustomerType = c.CustomerType,
+                    IsActive     = c.IsActive,
+                    CreatedAt    = c.CreatedAt,
+                    CreatedBy    = c.CreatedBy,
+                    UpdatedAt    = c.UpdatedAt,
+                    UpdatedBy    = c.UpdatedBy,
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (customer == null)
+                return await Result<GetCustomerByIdDto>.FailureAsync($"Customer not found with Id {query.Id}.");
+
+            return await Result<GetCustomerByIdDto>.SuccessAsync(customer);
         }
     }
 }

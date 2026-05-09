@@ -12,6 +12,11 @@ namespace RajMango.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public int? UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
+        public AppUser AppUser { get; set; }
+
         [Required]
         [StringLength(50)]
         public string FirstName { get; set; }
