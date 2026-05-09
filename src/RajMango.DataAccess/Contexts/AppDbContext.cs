@@ -28,6 +28,7 @@ namespace RajMango.DataAccess.Contexts
         public virtual DbSet<Category> Categories => Set<Category>();
         public virtual DbSet<Product> Products => Set<Product>();
         public virtual DbSet<MangoType> MangoTypes => Set<MangoType>();
+        public virtual DbSet<MangoAvailability> MangoAvailabilities => Set<MangoAvailability>();
 
         // 🛒 Orders & Payments
         public virtual DbSet<Order> Orders => Set<Order>();
