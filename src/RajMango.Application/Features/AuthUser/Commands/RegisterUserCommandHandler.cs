@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Features.Services;
@@ -18,12 +18,12 @@ namespace RajMango.Application.Features.Commands
         private readonly IDataContext _dataContext;
 
         public RegisterUserCommandHandler(IPasswordHasher<AppUser> passwordHasher,
-                                        IRegistrationLock registrationLock,
-                                        IErrorHandler errorHandler,
-                                        IDataContext dataContext)
+                                         IRegistrationLock registrationLock,
+                                         IErrorHandler errorHandler,
+                                         IDataContext dataContext)
         {
-            _registrationLock = registrationLock;
             _passwordHasher = passwordHasher;
+            _registrationLock = registrationLock;
             _errorHandler = errorHandler;
             _dataContext = dataContext;
         }
@@ -34,59 +34,81 @@ namespace RajMango.Application.Features.Commands
             {
                 try
                 {
-                    var userName = await GenerateUniqueUserNameAsync(command.FirstName, command.LastName);
+                    // Uniqueness checks
+                    var emailTaken = await _dataContext.Get<AppUser>()
+                        .AnyAsync(u => u.Email == command.Email, cancellationToken);
+                    if (emailTaken)
+                        return await Result<int>.FailureAsync("An account with this email address already exists.");
+
+                    var phoneTaken = await _dataContext.Get<AppUser>()
+                        .AnyAsync(u => u.PhoneNumber == command.PhoneNumber, cancellationToken);
+                    if (phoneTaken)
+                        return await Result<int>.FailureAsync("An account with this phone number already exists.");
+
+                    var userName     = await GenerateUniqueUserNameAsync(command.FirstName, command.LastName);
                     var passwordHash = _passwordHasher.HashPassword(null, command.Password);
+
                     var newUser = new AppUser
                     {
-                        UserName = userName,
-                        FirstName = command.FirstName,
-                        LastName = command.LastName,
-                        Email = command.Email,
-                        PhoneNumber = command.PhoneNumber,
-                        IsActive = true,
-                        EmailConfirmed = false,
+                        UserName             = userName,
+                        FirstName            = command.FirstName,
+                        LastName             = command.LastName,
+                        Email                = command.Email,
+                        PhoneNumber          = command.PhoneNumber,
+                        PasswordHash         = passwordHash,
+                        IsActive             = true,
+                        EmailConfirmed       = false,
                         PhoneNumberConfirmed = false,
-                        PasswordHash = _passwordHasher.HashPassword(null, command.Password),
-
+                        CreatedAt            = Clock.Now(),
                     };
 
                     _dataContext.Get<AppUser>().Add(newUser);
                     await _dataContext.SaveChangesAsync(cancellationToken);
 
-                    var userRole = new UserRole
+                    // Assign general role
+                    _dataContext.Get<UserRole>().Add(new UserRole
                     {
-                        UserId = newUser.Id,
-                        RoleId = (int)UserType.General, //FOR TEST
+                        UserId     = newUser.Id,
+                        RoleId     = (int)UserType.General,
                         AssignedAt = Clock.Now(),
-                    };
+                        CreatedAt  = Clock.Now(),
+                        CreatedBy  = newUser.Id,
+                    });
 
-                    _dataContext.Get<UserRole>().Add(userRole);
+                    // Auto-create linked Customer record
+                    _dataContext.Get<Customer>().Add(new Customer
+                    {
+                        UserId       = newUser.Id,
+                        FirstName    = command.FirstName,
+                        LastName     = command.LastName,
+                        PhoneNumber1 = command.PhoneNumber,
+                        Email        = command.Email,
+                        CustomerType = CustomerType.Regular,
+                        IsActive     = true,
+                        CreatedBy    = newUser.Id,
+                        CreatedAt    = Clock.Now(),
+                    });
+
                     await _dataContext.SaveChangesAsync(cancellationToken);
 
-                    return await Result<int>.SuccessAsync(newUser.Id, "User registered successfully.");
+                    return await Result<int>.SuccessAsync(newUser.Id, "Account created successfully.");
                 }
                 catch (Exception ex)
                 {
                     _errorHandler.Handle(ex);
                 }
-                return await Result<int>.FailureAsync($"User registration failed.");
+                return await Result<int>.FailureAsync("Registration failed. Please try again.");
             }
         }
 
-        /**
-         * Generates a unique username using:
-         * First char of first name + first char of last name (both uppercased) + 4-digit random number
-         */
-        public async Task<string> GenerateUniqueUserNameAsync(string firstName, string lastName)
+        private async Task<string> GenerateUniqueUserNameAsync(string firstName, string lastName)
         {
             string username;
-
             do
             {
                 username = UserNameGenerator.GenerateUsername(firstName, lastName);
             }
             while (await _dataContext.Get<AppUser>().AnyAsync(u => u.UserName == username));
-
             return username;
         }
     }

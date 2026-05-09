@@ -38,6 +38,14 @@ namespace RajMango.WebApi.Controllers
         [HttpPost("registration")]
         public async Task<ActionResult<Result<int>>> Register(RegisterUserCommand command)
         {
+            var validator = new RegisterUserCommandValidator();
+            var result = validator.Validate(command);
+            if (!result.IsValid)
+            {
+                var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
             return await _mediator.Send(command);
         }
 

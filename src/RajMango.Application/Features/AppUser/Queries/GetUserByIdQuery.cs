@@ -27,31 +27,30 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<Result<AppUserDto>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Get<AppUser>().FirstOrDefaultAsync(u => u.Id == query.Id);
+            var user = await _dataContext.Get<AppUser>().FirstOrDefaultAsync(u => u.Id == query.Id, cancellationToken);
             if (user == null)
-            {
-                var orderDto = new AppUserDto
-                {
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    IsActive = user.IsActive,
-                    EmailConfirmed = user.EmailConfirmed,
-                    PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt,
-                };
+                return await Result<AppUserDto>.FailureAsync($"User not found with Id {query.Id}.");
 
-                var role = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(p => p.UserId == query.Id);
-                if (role != null)
-                {
-                    orderDto.RoleId = role.RoleId;
-                }
-                return await Result<AppUserDto>.SuccessAsync(orderDto);
-            }
-            return await Result<AppUserDto>.SuccessAsync(new AppUserDto());
+            var dto = new AppUserDto
+            {
+                Id                   = user.Id,
+                UserName             = user.UserName,
+                FirstName            = user.FirstName,
+                LastName             = user.LastName,
+                Email                = user.Email,
+                PhoneNumber          = user.PhoneNumber,
+                IsActive             = user.IsActive,
+                EmailConfirmed       = user.EmailConfirmed,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                CreatedAt            = user.CreatedAt,
+                UpdatedAt            = user.UpdatedAt,
+            };
+
+            var userRole = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(r => r.UserId == query.Id, cancellationToken);
+            if (userRole != null)
+                dto.RoleId = userRole.RoleId;
+
+            return await Result<AppUserDto>.SuccessAsync(dto);
         }
     }
 }
