@@ -1,4 +1,3 @@
-﻿using IdentityModel.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RajMango.Shared;
@@ -8,90 +7,53 @@ namespace RajMango.WebApi.OpenApi
 {
     public class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
     {
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly AppSettings _settings;
-        public ConfigureSwaggerGenOptions(IHttpClientFactory httpClientFactory,
-                                          IOptions<AppSettings> settings)
+
+        public ConfigureSwaggerGenOptions(IOptions<AppSettings> settings)
         {
-            _httpClientFactory = httpClientFactory;
             _settings = settings.Value;
         }
 
         public void Configure(SwaggerGenOptions options)
         {
-            //var discoveryDocument = GetDiscoveryDocument();
-
             options.OperationFilter<AuthorizeOperationFilter>();
             options.DescribeAllParametersInCamelCase();
-            options.CustomSchemaIds(type => GenerateSchemaId(type));
+            options.CustomSchemaIds(GenerateSchemaId);
             options.CustomOperationIds(apiDesc =>
             {
                 var controller = apiDesc.ActionDescriptor.RouteValues["controller"];
-                var action = apiDesc.ActionDescriptor.RouteValues["action"];
+                var action     = apiDesc.ActionDescriptor.RouteValues["action"];
                 return $"{controller}_{action}";
             });
 
-            options.SwaggerDoc(_settings.ApiInfo.Version, CreateOpenApiInfo());
-
-            options.AddSecurityDefinition(_settings.Security.Jwt.SecurityScheme, new OpenApiSecurityScheme
+            options.SwaggerDoc(_settings.ApiInfo.Version, new OpenApiInfo
             {
-                Type = SecuritySchemeType.OAuth2,
+                Title       = _settings.ApiInfo.Title,
+                Version     = _settings.ApiInfo.Version,
+                Description = _settings.ApiInfo.Description,
+                Contact     = new OpenApiContact(),
+                License     = new OpenApiLicense(),
+            });
 
-                Flows = new OpenApiOAuthFlows
-                {
-                    AuthorizationCode = new OpenApiOAuthFlow
-                    {
-                        //AuthorizationUrl = new Uri(discoveryDocument.AuthorizeEndpoint),
-                        //TokenUrl = new Uri(discoveryDocument.TokenEndpoint),
-                        AuthorizationUrl = new Uri("https://localhost:7215"),
-                        TokenUrl = new Uri("https://localhost:7215"),
-                        Scopes = new Dictionary<string, string>
-                        {
-                            { _settings.Security.Jwt.Audience , _settings.ApiInfo.Title }
-                        },
-                    }
-                },
-                Description = _settings.Security.Jwt.Description
+            // JWT Bearer — paste the token returned by POST /api/auth/login
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Type        = SecuritySchemeType.Http,
+                Scheme      = "bearer",
+                BearerFormat = "JWT",
+                Description = "Enter the JWT token returned by POST /api/auth/login.",
             });
         }
 
-        private string GenerateSchemaId(Type type)
+        private static string GenerateSchemaId(Type type)
         {
-            if (type.IsGenericType)
-            {
-                var genericTypeName = type.GetGenericTypeDefinition().Name;
-                genericTypeName = genericTypeName[..genericTypeName.IndexOf('`')];
+            if (!type.IsGenericType)
+                return type.Name;
 
-                var genericArgs = type.GetGenericArguments().Select(GenerateSchemaId); // 👈 recursive call
-
-                Console.WriteLine($"{genericTypeName}_{string.Join("_", genericArgs)}");
-
-                return $"{genericTypeName}_{string.Join("_", genericArgs)}";
-            }
-
-            Console.WriteLine($"NonGeneric TypeName: {type.Name}");
-            return type.Name;
-        }
-
-        private DiscoveryDocumentResponse GetDiscoveryDocument()
-        {
-            return _httpClientFactory
-                .CreateClient()
-                .GetDiscoveryDocumentAsync(_settings.Security.Jwt.Authority)
-                .GetAwaiter()
-                .GetResult();
-        }
-
-        private OpenApiInfo CreateOpenApiInfo()
-        {
-            return new OpenApiInfo()
-            {
-                Title = _settings.ApiInfo.Title,
-                Version = _settings.ApiInfo.Version,
-                Description = _settings.ApiInfo.Description,
-                Contact = new OpenApiContact(),
-                License = new OpenApiLicense()
-            };
+            var baseName    = type.GetGenericTypeDefinition().Name;
+            baseName        = baseName[..baseName.IndexOf('`')];
+            var genericArgs = type.GetGenericArguments().Select(GenerateSchemaId);
+            return $"{baseName}_{string.Join("_", genericArgs)}";
         }
     }
 }

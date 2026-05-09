@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
-using RajMango.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net;
 
@@ -9,46 +7,42 @@ namespace RajMango.WebApi.OpenApi
 {
     public class AuthorizeOperationFilter : IOperationFilter
     {
-        private readonly AppSettings _settings;
-        public AuthorizeOperationFilter(IOptions<AppSettings> settings)
-        {
-            _settings = settings.Value;
-        }
-
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (operation == null) { throw new ArgumentNullException(nameof(operation)); }
-            if (context == null) { throw new ArgumentNullException(nameof(context)); }
-            if (context.MethodInfo == null) { throw new ArgumentNullException(nameof(context.MethodInfo)); }
-            if (context.MethodInfo.DeclaringType == null) { throw new ArgumentNullException(nameof(context.MethodInfo.DeclaringType)); }
+            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            if (context == null)  throw new ArgumentNullException(nameof(context));
 
-            var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
-                            .Union(context.MethodInfo.GetCustomAttributes(true))
-                            .OfType<AuthorizeAttribute>();
+            // AllowAnonymous at method or class level overrides any Authorize
+            var hasAllowAnonymous = context.MethodInfo.GetCustomAttributes(true)
+                .Union(context.MethodInfo.DeclaringType?.GetCustomAttributes(true) ?? Array.Empty<object>())
+                .OfType<AllowAnonymousAttribute>()
+                .Any();
 
-            if (authAttributes.Any())
+            if (hasAllowAnonymous)
+                return;
+
+            var hasAuthorize = context.MethodInfo.DeclaringType?.GetCustomAttributes(true)
+                .Union(context.MethodInfo.GetCustomAttributes(true))
+                .OfType<AuthorizeAttribute>()
+                .Any() ?? false;
+
+            if (!hasAuthorize)
+                return;
+
+            operation.Responses.TryAdd(StatusCodes.Status401Unauthorized.ToString(),
+                new OpenApiResponse { Description = nameof(HttpStatusCode.Unauthorized) });
+            operation.Responses.TryAdd(StatusCodes.Status403Forbidden.ToString(),
+                new OpenApiResponse { Description = nameof(HttpStatusCode.Forbidden) });
+
+            var bearerScheme = new OpenApiSecurityScheme
             {
-                operation.Responses.Add(StatusCodes.Status401Unauthorized.ToString(), new OpenApiResponse { Description = nameof(HttpStatusCode.Unauthorized) });
-                operation.Responses.Add(StatusCodes.Status403Forbidden.ToString(), new OpenApiResponse { Description = nameof(HttpStatusCode.Forbidden) });
-            }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+            };
 
-            if (authAttributes.Any())
+            operation.Security = new List<OpenApiSecurityRequirement>
             {
-                operation.Security = new List<OpenApiSecurityRequirement>();
-
-                var oauth2SecurityScheme = new OpenApiSecurityScheme()
-                {
-                    Reference = new OpenApiReference { 
-                        Type = ReferenceType.SecurityScheme, 
-                        Id = _settings.Security.Jwt.SecurityScheme },
-                };
-
-
-                operation.Security.Add(new OpenApiSecurityRequirement()
-                {
-                    [oauth2SecurityScheme] = new[] { _settings.Security.Jwt.SecurityScheme }
-                });
-            }
+                new() { [bearerScheme] = Array.Empty<string>() }
+            };
         }
     }
 }

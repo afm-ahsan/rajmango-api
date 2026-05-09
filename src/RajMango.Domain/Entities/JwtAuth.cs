@@ -19,7 +19,7 @@ namespace RajMango.Domain.Entities
         public AppUser User { get; set; }
 
         [Required]
-        [StringLength(512)]
+        [StringLength(2048)]
         public string AuthToken { get; set; }
 
         [Required]

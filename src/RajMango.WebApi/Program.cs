@@ -99,17 +99,11 @@ if (app.Environment.IsDevelopment())
     app
     .UseSwagger()
     .UseSwaggerUI(setup =>
-     {
-         setup.SwaggerEndpoint(configuration["Swagger:Endpoint"], configuration["Swagger:Version"]);
-         setup.OAuthClientId(configuration["Security:Jwt:ClientId"]);
-         setup.OAuthClientSecret(configuration["Security:Jwt:ClientSecret"]);
-         setup.OAuthAppName(configuration["Swagger:OAuthAppName"]);
-         setup.OAuthScopes(configuration["Security:Jwt:Audience"]);
-         setup.OAuthScopeSeparator(" ");
-         setup.OAuthUsePkce();
-         setup.EnableTryItOutByDefault();
-         setup.ConfigObject.AdditionalItems.Add("syntaxHighlight", false);
-     });
+    {
+        setup.SwaggerEndpoint(configuration["Swagger:Endpoint"], configuration["Swagger:Version"]);
+        setup.EnableTryItOutByDefault();
+        setup.ConfigObject.AdditionalItems.Add("syntaxHighlight", false);
+    });
 }
 
 app.UseCors(x => x

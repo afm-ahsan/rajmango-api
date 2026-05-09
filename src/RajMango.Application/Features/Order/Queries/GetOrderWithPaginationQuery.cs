@@ -1,8 +1,8 @@
-﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs.Order;
 using RajMango.Application.Extensions;
+using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -16,6 +16,7 @@ namespace RajMango.Application.Features.Queries
         public string SortBy { get; set; }
         public string SortOrder { get; set; }
         public string Filter { get; set; }
+        /// <summary>Admin only: filter by a specific user. 0 = all users.</summary>
         public int UserId { get; set; }
 
         public GetOrderWithPaginationQuery() { }
@@ -34,97 +35,88 @@ namespace RajMango.Application.Features.Queries
     public class GetOrderWithPaginationQueryHandler : IRequestHandler<GetOrderWithPaginationQuery, PaginatedResult<OrderDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public GetOrderWithPaginationQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetOrderWithPaginationQueryHandler(IDataContext dataContext, ICurrentUserService currentUserService)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<PaginatedResult<OrderDto>> Handle(GetOrderWithPaginationQuery query, CancellationToken cancellationToken)
         {
             var orderQuery = _dataContext.Get<Order>()
-                                         .Include(p => p.OrderDetails)
+                                         .Include(o => o.OrderDetails)
                                          .AsQueryable();
 
-            orderQuery = orderQuery.Where(s => s.UserId == query.UserId);
-            orderQuery = GetSortableQuery(orderQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
-
-            var orders = await orderQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
-
-            var orderList = new List<OrderDto>();
-            foreach (var order in orders.Data)
+            if (!_currentUserService.IsAdmin)
             {
-                var orderDto = new OrderDto
-                {
-                    Id = order.Id,
-                    OrderNumber = order.OrderNumber,
-                    OrderDate = order.OrderDate,
-                    TotalQuantity = order.TotalQuantity,
-                    TotalAmount = order.TotalAmount,
-                    OrderStatus = order.OrderStatus,
-                    PaymentStatus = order.PaymentStatus,
-                    PaidAmount = order.PaidAmount,
-                    DueAmount = order.DueAmount,
-                    IsValidOrder = order.IsValidOrder,
-                    IsDelivered = order.IsDelivered,
-                    DeliveryDate = order.DeliveryDate,
-                    TrackingNumber = order.TrackingNumber,
-                    CourierStationId = order.CourierStationId,
-                    FallbackAddress = order.FallbackAddress,
-                    UserId = order.UserId,
-
-                    OrderDetails = order.OrderDetails.Select(p => new OrderDetailDto
-                    {
-                        Id = p.Id,
-                        OrderId = p.OrderId,
-                        MangoTypeId = p.MangoTypeId,
-                        CrateType = p.CrateType,
-                        Quantity = p.Quantity,
-                        UnitPrice = p.UnitPrice,
-                        Discount = p.Discount,
-                        TotalPrice = p.TotalPrice,
-                        Note = p.Note,
-                    }).ToList(),
-                };
-
-                orderList.Add(orderDto);
+                orderQuery = orderQuery.Where(o => o.UserId == _currentUserService.UserId);
             }
-            return new PaginatedResult<OrderDto>(succeeded: true, data: orderList, pageNumber: query.PageNumber, pageSize: query.PageSize);
+            else if (query.UserId > 0)
+            {
+                orderQuery = orderQuery.Where(o => o.UserId == query.UserId);
+            }
+
+            orderQuery = ApplyFilterAndSort(orderQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
+
+            var paged = await orderQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+
+            var orderList = paged.Data.Select(o => new OrderDto
+            {
+                Id               = o.Id,
+                OrderNumber      = o.OrderNumber,
+                OrderDate        = o.OrderDate,
+                TotalQuantity    = o.TotalQuantity,
+                TotalAmount      = o.TotalAmount,
+                OrderStatus      = o.OrderStatus,
+                PaymentStatus    = o.PaymentStatus,
+                PaidAmount       = o.PaidAmount,
+                DueAmount        = o.DueAmount,
+                IsValidOrder     = o.IsValidOrder,
+                IsDelivered      = o.IsDelivered,
+                DeliveryDate     = o.DeliveryDate,
+                TrackingNumber   = o.TrackingNumber,
+                CourierStationId = o.CourierStationId,
+                FallbackAddress  = o.FallbackAddress,
+                UserId           = o.UserId,
+                OrderDetails = o.OrderDetails.Select(d => new OrderDetailDto
+                {
+                    Id          = d.Id,
+                    OrderId     = d.OrderId,
+                    MangoTypeId = d.MangoTypeId,
+                    CrateType   = d.CrateType,
+                    Quantity    = d.Quantity,
+                    UnitPrice   = d.UnitPrice,
+                    Discount    = d.Discount,
+                    TotalPrice  = d.TotalPrice,
+                    Note        = d.Note,
+                }).ToList(),
+            }).ToList();
+
+            return new PaginatedResult<OrderDto>(
+                succeeded: true,
+                data: orderList,
+                pageNumber: query.PageNumber,
+                pageSize: query.PageSize);
         }
 
-        public IQueryable<Order> GetSortableQuery(IQueryable<Order> query, string filter, string sortBy, bool ascending)
+        private static IQueryable<Order> ApplyFilterAndSort(IQueryable<Order> query, string filter, string sortBy, bool ascending)
         {
             if (!string.IsNullOrEmpty(filter))
-            {
-                query = query.Where(s => s.OrderNumber.Contains(filter));
-            }
+                query = query.Where(o => o.OrderNumber.Contains(filter));
 
-            switch (sortBy)
+            query = sortBy switch
             {
-                case "orderNumber":
-                    query = ascending ? query.OrderBy(e => e.OrderNumber) : query.OrderByDescending(e => e.OrderNumber);
-                    break;
-                case "orderDate":
-                    query = ascending ? query.OrderBy(e => e.OrderDate) : query.OrderByDescending(e => e.OrderDate);
-                    break;
-                case "totalQuantity":
-                    query = ascending ? query.OrderBy(e => e.TotalQuantity) : query.OrderByDescending(e => e.TotalQuantity);
-                    break;
-                case "totalAmount":
-                    query = ascending ? query.OrderBy(e => e.TotalAmount) : query.OrderByDescending(e => e.TotalAmount);
-                    break;
-                case "orderStatus":
-                    query = ascending ? query.OrderBy(e => e.OrderStatus) : query.OrderByDescending(e => e.OrderStatus);
-                    break;
-                case "paymentStatus":
-                    query = ascending ? query.OrderBy(e => e.PaymentStatus) : query.OrderByDescending(e => e.PaymentStatus);
-                    break;
-                case "isDelivered":
-                    query = ascending ? query.OrderBy(e => e.IsDelivered) : query.OrderByDescending(e => e.IsDelivered);
-                    break;
-            }
+                "orderNumber"   => ascending ? query.OrderBy(o => o.OrderNumber)   : query.OrderByDescending(o => o.OrderNumber),
+                "orderDate"     => ascending ? query.OrderBy(o => o.OrderDate)     : query.OrderByDescending(o => o.OrderDate),
+                "totalQuantity" => ascending ? query.OrderBy(o => o.TotalQuantity) : query.OrderByDescending(o => o.TotalQuantity),
+                "totalAmount"   => ascending ? query.OrderBy(o => o.TotalAmount)   : query.OrderByDescending(o => o.TotalAmount),
+                "orderStatus"   => ascending ? query.OrderBy(o => o.OrderStatus)   : query.OrderByDescending(o => o.OrderStatus),
+                "paymentStatus" => ascending ? query.OrderBy(o => o.PaymentStatus) : query.OrderByDescending(o => o.PaymentStatus),
+                "isDelivered"   => ascending ? query.OrderBy(o => o.IsDelivered)   : query.OrderByDescending(o => o.IsDelivered),
+                _               => query.OrderByDescending(o => o.OrderDate),
+            };
 
             return query;
         }
