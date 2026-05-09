@@ -23,5 +23,12 @@ namespace RajMango.WebApi.Controllers
         {
             return await _mediator.Send(new GetCustomerDashboardQuery());
         }
+
+        [HttpGet("admin")]
+        [Authorize(Roles = "system_admin,admin")]
+        public async Task<ActionResult<Result<AdminDashboardDto>>> GetAdminDashboard()
+        {
+            return await _mediator.Send(new GetAdminDashboardQuery());
+        }
     }
 }
