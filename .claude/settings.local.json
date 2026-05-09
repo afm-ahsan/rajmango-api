@@ -3,7 +3,11 @@
     "allow": [
       "Bash(dotnet build *)",
       "Bash(dotnet restore *)",
-      "Bash(dotnet ef *)"
+      "Bash(dotnet ef *)",
+      "Bash(dotnet user-secrets *)",
+      "Bash(git check-ignore *)",
+      "Bash(findstr /i \"secret\")",
+      "Bash(Test-Path *)"
     ]
   }
 }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
@@ -21,7 +20,6 @@ namespace RajMango.Application.Features.Queries
     public class GetUserInfoWithPaginationQueryHandler : IRequestHandler<GetUserWithPaginationQuery, PaginatedResult<AppUserDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
         public GetUserInfoWithPaginationQueryHandler(IDataContext dataContext)
         {
