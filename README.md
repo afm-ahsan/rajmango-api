@@ -60,25 +60,6 @@ Admin dashboard APIs
 Basic reports
 Swagger/OpenAPI
 ```
-Phase-2 items:
-
-```text
-Full bKash payment gateway
-Advanced Google Maps integration
-Complaint management
-Feedback system
-Policy management
-Notification system
-```
-
-Phase-3 items:
-
-```text
-Chatbot/FAQ
-Marketplace/vendor comparison
-Mobile app
-AI analytics
-```
 
 ## Business Rules
 
