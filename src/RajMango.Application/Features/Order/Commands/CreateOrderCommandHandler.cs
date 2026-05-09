@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Features.Services;
@@ -6,6 +5,8 @@ using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
+using RajMango.Shared.Enums;
+using RajMango.Shared.Utils;
 using System.Globalization;
 
 namespace RajMango.Application.Features.Commands
@@ -14,99 +15,105 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public CreateOrderCommandHandler(IErrorHandler errorHandler,
-                                         IDataContext dataContext,
-                                         IMapper mapper)
+        public CreateOrderCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<Result<int>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
         {
             try
             {
+                var today = Clock.Now().Date;
                 var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
-                var unavailableMangoTypes = await _dataContext.Get<MangoType>()
-                    .Where(m => requestedMangoTypeIds.Contains(m.Id) && !m.IsAvailable)
-                    .Select(m => m.Name)
+
+                // Resolve active MangoAvailability for each requested mango type
+                var availabilities = await _dataContext.Get<MangoAvailability>()
+                    .Include(a => a.MangoType)
+                    .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
+                             && a.Status == MangoAvailabilityStatus.Available
+                             && a.StartDate.Date <= today
+                             && a.EndDate.Date >= today)
                     .ToListAsync(cancellationToken);
 
-                if (unavailableMangoTypes.Any())
+                var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
+                var unavailableIds = requestedMangoTypeIds.Where(id => !availableMangoTypeIds.Contains(id)).ToList();
+
+                if (unavailableIds.Any())
                 {
-                    var names = string.Join(", ", unavailableMangoTypes);
-                    return await Result<int>.FailureAsync($"The following mango types are not currently available: {names}.");
+                    var names = await _dataContext.Get<MangoType>()
+                        .Where(m => unavailableIds.Contains(m.Id))
+                        .Select(m => m.Name)
+                        .ToListAsync(cancellationToken);
+                    return await Result<int>.FailureAsync(
+                        $"The following mango types are not currently available: {string.Join(", ", names)}.");
                 }
 
-                var orderNumber = await GenerateOrderNumber();
-                var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails);
-                
+                // Backend-authoritative prices: MangoTypeId → PricePerKg
+                var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+
+                var orderNumber  = await GenerateOrderNumber();
+                var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
+
                 var newOrder = new Order
                 {
-                    UserId = command.UserId,
-                    OrderNumber = orderNumber,
+                    UserId        = command.UserId,
+                    OrderNumber   = orderNumber,
                     TotalQuantity = orderSummary.TotalQuantity,
-                    TotalAmount = orderSummary.TotalAmount,
-                    CreatedBy = command.UserId,
+                    TotalAmount   = orderSummary.TotalAmount,
+                    PaidAmount    = 0,
+                    DueAmount     = orderSummary.TotalAmount,
+                    CreatedBy     = command.UserId,
                 };
 
                 if (command.CourierStationId != null)
-                {
                     newOrder.CourierStationId = command.CourierStationId;
-                }
                 else
-                {
                     newOrder.FallbackAddress = command.FallbackAddress;
-                }
 
                 _dataContext.Get<Order>().Add(newOrder);
-
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
-                foreach (var orderDetail in command.OrderDetails)
+                foreach (var detail in command.OrderDetails)
                 {
-                    var newOrderDetail = new OrderDetail
-                    {
-                        OrderId = newOrder.Id,
-                        MangoTypeId = orderDetail.MangoTypeId,
-                        CrateType = orderDetail.CrateType,
-                        Quantity = orderDetail.Quantity,
-                        UnitPrice = orderDetail.UnitPrice,
-                        Discount = orderDetail.Discount,
-                        TotalPrice = orderDetail.TotalPrice,
-                        Note = orderDetail.Note,
-                    };
+                    var crateWeight = DomainUtils.GetCrateWeight(detail.CrateType);
+                    var pricePerKg  = priceMap[detail.MangoTypeId];
+                    var lineKg      = detail.Quantity * crateWeight;
 
-                    newOrder.OrderDetails.Add(newOrderDetail);
+                    newOrder.OrderDetails.Add(new OrderDetail
+                    {
+                        OrderId     = newOrder.Id,
+                        MangoTypeId = detail.MangoTypeId,
+                        CrateType   = detail.CrateType,
+                        Quantity    = detail.Quantity,
+                        UnitPrice   = pricePerKg,
+                        Discount    = detail.Discount,
+                        TotalPrice  = lineKg * pricePerKg - detail.Discount,
+                        Note        = detail.Note,
+                    });
                 }
 
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
-                return await Result<int>.SuccessAsync(newOrder.Id, "Order is Created.");
+                return await Result<int>.SuccessAsync(newOrder.Id, "Order created.");
             }
             catch (Exception ex)
             {
                 _errorHandler.Handle(ex);
             }
-            return await Result<int>.FailureAsync($"Order Creation Failed");
+            return await Result<int>.FailureAsync("Order creation failed.");
         }
 
-        public async Task<string> GenerateOrderNumber(DateTime? date = null)
+        private async Task<string> GenerateOrderNumber(DateTime? date = null)
         {
             var today = (date ?? Clock.Now()).Date;
-
             var countToday = await _dataContext.Get<Order>()
-                                            .Where(x => x.OrderDate.Date == today)
-                                            .CountAsync();
-
-            var sequence = countToday + 1;
+                .Where(x => x.OrderDate.Date == today)
+                .CountAsync();
             var formattedDate = today.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-            var orderNumber = $"{formattedDate}{sequence:D2}";
-
-            return orderNumber;
+            return $"{formattedDate}{(countToday + 1):D2}";
         }
     }
 }

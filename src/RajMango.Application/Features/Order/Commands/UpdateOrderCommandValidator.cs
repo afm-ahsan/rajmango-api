@@ -4,13 +4,13 @@ using RajMango.Shared.Utils;
 
 namespace RajMango.Application.Features.Commands
 {
-    public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
+    public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
     {
-        public CreateOrderCommandValidator()
+        public UpdateOrderCommandValidator()
         {
-            RuleFor(x => x.UserId)
+            RuleFor(x => x.Id)
                 .GreaterThan(0)
-                .WithMessage("A valid user is required.");
+                .WithMessage("A valid order Id is required.");
 
             RuleFor(x => x.OrderDetails)
                 .NotEmpty()

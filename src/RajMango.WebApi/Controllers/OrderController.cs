@@ -96,8 +96,14 @@ namespace RajMango.WebApi.Controllers
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateOrderCommand command)
         {
             if (id != command.Id)
-            {
                 return BadRequest();
+
+            var validator = new UpdateOrderCommandValidator();
+            var result = validator.Validate(command);
+            if (!result.IsValid)
+            {
+                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errorMessages);
             }
 
             return await _mediator.Send(command);
