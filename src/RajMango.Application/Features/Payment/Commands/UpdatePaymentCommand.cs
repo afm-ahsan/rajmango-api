@@ -1,29 +1,15 @@
-﻿using RajMango.Shared;
 using MediatR;
+using RajMango.Shared;
+using RajMango.Shared.Enums;
 
 namespace RajMango.Application.Features.Commands
 {
     public record UpdatePaymentCommand : IRequest<Result<int>>
     {
         public int Id { get; set; }
-        public string OrderId { get; set; }
-        public int PaymentMethod { get; set; }
-        public double Discount { get; set; }
-        public double RecipientAmount { get; set; }
-        public double Subtotal { get; set; }
-        public double DiscountAmount { get; set; }
-        public double VatAmount { get; set; }
-        public double TotalPayable { get; set; }
-        public double Balance { get; set; }
-        public decimal CashAmount { get; set; }
-        public decimal ChangeAmount { get; set; }
-        public int Type { get; set; }
-        public string CardType { get; set; }
-        public string WalletTransactionId { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int? UpdatedBy { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
+        public decimal PaidAmount { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public string TransactionId { get; set; }
+        public int UpdatedBy { get; set; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
-using MediatR;
 
 namespace RajMango.Application.Features.Commands
 {
@@ -11,38 +12,48 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public UpdatePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IMapper mapper)
+        public UpdatePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<Result<int>> Handle(UpdatePaymentCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _dataContext.Get<Payment>().FindAsync(command.Id);
-                if (user != null)
-                {
-                    command.UpdatedAt = Clock.Now();
+                var payment = await _dataContext.Get<Payment>().FindAsync(new object[] { command.Id }, cancellationToken);
+                if (payment == null)
+                    return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
 
-                    var mappedEntity = _mapper.Map<Payment>(command);
-                    
-                    _dataContext.Get<Payment>().Update(mappedEntity);
+                payment.PaidAmount = command.PaidAmount;
+                payment.GrossAmount = command.PaidAmount;
+                payment.NetAmount = command.PaidAmount;
+                payment.PaymentMethod = command.PaymentMethod;
+                payment.TransactionId = command.TransactionId;
+                payment.UpdatedBy = command.UpdatedBy;
+                payment.UpdatedAt = Clock.Now();
 
-                    await _dataContext.SaveChangesAsync(cancellationToken);
+                _dataContext.Get<Payment>().Update(payment);
+                await _dataContext.SaveChangesAsync(cancellationToken);
 
-                    return await Result<int>.SuccessAsync(user.Id, "Payment is Updated.");
-                }
+                var order = await _dataContext.Get<Order>().FindAsync(new object[] { payment.OrderId }, cancellationToken);
+                var allPayments = await _dataContext.Get<Payment>()
+                    .Where(p => p.OrderId == payment.OrderId)
+                    .ToListAsync(cancellationToken);
+
+                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                _dataContext.Get<Order>().Update(order);
+                await _dataContext.SaveChangesAsync(cancellationToken);
+
+                return await Result<int>.SuccessAsync(payment.Id, "Payment updated.");
             }
             catch (Exception ex)
             {
                 _errorHandler.Handle(ex);
             }
-            return await Result<int>.FailureAsync($"Payment information not found with the Id - {command.Id}");
+            return await Result<int>.FailureAsync($"Payment update failed for Id {command.Id}.");
         }
     }
 }

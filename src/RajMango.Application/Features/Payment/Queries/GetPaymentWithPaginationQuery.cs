@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using MediatR;
 using RajMango.Application.Extensions;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
-using MediatR;
 
 namespace RajMango.Application.Features.Queries
 {
@@ -25,20 +23,31 @@ namespace RajMango.Application.Features.Queries
     public class GetPaymentInfoWithPaginationQueryHandler : IRequestHandler<GetPaymentWithPaginationQuery, PaginatedResult<GetPaymentWithPaginationDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public GetPaymentInfoWithPaginationQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetPaymentInfoWithPaginationQueryHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<PaginatedResult<GetPaymentWithPaginationDto>> Handle(GetPaymentWithPaginationQuery query, CancellationToken cancellationToken)
         {
             return await _dataContext.Get<Payment>()
-                   .OrderBy(x => x.Id)
-                   .ProjectTo<GetPaymentWithPaginationDto>(_mapper.ConfigurationProvider)
-                   .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+                .OrderBy(p => p.Id)
+                .Select(p => new GetPaymentWithPaginationDto
+                {
+                    Id = p.Id,
+                    OrderId = p.OrderId,
+                    PaidAmount = p.PaidAmount,
+                    DueAmount = p.DueAmount,
+                    PaymentStatus = p.PaymentStatus,
+                    PaymentMethod = p.PaymentMethod,
+                    TransactionId = p.TransactionId,
+                    CreatedBy = p.CreatedBy,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedBy = p.UpdatedBy,
+                    UpdatedAt = p.UpdatedAt,
+                })
+                .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         }
     }
 }

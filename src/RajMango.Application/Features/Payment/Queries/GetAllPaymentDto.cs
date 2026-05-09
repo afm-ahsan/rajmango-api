@@ -1,23 +1,16 @@
-﻿using RajMango.Application.DTOs;
-using RajMango.Shared;
+using RajMango.Application.DTOs;
+using RajMango.Shared.Enums;
 
 namespace RajMango.Application.Features.Queries
 {
-    public class GetAllPaymentDto : FullAuditedDto
+    public class GetAllPaymentDto : AuditedDto
     {
         public int Id { get; set; }
-        public string OrderId { get; set; }
-        public int PaymentMethod { get; set; }
-        public double Discount { get; set; }
-        public double RecipientAmount { get; set; }
-        public double Subtotal { get; set; }
-        public double DiscountAmount { get; set; }
-        public double VatAmount { get; set; }
-        public double TotalPayable { get; set; }
-        public double Balance { get; set; }
-        public decimal CashAmount { get; set; }
-        public decimal ChangeAmount { get; set; }
-        public string CardType { get; set; }
-        public string WalletTransactionId { get; set; }
+        public int OrderId { get; set; }
+        public decimal PaidAmount { get; set; }
+        public decimal DueAmount { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public string TransactionId { get; set; }
     }
 }

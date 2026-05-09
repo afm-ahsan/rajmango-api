@@ -29,6 +29,18 @@ namespace RajMango.Application.Features.Commands
         {
             try
             {
+                var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
+                var unavailableMangoTypes = await _dataContext.Get<MangoType>()
+                    .Where(m => requestedMangoTypeIds.Contains(m.Id) && !m.IsAvailable)
+                    .Select(m => m.Name)
+                    .ToListAsync(cancellationToken);
+
+                if (unavailableMangoTypes.Any())
+                {
+                    var names = string.Join(", ", unavailableMangoTypes);
+                    return await Result<int>.FailureAsync($"The following mango types are not currently available: {names}.");
+                }
+
                 var orderNumber = await GenerateOrderNumber();
                 var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails);
                 

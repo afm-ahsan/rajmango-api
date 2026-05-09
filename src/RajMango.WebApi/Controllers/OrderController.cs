@@ -78,6 +78,15 @@ namespace RajMango.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Result<int>>> Create(CreateOrderCommand command)
         {
+            var validator = new CreateOrderCommandValidator();
+            var result = validator.Validate(command);
+
+            if (!result.IsValid)
+            {
+                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errorMessages);
+            }
+
             return await _mediator.Send(command);
         }
 
@@ -92,10 +101,19 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(command);
         }
 
+        [HttpPatch("{id}/status")]
+        public async Task<ActionResult<Result<int>>> UpdateStatus(int id, [FromBody] UpdateOrderStatusCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest();
+
+            return await _mediator.Send(command);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
-            return await _mediator.Send(new DeleteCourierProviderCommand { Id = id });
+            return await _mediator.Send(new DeleteOrderCommand { Id = id });
         }
     }
 }
