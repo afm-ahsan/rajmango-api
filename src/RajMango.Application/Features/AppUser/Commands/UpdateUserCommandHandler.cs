@@ -1,0 +1,75 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Interfaces;
+using RajMango.Application.Interfaces.Repositories;
+using RajMango.Domain.Entities;
+using RajMango.Shared;
+
+namespace RajMango.Application.Features.Commands
+{
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<int>>
+    {
+        private readonly IPasswordHasher<AppUser> _passwordHasher;
+        private readonly IErrorHandler _errorHandler;
+        private readonly IDataContext _dataContext;
+
+        public UpdateUserCommandHandler(IPasswordHasher<AppUser> passwordHasher,
+                                        IErrorHandler errorHandler,
+                                        IDataContext dataContext)
+        {
+            _passwordHasher = passwordHasher;
+            _errorHandler = errorHandler;
+            _dataContext = dataContext;
+        }
+
+        public async Task<Result<int>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _dataContext.Get<AppUser>().FindAsync(command.Id);
+                if (user != null)
+                {
+                    user.FirstName = command.FirstName;
+                    user.LastName = command.LastName;
+                    user.Email = command.Email;
+                    user.PhoneNumber = command.PhoneNumber;
+                    user.IsActive = command.IsActive;
+                    user.UpdatedAt = Clock.Now();
+
+                    if (!string.IsNullOrWhiteSpace(command.Password))
+                    {
+                        var passwordHash = _passwordHasher.HashPassword(user, command.Password);
+                        user.PasswordHash = passwordHash;
+                    }
+                    
+                    _dataContext.Get<AppUser>().Update(user);
+
+                    var role = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(p => p.UserId == command.Id);
+                    if (role == null || role.RoleId != command.RoleId)
+                    {
+                        if (role != null)
+                        {
+                            _dataContext.Get<UserRole>().Remove(role);
+                        }
+                        var roleUser = new UserRole
+                        {
+                            UserId = command.Id,
+                            RoleId = command.RoleId.Value,
+                        };
+                        _dataContext.Get<UserRole>().Add(roleUser);
+                    }
+
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+
+                    return await Result<int>.SuccessAsync(user.Id, "User Information Updated Successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.Handle(ex);
+            }
+            return await Result<int>.FailureAsync($"User information not found with the Id - {command.Id}");
+        }
+    }
+}
