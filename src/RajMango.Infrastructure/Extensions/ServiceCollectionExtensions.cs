@@ -23,7 +23,8 @@ namespace RajMango.Infrastructure.Extensions
                 .AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>()
                 .AddTransient<IErrorHandler, ErrorHandler>()
                 .AddTransient<IDateTimeService, DateTimeService>()
-                .AddTransient<IEmailService, EmailService>();
+                .AddTransient<IEmailService, EmailService>()
+                .AddTransient<IJwtTokenService, JwtTokenService>();
 
             //Later
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.DTOs;
 using RajMango.Application.Features;
@@ -7,7 +8,7 @@ using RajMango.Shared;
 
 namespace RajMango.WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "system_admin,admin")]
     [ApiController]
     [Route("api/courier-station")]
     public class CourierStationController : ControllerBase

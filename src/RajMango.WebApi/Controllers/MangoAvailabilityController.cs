@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Commands;
 using RajMango.Application.Features.Queries;
@@ -6,7 +7,7 @@ using RajMango.Shared;
 
 namespace RajMango.WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/mango-availability")]
     public class MangoAvailabilityController : ControllerBase
@@ -41,12 +42,14 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "system_admin,admin")]
         public async Task<ActionResult<Result<int>>> Create([FromBody] CreateMangoAvailabilityCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "system_admin,admin")]
         public async Task<ActionResult<Result<int>>> Update(int id, [FromBody] UpdateMangoAvailabilityCommand command)
         {
             if (id != command.Id)
@@ -56,6 +59,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPatch("{id}/status")]
+        [Authorize(Roles = "system_admin,admin")]
         public async Task<ActionResult<Result<int>>> UpdateStatus(int id, [FromBody] UpdateMangoAvailabilityStatusCommand command)
         {
             if (id != command.Id)
@@ -65,6 +69,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "system_admin,admin")]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteMangoAvailabilityCommand { Id = id });

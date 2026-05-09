@@ -1,5 +1,5 @@
-﻿using AutoMapper;
 using RajMango.Application.DTOs;
+using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -12,7 +12,6 @@ namespace RajMango.Application.Features.Queries
 {
     public record GetAuthUserQuery : IRequest<Result<GetAuthUserDto>>
     {
-        //public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
 
@@ -27,37 +26,49 @@ namespace RajMango.Application.Features.Queries
     {
         private readonly IPasswordHasher<AppUser> _passwordHasher;
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
+        private readonly IJwtTokenService _jwtTokenService;
 
-        public GetGetAuthUserQueryHandler(IPasswordHasher<AppUser> passwordHasher, IDataContext dataContext, IMapper mapper)
+        public GetGetAuthUserQueryHandler(IPasswordHasher<AppUser> passwordHasher, IDataContext dataContext, IJwtTokenService jwtTokenService)
         {
             _passwordHasher = passwordHasher;
             _dataContext = dataContext;
-            _mapper = mapper;
+            _jwtTokenService = jwtTokenService;
         }
 
         public async Task<Result<GetAuthUserDto>> Handle(GetAuthUserQuery query, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Get<AppUser>().FirstOrDefaultAsync(u => u.Email == query.Email);
+            var user = await _dataContext.Get<AppUser>().FirstOrDefaultAsync(u => u.Email == query.Email, cancellationToken);
 
             if (user == null)
-            {
-                return await Result<GetAuthUserDto>.FailureAsync($"Invalid username.");
-            }
-
-            //var hashedPassword = _passwordHasher.HashPassword(user, query.Password);
-            //var hashedPassword1 = _passwordHasher.HashPassword(user, "S@dmin321!");
-            //var hashedPassword2 = _passwordHasher.HashPassword(user, "@dmin321!");
+                return await Result<GetAuthUserDto>.FailureAsync("Invalid username.");
 
             var verifyPassword = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, query.Password);
             if (verifyPassword == PasswordVerificationResult.Failed)
+                return await Result<GetAuthUserDto>.FailureAsync("Invalid password.");
+
+            // Fetch role before token generation so the role claim is embedded in the JWT
+            string roleCode = null;
+            int? roleId = null;
+            string permissionJson = null;
+            List<PermissionModel> permissions = null;
+
+            var userRole = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(p => p.UserId == user.Id, cancellationToken);
+            if (userRole != null)
             {
-                return await Result<GetAuthUserDto>.FailureAsync($"Invalid password.");
+                var role = await _dataContext.Get<Role>().FirstOrDefaultAsync(p => p.Id == userRole.RoleId && p.IsActive, cancellationToken);
+                if (role != null)
+                {
+                    roleCode = role.Code;
+                    roleId = role.Id;
+                    permissionJson = role.PermissionJson;
+                    if (!string.IsNullOrEmpty(role.PermissionJson))
+                        permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson);
+                }
             }
 
-            var jwtAuth = await CreateAccessToken(user.Id, cancellationToken);
+            var jwtAuth = await CreateAccessTokenAsync(user, roleCode, cancellationToken);
 
-            var authUserDto = new GetAuthUserDto
+            return await Result<GetAuthUserDto>.SuccessAsync(new GetAuthUserDto
             {
                 UserId = user.Id,
                 UserName = user.UserName,
@@ -67,57 +78,36 @@ namespace RajMango.Application.Features.Queries
                 ImagePath = "/assets/media/avatars/300-1.jpg",
                 PhoneNumber = user.PhoneNumber,
                 AuthToken = jwtAuth.AuthToken,
-                JwtAuth = jwtAuth
-            };
-
-
-            var userRole = _dataContext.Get<UserRole>().FirstOrDefault(p => p.UserId == user.Id);
-            if (userRole != null)
-            {
-                var role = await _dataContext.Get<Role>().FirstOrDefaultAsync(p => p.Id == userRole.RoleId && p.IsActive);
-                if (role != null)
-                {
-                    authUserDto.RoleId = role.Id;
-                    if (!string.IsNullOrEmpty(role.PermissionJson))
-                    {
-                        authUserDto.PermissionJson = role.PermissionJson;
-                        authUserDto.Permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson);
-                    }
-                }
-            }
-            return await Result<GetAuthUserDto>.SuccessAsync(authUserDto);
+                JwtAuth = jwtAuth,
+                RoleId = roleId,
+                PermissionJson = permissionJson,
+                Permissions = permissions,
+            });
         }
 
-        private async Task<JwtAuthDto> CreateAccessToken(int userId, CancellationToken cancellationToken)
+        private async Task<JwtAuthDto> CreateAccessTokenAsync(AppUser user, string roleCode, CancellationToken cancellationToken)
         {
+            var token = _jwtTokenService.GenerateJwtToken(user.Id, user.UserName, user.Email, roleCode);
+            var expiry = Clock.Now().AddHours(24);
+
             var jwtAuth = new JwtAuth
             {
-                UserId = userId,
-                AuthToken = CreateToken(),
-                RefreshToken = CreateToken(),
-                ExpiresIn = DateTime.Now.AddHours(24),
+                UserId = user.Id,
+                AuthToken = token,
+                RefreshToken = Guid.NewGuid().ToString("N"),
+                ExpiresIn = expiry,
                 IpAddress = "127.0.0.1",
-                DeviceInfo = "Seeded device",
+                DeviceInfo = "Web",
             };
             _dataContext.Get<JwtAuth>().Add(jwtAuth);
             await _dataContext.SaveChangesAsync(cancellationToken);
 
             return new JwtAuthDto
             {
-                AuthToken = jwtAuth.AuthToken,
+                AuthToken = token,
                 RefreshToken = jwtAuth.RefreshToken,
-                ExpiresIn = jwtAuth.ExpiresIn
+                ExpiresIn = expiry,
             };
-        }
-
-        private string CreateToken()
-        {
-            byte[] time = BitConverter.GetBytes(DateTime.Now.ToBinary());
-            byte[] key = Guid.NewGuid().ToByteArray();
-            string token = Convert.ToBase64String(time.Concat(key).ToArray());
-
-            return token;
-            //string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RajMango.Application\RajMango.Application.csproj" />
     <ProjectReference Include="..\RajMango.Domain\RajMango.Domain.csproj" />
   </ItemGroup>

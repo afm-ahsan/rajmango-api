@@ -2,12 +2,13 @@ using RajMango.Application.Features.Commands;
 using RajMango.Application.Features.Queries;
 using RajMango.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.DTOs;
 
 namespace RajMango.WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "system_admin")]
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase
