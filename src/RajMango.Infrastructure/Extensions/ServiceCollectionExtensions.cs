@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RajMango.Application.Interfaces;
@@ -13,12 +14,12 @@ namespace RajMango.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddInfrastructureLayer(this IServiceCollection services)
+        public static void AddInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddServices();
+            services.AddServices(configuration);
         }
 
-        private static void AddServices(this IServiceCollection services)
+        private static void AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddScoped<IMediator, Mediator>()
@@ -28,7 +29,8 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IEmailService, EmailService>()
                 .AddTransient<IJwtTokenService, JwtTokenService>()
                 .AddTransient<INotificationService, NotificationService>()
-                .AddTransient<IBkashService, BkashService>();
+                .AddTransient<IBkashService, BkashService>()
+                .AddTransient<ICacheService, RedisCacheService>();
 
             services.AddHttpClient("Bkash", (sp, client) =>
             {
@@ -38,6 +40,13 @@ namespace RajMango.Infrastructure.Extensions
                 client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             });
+
+            // Redis or in-memory distributed cache (fallback for dev/test when Redis not configured)
+            var redisConnectionString = configuration["Redis:ConnectionString"];
+            if (!string.IsNullOrWhiteSpace(redisConnectionString))
+                services.AddStackExchangeRedisCache(opts => opts.Configuration = redisConnectionString);
+            else
+                services.AddDistributedMemoryCache();
 
             //Later
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

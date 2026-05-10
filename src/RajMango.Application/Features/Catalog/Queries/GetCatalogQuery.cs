@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -34,7 +35,11 @@ namespace RajMango.Application.Features.Queries
         public decimal? PricePerCrate { get; set; }
     }
 
-    public record GetCatalogQuery : IRequest<Result<List<CatalogItemDto>>>;
+    public record GetCatalogQuery : IRequest<Result<List<CatalogItemDto>>>, ICacheableQuery
+    {
+        public string CacheKey => CacheKeys.CatalogAll;
+        public TimeSpan? Expiry => TimeSpan.FromMinutes(5);
+    }
 
     public class GetCatalogQueryHandler : IRequestHandler<GetCatalogQuery, Result<List<CatalogItemDto>>>
     {

@@ -1,4 +1,5 @@
 using MediatR;
+using RajMango.Application.Common;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -25,12 +26,18 @@ namespace RajMango.Application.Features.Commands
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
         private readonly INotificationService _notificationService;
+        private readonly IRealtimeService _realtime;
 
-        public UpdateOrderStatusCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, INotificationService notificationService)
+        public UpdateOrderStatusCommandHandler(
+            IErrorHandler errorHandler,
+            IDataContext dataContext,
+            INotificationService notificationService,
+            IRealtimeService realtime)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
             _notificationService = notificationService;
+            _realtime = realtime;
         }
 
         public async Task<Result<int>> Handle(UpdateOrderStatusCommand command, CancellationToken cancellationToken)
@@ -59,6 +66,10 @@ namespace RajMango.Application.Features.Commands
 
                 await _notificationService.SendOrderStatusChangedAsync(
                     order.UserId, order.OrderNumber, command.NewStatus.ToString(), cancellationToken);
+
+                var statusPayload = new { OrderId = order.Id, OrderNumber = order.OrderNumber, Status = command.NewStatus.ToString(), order.UserId };
+                await _realtime.SendToUserAsync(order.UserId, RealtimeEvents.OrderStatusUpdated, statusPayload, cancellationToken);
+                await _realtime.SendToAdminsAsync(RealtimeEvents.OrderStatusUpdated, statusPayload, cancellationToken);
 
                 return await Result<int>.SuccessAsync(order.Id, $"Order status updated to {command.NewStatus}.");
             }

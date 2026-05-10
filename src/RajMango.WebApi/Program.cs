@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,7 @@ using RajMango.Application.Interfaces;
 using RajMango.DataAccess.Extensions;
 using RajMango.Infrastructure.Extensions;
 using RajMango.Shared;
+using RajMango.WebApi.Hubs;
 using RajMango.WebApi.OpenApi;
 using RajMango.WebApi.Services;
 using Serilog;
@@ -34,13 +36,15 @@ builder.Host.UseSerilog();
 //        options.UseMySql(configuration.GetConnectionString("Default"), ServerVersion.Parse("10.4.19-mariadb")),
 //        ServiceLifetime.Scoped);
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IRealtimeService, RealtimeService>();
+builder.Services.AddSingleton<IUserIdProvider, RajMangoUserIdProvider>();
 builder.Services.AddHttpContextAccessor();
 
 // Add API Services
 builder.Services.RegisterApiServices();
 // Add services to the container.
 builder.Services.AddApplicationLayer();
-builder.Services.AddInfrastructureLayer();
+builder.Services.AddInfrastructureLayer(configuration);
 builder.Services.AddDataAccessLayer(configuration);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -87,6 +91,8 @@ builder
     .AddHttpClient()
     .AddSwaggerGen();
 
+builder.Services.AddSignalR();
+
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
@@ -131,6 +137,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<RajMangoHub>("/hubs/rajmango");
 
 app.Run();
 

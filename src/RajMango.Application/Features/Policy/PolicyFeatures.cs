@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Shared;
@@ -42,11 +43,13 @@ namespace RajMango.Application.Features.Policy
     {
         private readonly IDataContext _dataContext;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICacheService _cache;
 
-        public UpsertPolicyCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService)
+        public UpsertPolicyCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService, ICacheService cache)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
+            _cache = cache;
         }
 
         public async Task<Result<int>> Handle(UpsertPolicyCommand command, CancellationToken cancellationToken)
@@ -64,6 +67,7 @@ namespace RajMango.Application.Features.Policy
 
                 _dataContext.Get<Domain.Entities.Policy>().Update(existing);
                 await _dataContext.SaveChangesAsync(cancellationToken);
+                await _cache.RemoveAsync(CacheKeys.PolicyAll, cancellationToken);
                 return await Result<int>.SuccessAsync(existing.Id, "Policy updated.");
             }
 
@@ -79,6 +83,7 @@ namespace RajMango.Application.Features.Policy
 
             _dataContext.Get<Domain.Entities.Policy>().Add(policy);
             await _dataContext.SaveChangesAsync(cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.PolicyAll, cancellationToken);
             return await Result<int>.SuccessAsync(policy.Id, "Policy created.");
         }
     }
@@ -120,7 +125,11 @@ namespace RajMango.Application.Features.Policy
 
     // ── Get all (public) ─────────────────────────────────────────────────────
 
-    public record GetAllPoliciesQuery : IRequest<Result<List<PolicyDto>>>;
+    public record GetAllPoliciesQuery : IRequest<Result<List<PolicyDto>>>, ICacheableQuery
+    {
+        public string CacheKey => CacheKeys.PolicyAll;
+        public TimeSpan? Expiry => TimeSpan.FromMinutes(60);
+    }
 
     public class GetAllPoliciesQueryHandler : IRequestHandler<GetAllPoliciesQuery, Result<List<PolicyDto>>>
     {

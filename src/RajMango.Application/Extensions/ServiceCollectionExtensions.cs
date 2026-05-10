@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using System.Reflection;
 
@@ -22,7 +24,11 @@ namespace RajMango.Application.Extensions
 
         private static void AddMediator(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
+            });
         }
 
         private static void AddValidators(this IServiceCollection services)

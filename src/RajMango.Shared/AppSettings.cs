@@ -5,6 +5,7 @@
         public Security Security { get; set; }
         public ApiInfo ApiInfo { get; set; }
         public BkashSettings Bkash { get; set; }
+        public RedisSettings Redis { get; set; }
     }
 
     public class BkashSettings
@@ -14,6 +15,12 @@
         public string AppSecret { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class RedisSettings
+    {
+        public string ConnectionString { get; set; }
+        public int DefaultExpiryMinutes { get; set; } = 10;
     }
 
     public class Security

@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -13,12 +14,18 @@ namespace RajMango.Application.Features.Commands
         private readonly IDataContext _dataContext;
         private readonly ICurrentUserService _currentUserService;
         private readonly INotificationService _notificationService;
+        private readonly IRealtimeService _realtime;
 
-        public CreatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService, INotificationService notificationService)
+        public CreatePaymentCommandHandler(
+            IDataContext dataContext,
+            ICurrentUserService currentUserService,
+            INotificationService notificationService,
+            IRealtimeService realtime)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
             _notificationService = notificationService;
+            _realtime = realtime;
         }
 
         public async Task<Result<int>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
@@ -66,6 +73,10 @@ namespace RajMango.Application.Features.Commands
 
             await _notificationService.SendPaymentReceivedAsync(
                 order.UserId, order.OrderNumber, command.PaidAmount, cancellationToken);
+
+            var paymentPayload = new { PaymentId = payment.Id, order.OrderNumber, Amount = command.PaidAmount, order.UserId };
+            await _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, paymentPayload, cancellationToken);
+            await _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, paymentPayload, cancellationToken);
 
             return await Result<int>.SuccessAsync(payment.Id, "Payment recorded.");
         }

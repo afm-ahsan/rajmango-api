@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -15,11 +16,19 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly INotificationService _notification;
+        private readonly IRealtimeService _realtime;
 
-        public CreateOrderCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public CreateOrderCommandHandler(
+            IErrorHandler errorHandler,
+            IDataContext dataContext,
+            INotificationService notification,
+            IRealtimeService realtime)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _notification = notification;
+            _realtime = realtime;
         }
 
         public async Task<Result<int>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
@@ -99,6 +108,11 @@ namespace RajMango.Application.Features.Commands
                 }
 
                 await _dataContext.SaveChangesAsync(cancellationToken);
+
+                await _notification.SendOrderConfirmedAsync(newOrder.UserId, newOrder.OrderNumber, cancellationToken);
+                await _realtime.SendToAdminsAsync(RealtimeEvents.OrderCreated,
+                    new { OrderId = newOrder.Id, OrderNumber = newOrder.OrderNumber, UserId = newOrder.UserId },
+                    cancellationToken);
 
                 return await Result<int>.SuccessAsync(newOrder.Id, "Order created.");
             }

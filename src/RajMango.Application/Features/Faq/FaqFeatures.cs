@@ -1,6 +1,8 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
+using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -45,14 +47,19 @@ namespace RajMango.Application.Features.Faq
     public class UpsertFaqItemCommandHandler : IRequestHandler<UpsertFaqItemCommand, Result<int>>
     {
         private readonly IDataContext _dataContext;
+        private readonly ICacheService _cache;
 
-        public UpsertFaqItemCommandHandler(IDataContext dataContext)
+        public UpsertFaqItemCommandHandler(IDataContext dataContext, ICacheService cache)
         {
             _dataContext = dataContext;
+            _cache = cache;
         }
 
         public async Task<Result<int>> Handle(UpsertFaqItemCommand command, CancellationToken cancellationToken)
         {
+            int id;
+            string message;
+
             if (command.Id > 0)
             {
                 var existing = await _dataContext.Get<FaqItem>()
@@ -69,7 +76,8 @@ namespace RajMango.Application.Features.Faq
 
                 _dataContext.Get<FaqItem>().Update(existing);
                 await _dataContext.SaveChangesAsync(cancellationToken);
-                return await Result<int>.SuccessAsync(existing.Id, "FAQ item updated.");
+                id = existing.Id;
+                message = "FAQ item updated.";
             }
             else
             {
@@ -85,8 +93,12 @@ namespace RajMango.Application.Features.Faq
 
                 _dataContext.Get<FaqItem>().Add(item);
                 await _dataContext.SaveChangesAsync(cancellationToken);
-                return await Result<int>.SuccessAsync(item.Id, "FAQ item created.");
+                id = item.Id;
+                message = "FAQ item created.";
             }
+
+            await _cache.RemoveAsync(CacheKeys.FaqAll, cancellationToken);
+            return await Result<int>.SuccessAsync(id, message);
         }
     }
 
@@ -97,10 +109,12 @@ namespace RajMango.Application.Features.Faq
     public class DeleteFaqItemCommandHandler : IRequestHandler<DeleteFaqItemCommand, Result<int>>
     {
         private readonly IDataContext _dataContext;
+        private readonly ICacheService _cache;
 
-        public DeleteFaqItemCommandHandler(IDataContext dataContext)
+        public DeleteFaqItemCommandHandler(IDataContext dataContext, ICacheService cache)
         {
             _dataContext = dataContext;
+            _cache = cache;
         }
 
         public async Task<Result<int>> Handle(DeleteFaqItemCommand command, CancellationToken cancellationToken)
@@ -113,13 +127,18 @@ namespace RajMango.Application.Features.Faq
 
             _dataContext.Get<FaqItem>().Remove(item);
             await _dataContext.SaveChangesAsync(cancellationToken);
+            await _cache.RemoveAsync(CacheKeys.FaqAll, cancellationToken);
             return await Result<int>.SuccessAsync(command.Id, "FAQ item deleted.");
         }
     }
 
     // ── Get All (admin, ordered by SortOrder) ─────────────────────────────
 
-    public record GetAllFaqItemsQuery : IRequest<Result<List<FaqItemDto>>>;
+    public record GetAllFaqItemsQuery : IRequest<Result<List<FaqItemDto>>>, ICacheableQuery
+    {
+        public string CacheKey => CacheKeys.FaqAll;
+        public TimeSpan? Expiry => TimeSpan.FromMinutes(30);
+    }
 
     public class GetAllFaqItemsQueryHandler : IRequestHandler<GetAllFaqItemsQuery, Result<List<FaqItemDto>>>
     {

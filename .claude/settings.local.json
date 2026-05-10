@@ -14,7 +14,10 @@
       "Bash(dotnet add *)",
       "Bash(Get-ChildItem -Recurse \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\" -Filter \"*.cs\")",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(Select-Object -First 50)"
+      "Bash(Select-Object -First 50)",
+      "Bash(dotnet sln *)",
+      "Bash(dotnet test *)",
+      "PowerShell(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\" | ForEach-Object { $_.Name })"
     ]
   }
 }
