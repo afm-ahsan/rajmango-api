@@ -1,152 +1,100 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-//using System.Net.Http.Headers;
+using RajMango.Application.Common;
+using RajMango.Application.Interfaces;
 
 namespace RajMango.WebApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/file")]
     [ApiController]
     public class FileController : ControllerBase
     {
-        [HttpPost, DisableRequestSizeLimit]
-        [Route("upload-image")]
-        public async Task<IActionResult> UploadImage()
+        private readonly IFileStorageService _storage;
+
+        public FileController(IFileStorageService storage)
         {
+            _storage = storage;
+        }
+
+        /// <summary>
+        /// Upload an image to the specified domain folder.
+        /// domain: mango-types | users | feedbacks | complaints
+        /// </summary>
+        [HttpPost("upload")]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> Upload(
+            IFormFile file,
+            [FromQuery] string domain,
+            [FromQuery] string prefix = "file",
+            [FromQuery] int? entityId = null,
+            CancellationToken ct = default)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "No file provided." });
+
+            if (!UploadDomain.IsValid(domain))
+                return BadRequest(new { message = $"Invalid upload domain '{domain}'. Allowed: mango-types, users, feedbacks, complaints." });
+
             try
             {
-                var formCollection = await Request.ReadFormAsync();
-                var file = formCollection.Files.First();
-                var imageDirectory = GetImageDirectory(file.Name.Trim());
-                var rootDirectory = Path.Combine(Directory.GetCurrentDirectory(), imageDirectory);
-                
-                if(!Directory.Exists(rootDirectory))
-                {
-                    Directory.CreateDirectory(rootDirectory);
-                }
-                
-                if (file.Length > 0)
-                {
-                    //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(rootDirectory, file.FileName.Trim());
-                    var imagePath = Path.Combine(imageDirectory, file.FileName.Trim());
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                    return Ok(new { imagePath });
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                var relativePath = await _storage.SaveAsync(
+                    file.OpenReadStream(),
+                    file.FileName,
+                    file.ContentType,
+                    file.Length,
+                    domain,
+                    prefix,
+                    entityId,
+                    ct);
+
+                return Ok(new { relativePath });
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex}");
+                return BadRequest(new { message = ex.Message });
             }
         }
 
-        [HttpDelete]
-        [Route("delete-image/{fileName}/{location}")]
-        public IActionResult Delete(string fileName, string location)
+        /// <summary>Delete a previously uploaded file by its relative path.</summary>
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete([FromQuery] string relativePath, CancellationToken ct = default)
         {
-            try
-            {
-                if (!string.IsNullOrEmpty(fileName))
-                {
-                    var imageDirectory = GetImageDirectory(location);
-                    var rootDirectory = Path.Combine(Directory.GetCurrentDirectory(), imageDirectory);
-                    var fileToDelete = Path.Combine(rootDirectory, fileName);
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return BadRequest(new { message = "relativePath is required." });
 
-                    if (System.IO.File.Exists(fileToDelete))
-                    {
-                        System.IO.File.Delete(fileToDelete);
-                    }
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex}");
-            }
+            await _storage.DeleteAsync(relativePath, ct);
+            return Ok();
         }
 
-        [HttpGet, DisableRequestSizeLimit]
-        [Route("download")]
-        public async Task<IActionResult> Download([FromQuery] string fileUrl)
+        /// <summary>Download a file by its relative path (for non-public files served outside wwwroot).</summary>
+        [HttpGet("download")]
+        public async Task<IActionResult> Download([FromQuery] string relativePath, CancellationToken ct = default)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), fileUrl);
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return BadRequest();
 
-            if (!System.IO.File.Exists(filePath))
+            var normalized   = relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var webRoot      = HttpContext.RequestServices
+                                   .GetRequiredService<IWebHostEnvironment>().WebRootPath ?? string.Empty;
+            var physicalPath = Path.Combine(webRoot, normalized);
+
+            if (!System.IO.File.Exists(physicalPath))
                 return NotFound();
 
             var memory = new MemoryStream();
-            await using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
+            await using (var stream = new FileStream(physicalPath, FileMode.Open, FileAccess.Read))
+                await stream.CopyToAsync(memory, ct);
+
             memory.Position = 0;
-
-            return File(memory, GetContentType(filePath), filePath);
+            return File(memory, GetContentType(physicalPath));
         }
 
-        [HttpGet, DisableRequestSizeLimit]
-        [Route("get-images")]
-        public IActionResult GetPhotos()
-        {
-            try
-            {
-                var folderName = Path.Combine("Resources", "Images");
-                var pathToRead = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var photos = Directory.EnumerateFiles(pathToRead)
-                    .Where(IsImageFile)
-                    .Select(fullPath => Path.Combine(folderName, Path.GetFileName(fullPath)));
-
-                return Ok(new { photos });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex}");
-            }
-        }
-
-        private bool IsImageFile(string fileName)
-        {
-            return fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
-                   || fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
-                   || fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private string GetImageDirectory(string location)
-        {
-            var imageDirectory = Path.Combine("Resources", "Images");
-            var splitLocation = location.Trim().Split(' ');
-            if (splitLocation.Length == 1)
-                imageDirectory = Path.Combine("Resources", "Images", splitLocation[0]);
-            if (splitLocation.Length == 2)
-                imageDirectory = Path.Combine("Resources", "Images", splitLocation[0], splitLocation[1]);
-            return imageDirectory;
-        }
-
-        private string GetContentType(string path)
+        private static string GetContentType(string path)
         {
             var provider = new FileExtensionContentTypeProvider();
-            string contentType;
-
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            if (!provider.TryGetContentType(path, out contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-            return contentType;
+            return provider.TryGetContentType(path, out var ct) ? ct : "application/octet-stream";
         }
     }
 }

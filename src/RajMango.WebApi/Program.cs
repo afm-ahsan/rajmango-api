@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RajMango.Application.Extensions;
@@ -117,20 +116,7 @@ app.UseCors(x => x
             .AllowAnyMethod()
             .AllowAnyHeader());
 
-app.UseStaticFiles();
-//app.UseDirectoryBrowser();
-app.UseStaticFiles(new StaticFileOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
-    RequestPath = new PathString("/Resources")
-});
-
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    FileProvider = new PhysicalFileProvider(
-//           Path.Combine(builder.Environment.ContentRootPath, "Resources")),
-//    RequestPath = "/Resources"
-//});
+app.UseStaticFiles(); // serves wwwroot — /uploads/... paths are public from here
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

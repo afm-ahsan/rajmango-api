@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Feedback.Commands;
 using RajMango.Application.Features.Feedback.Queries;
 using RajMango.Shared;
+using FluentValidation;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -48,6 +49,17 @@ namespace RajMango.WebApi.Controllers
         public async Task<ActionResult<Result<List<FeedbackDto>>>> GetAll()
         {
             return await _mediator.Send(new GetAllFeedbackQuery());
+        }
+
+        /// <summary>Attach an uploaded image path to a feedback (max 3 images).</summary>
+        [HttpPost("images")]
+        public async Task<ActionResult<Result<int>>> AddImage([FromBody] AddFeedbackImageCommand command)
+        {
+            var validation = new AddFeedbackImageCommandValidator().Validate(command);
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors.Select(e => e.ErrorMessage));
+
+            return await _mediator.Send(command);
         }
     }
 }

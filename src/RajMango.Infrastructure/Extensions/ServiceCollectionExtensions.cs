@@ -30,7 +30,8 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IJwtTokenService, JwtTokenService>()
                 .AddTransient<INotificationService, NotificationService>()
                 .AddTransient<IBkashService, BkashService>()
-                .AddTransient<ICacheService, RedisCacheService>();
+                .AddTransient<ICacheService, RedisCacheService>()
+                .AddTransient<IFileStorageService, LocalFileStorageService>();
 
             services.AddHttpClient("Bkash", (sp, client) =>
             {
