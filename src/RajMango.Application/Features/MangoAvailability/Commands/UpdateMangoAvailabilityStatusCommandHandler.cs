@@ -33,7 +33,6 @@ namespace RajMango.Application.Features.Commands
             try
             {
                 var availability = await _dataContext.Get<MangoAvailability>()
-                    .Include(a => a.MangoType)
                     .FirstOrDefaultAsync(a => a.Id == command.Id, cancellationToken);
 
                 if (availability == null)
@@ -43,11 +42,7 @@ namespace RajMango.Application.Features.Commands
                 availability.UpdatedBy = command.UpdatedBy;
                 availability.UpdatedAt = Clock.Now();
 
-                // Keep MangoType.IsAvailable in sync so the order placement check stays accurate.
-                availability.MangoType.IsAvailable = command.NewStatus == MangoAvailabilityStatus.Available;
-
                 _dataContext.Get<MangoAvailability>().Update(availability);
-                _dataContext.Get<MangoType>().Update(availability.MangoType);
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
                 await _cache.RemoveAsync(CacheKeys.CatalogAll, cancellationToken);

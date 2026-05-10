@@ -12,8 +12,7 @@ namespace RajMango.Application.Features.Queries
         public string Region { get; set; }
         public string AverageWeight { get; set; }
         public MangoGrade MangoGrade { get; set; }
-        public decimal PricePerKg { get; set; }
+        public SweetnessLevel SweetnessLevel { get; set; }
         public int Sequence { get; set; }
-        public bool IsAvailable { get; set; }
     }
 }

@@ -17,7 +17,8 @@
       "Bash(Select-Object -First 50)",
       "Bash(dotnet sln *)",
       "Bash(dotnet test *)",
-      "PowerShell(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\" | ForEach-Object { $_.Name })"
+      "PowerShell(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\" | ForEach-Object { $_.Name })",
+      "PowerShell(dotnet build *)"
     ]
   }
 }

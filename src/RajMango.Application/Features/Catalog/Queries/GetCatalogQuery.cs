@@ -18,6 +18,7 @@ namespace RajMango.Application.Features.Queries
         public string Region { get; set; }
         public string AverageWeight { get; set; }
         public MangoGrade MangoGrade { get; set; }
+        public SweetnessLevel SweetnessLevel { get; set; }
         public int Sequence { get; set; }
         public bool IsCurrentlyAvailable { get; set; }
         public decimal? PricePerKg { get; set; }
@@ -59,7 +60,7 @@ namespace RajMango.Application.Features.Queries
                 .Select(m => new
                 {
                     m.Id, m.Name, m.Description, m.ImagePath,
-                    m.Region, m.AverageWeight, m.MangoGrade, m.Sequence,
+                    m.Region, m.AverageWeight, m.MangoGrade, m.SweetnessLevel, m.Sequence,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -107,6 +108,7 @@ namespace RajMango.Application.Features.Queries
                     Region               = m.Region,
                     AverageWeight        = m.AverageWeight,
                     MangoGrade           = m.MangoGrade,
+                    SweetnessLevel       = m.SweetnessLevel,
                     Sequence             = m.Sequence,
                     IsCurrentlyAvailable = avail != null,
                     PricePerKg           = pricePerKg,

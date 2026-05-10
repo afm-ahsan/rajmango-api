@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using RajMango.Application.Extensions;
@@ -51,25 +51,16 @@ namespace RajMango.Application.Features.Queries
             var query = _dataContext.Get<MangoType>().AsQueryable();
 
             if (!string.IsNullOrEmpty(filter))
-            {
                 query = query.Where(s => s.Name.Contains(filter));
-            }
 
-            switch (sortBy)
+            query = sortBy switch
             {
-                case "name":
-                    query = ascending ? query.OrderBy(e => e.Name) : query.OrderByDescending(e => e.Name);
-                    break;
-                case "pricePerKg":
-                    query = ascending ? query.OrderBy(e => e.PricePerKg) : query.OrderByDescending(e => e.PricePerKg);
-                    break;
-                case "description":
-                    query = ascending ? query.OrderBy(e => e.Description) : query.OrderByDescending(e => e.Description);
-                    break;
-                default:
-                    query = ascending ? query.OrderBy(e => e.IsAvailable) : query.OrderByDescending(e => e.IsAvailable);
-                    break;
-            }
+                "name"        => ascending ? query.OrderBy(e => e.Name)        : query.OrderByDescending(e => e.Name),
+                "description" => ascending ? query.OrderBy(e => e.Description) : query.OrderByDescending(e => e.Description),
+                "region"      => ascending ? query.OrderBy(e => e.Region)      : query.OrderByDescending(e => e.Region),
+                "mangoGrade"  => ascending ? query.OrderBy(e => e.MangoGrade)  : query.OrderByDescending(e => e.MangoGrade),
+                _             => ascending ? query.OrderBy(e => e.Sequence)    : query.OrderByDescending(e => e.Sequence),
+            };
 
             return query;
         }

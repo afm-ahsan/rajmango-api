@@ -24,8 +24,6 @@ namespace RajMango.Domain.Entities
         [StringLength(512)]
         public string ImagePath { get; set; }
         
-        public decimal PricePerKg { get; set; }
-
         [StringLength(50)]
         public string Region { get; set; }
 
@@ -34,8 +32,8 @@ namespace RajMango.Domain.Entities
 
         public MangoGrade MangoGrade { get; set; }
 
-        public int Sequence { get; set; } = 0;
+        public SweetnessLevel SweetnessLevel { get; set; }
 
-        public bool IsAvailable { get; set; }
+        public int Sequence { get; set; } = 0;
     }
 }

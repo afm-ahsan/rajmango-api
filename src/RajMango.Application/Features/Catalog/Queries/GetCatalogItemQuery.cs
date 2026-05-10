@@ -34,7 +34,7 @@ namespace RajMango.Application.Features.Queries
                 .Select(m => new
                 {
                     m.Id, m.Name, m.Description, m.ImagePath,
-                    m.Region, m.AverageWeight, m.MangoGrade, m.Sequence,
+                    m.Region, m.AverageWeight, m.MangoGrade, m.SweetnessLevel, m.Sequence,
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -79,6 +79,7 @@ namespace RajMango.Application.Features.Queries
                 Region               = mangoType.Region,
                 AverageWeight        = mangoType.AverageWeight,
                 MangoGrade           = mangoType.MangoGrade,
+                SweetnessLevel       = mangoType.SweetnessLevel,
                 Sequence             = mangoType.Sequence,
                 IsCurrentlyAvailable = avail != null,
                 PricePerKg           = pricePerKg,
