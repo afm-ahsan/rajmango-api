@@ -9,7 +9,9 @@
       "Bash(findstr /i \"secret\")",
       "Bash(Test-Path *)",
       "Bash(grep -v \"//\\\\|obj\\\\\\\\\")",
-      "PowerShell(cd \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\"; $secret = -join \\(\\(65..90\\)+\\(97..122\\)+\\(48..57\\) | Get-Random -Count 48 | % {[char]$_}\\); dotnet user-secrets set \"Security:Jwt:ClientSecret\" $secret --project src/RajMango.WebApi)"
+      "PowerShell(cd \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\"; $secret = -join \\(\\(65..90\\)+\\(97..122\\)+\\(48..57\\) | Get-Random -Count 48 | % {[char]$_}\\); dotnet user-secrets set \"Security:Jwt:ClientSecret\" $secret --project src/RajMango.WebApi)",
+      "Bash(python -c ' *)",
+      "Bash(dotnet add *)"
     ]
   }
 }

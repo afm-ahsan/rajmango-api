@@ -24,11 +24,13 @@ namespace RajMango.Application.Features.Commands
 
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly INotificationService _notificationService;
 
-        public UpdateOrderStatusCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public UpdateOrderStatusCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, INotificationService notificationService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _notificationService = notificationService;
         }
 
         public async Task<Result<int>> Handle(UpdateOrderStatusCommand command, CancellationToken cancellationToken)
@@ -54,6 +56,9 @@ namespace RajMango.Application.Features.Commands
 
                 _dataContext.Get<Order>().Update(order);
                 await _dataContext.SaveChangesAsync(cancellationToken);
+
+                await _notificationService.SendOrderStatusChangedAsync(
+                    order.UserId, order.OrderNumber, command.NewStatus.ToString(), cancellationToken);
 
                 return await Result<int>.SuccessAsync(order.Id, $"Order status updated to {command.NewStatus}.");
             }

@@ -12,11 +12,13 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IDataContext _dataContext;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
 
-        public CreatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService)
+        public CreatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService, INotificationService notificationService)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
         }
 
         public async Task<Result<int>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
@@ -61,6 +63,9 @@ namespace RajMango.Application.Features.Commands
             _dataContext.Get<Order>().Update(order);
             _dataContext.Get<Payment>().Update(payment);
             await _dataContext.SaveChangesAsync(cancellationToken);
+
+            await _notificationService.SendPaymentReceivedAsync(
+                order.UserId, order.OrderNumber, command.PaidAmount, cancellationToken);
 
             return await Result<int>.SuccessAsync(payment.Id, "Payment recorded.");
         }

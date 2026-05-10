@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RajMango.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using RajMango.DataAccess.Contexts;
 namespace RajMango.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260510063247_Add_Complaint_Tables")]
+    partial class Add_Complaint_Tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,7 +114,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 316, DateTimeKind.Unspecified).AddTicks(4503),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 122, DateTimeKind.Unspecified).AddTicks(3907),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "systemadmin@rajmango.com",
@@ -121,7 +124,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPdJ0GRbQ/hjSLXgap+9q5AycO8s1VnULVUPMEy2cu4ziaoxKzVy4Qh/iQ/7X0O/yQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFVvz1v51np8G+QDSTBAg5xGjWOgmFNHD3RKxhDbUse/vEi8w6325AWyKrG0glTneQ==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -131,7 +134,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 388, DateTimeKind.Unspecified).AddTicks(1088),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 198, DateTimeKind.Unspecified).AddTicks(8949),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "admin@rajmango.com",
@@ -141,7 +144,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAror/VJKHASjarhV30qpoQ3sRr6Ao0vKH6bxPO5IBUmV97IC6oQ83JjiXSIFbqHYQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMymqpY0oG+Tsxfyw2LU7mEFmOBbprJ2B5ZBGQ75fOx7WJzlU21QTIe5qeyT8lJsZQ==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -151,7 +154,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(7731),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(957),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "general@rajmango.com",
@@ -161,7 +164,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKw2V5lv/7T1iT4HlIY5vILFsaCZDc7MvvOoblZqOnU2SacAbtEj9oo3XIjC9NPerw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFlM0OfSMh1dmw/aGXjXhp8JNJLVSiFftLmgoF4HYPRxSrC4WLB6XjVHZbHJHYEQzA==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -1053,7 +1056,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AverageWeight = "250-350g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8423),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1687),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A sweet and early-season mango, Gopalbhog is known for its rich aroma, fiberless flesh, and vibrant yellow skin. Popular in Rajshahi and Chapainawabganj.",
@@ -1071,7 +1074,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AverageWeight = "300-400g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8428),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1692),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Also known as Khirshapat, this premium mango is highly sought after for its buttery smooth texture and excellent sweetness. It’s the pride of Chapainawabganj.",
@@ -1089,7 +1092,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AverageWeight = "300-500g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8432),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1696),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Langra is a traditional mid-season mango with a distinct tangy-sweet taste. Its green skin remains even when ripe. Highly popular across Bangladesh.",
@@ -1107,7 +1110,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 4,
                             AverageWeight = "200-300g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8444),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1699),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A hybrid mango known for its long shelf life and rich aroma. Amrupali is intensely sweet and has a reddish hue when ripe. Great for gifting and exports.",
@@ -1125,7 +1128,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 5,
                             AverageWeight = "250-350g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8477),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1703),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A local variety with good sweetness and juiciness, Brindabon mangoes are medium-sized and ideal for table consumption. Rarely found outside local markets.",
@@ -1143,7 +1146,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 6,
                             AverageWeight = "500-700g",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Local).AddTicks(8482),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Local).AddTicks(1707),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Fazli mangoes are large, fleshy, and less fibrous, making them perfect for pulp and chutney. They are harvested late in the season and have excellent storage qualities.",
@@ -1425,46 +1428,6 @@ namespace RajMango.DataAccess.Migrations
                     b.ToTable("PaymentAttachments");
                 });
 
-            modelBuilder.Entity("RajMango.Domain.Entities.Policy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PolicyType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Policies");
-                });
-
             modelBuilder.Entity("RajMango.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -1683,7 +1646,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             Code = "system_admin",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 244, DateTimeKind.Unspecified).AddTicks(2255),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 38, DateTimeKind.Unspecified).AddTicks(3860),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Full system access including user and role management.",
@@ -1697,7 +1660,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             Code = "admin",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 244, DateTimeKind.Unspecified).AddTicks(2318),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 38, DateTimeKind.Unspecified).AddTicks(3930),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard administrative access excluding system-level configurations.",
@@ -1711,7 +1674,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             Code = "general",
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 244, DateTimeKind.Unspecified).AddTicks(2347),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 38, DateTimeKind.Unspecified).AddTicks(3968),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard user like a customer access only order related features",
@@ -1836,8 +1799,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8338),
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8324),
+                            AssignedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1592),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1577),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -1848,8 +1811,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8353),
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8351),
+                            AssignedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1608),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1606),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -1860,8 +1823,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8360),
-                            CreatedAt = new DateTime(2026, 5, 10, 12, 34, 16, 460, DateTimeKind.Unspecified).AddTicks(8358),
+                            AssignedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1614),
+                            CreatedAt = new DateTime(2026, 5, 10, 12, 32, 46, 279, DateTimeKind.Unspecified).AddTicks(1612),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,

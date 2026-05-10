@@ -35,7 +35,13 @@ namespace RajMango.Application.DTOs.Order
         public int? CourierStationId { get; set; }
 
         public string FallbackAddress { get; set; }
-        
+
+        public string ReceiverName { get; set; }
+
+        public string ReceiverPhone { get; set; }
+
+        public string DeliveryNote { get; set; }
+
         public string Area { get; set; }
 
         public DeliveryStatus DeliveryStatus { get; set; }

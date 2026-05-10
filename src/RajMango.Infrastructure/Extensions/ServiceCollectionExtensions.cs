@@ -24,7 +24,8 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IErrorHandler, ErrorHandler>()
                 .AddTransient<IDateTimeService, DateTimeService>()
                 .AddTransient<IEmailService, EmailService>()
-                .AddTransient<IJwtTokenService, JwtTokenService>();
+                .AddTransient<IJwtTokenService, JwtTokenService>()
+                .AddTransient<INotificationService, NotificationService>();
 
             //Later
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

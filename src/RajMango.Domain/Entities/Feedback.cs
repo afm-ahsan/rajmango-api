@@ -22,6 +22,9 @@ namespace RajMango.Domain.Entities
         [ForeignKey(nameof(UserId))]
         public AppUser AppUser { get; set; }
 
+        /// <summary>1–5 star rating.</summary>
+        public int Rating { get; set; }
+
         [StringLength(1000)]
         public string Note { get; set; }
 

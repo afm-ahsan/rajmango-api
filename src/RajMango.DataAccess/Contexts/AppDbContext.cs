@@ -47,8 +47,14 @@ namespace RajMango.DataAccess.Contexts
         public virtual DbSet<CourierStation> CourierStations => Set<CourierStation>();
         public virtual DbSet<CourierAreaMap> CourierAreaMaps => Set<CourierAreaMap>();
 
-        // 💬 Feedback & Audit
+        // 📄 Policies
+        public virtual DbSet<Policy> Policies => Set<Policy>();
+
+        // 💬 Feedback, Complaints & Audit
         public virtual DbSet<Feedback> Feedbacks => Set<Feedback>();
+        public virtual DbSet<FeedbackImage> FeedbackImages => Set<FeedbackImage>();
+        public virtual DbSet<Complaint> Complaints => Set<Complaint>();
+        public virtual DbSet<ComplaintImage> ComplaintImages => Set<ComplaintImage>();
         public virtual DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
 

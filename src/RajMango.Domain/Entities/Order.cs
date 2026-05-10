@@ -57,6 +57,15 @@ namespace RajMango.Domain.Entities
         [StringLength(500)]
         public string FallbackAddress { get; set; }
 
+        [StringLength(100)]
+        public string ReceiverName { get; set; }
+
+        [StringLength(20)]
+        public string ReceiverPhone { get; set; }
+
+        [StringLength(500)]
+        public string DeliveryNote { get; set; }
+
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new HashSet<OrderDetail>();
         
         public virtual ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();

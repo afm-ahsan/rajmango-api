@@ -79,6 +79,9 @@ namespace RajMango.Application.Features.Queries
                 TrackingNumber   = o.TrackingNumber,
                 CourierStationId = o.CourierStationId,
                 FallbackAddress  = o.FallbackAddress,
+                ReceiverName     = o.ReceiverName,
+                ReceiverPhone    = o.ReceiverPhone,
+                DeliveryNote     = o.DeliveryNote,
                 UserId           = o.UserId,
                 OrderDetails = o.OrderDetails.Select(d => new OrderDetailDto
                 {

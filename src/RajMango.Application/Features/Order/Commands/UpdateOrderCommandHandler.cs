@@ -76,6 +76,9 @@ namespace RajMango.Application.Features.Commands
                 order.TotalQuantity = orderSummary.TotalQuantity;
                 order.TotalAmount   = orderSummary.TotalAmount;
                 order.DueAmount     = orderSummary.TotalAmount - order.PaidAmount;
+                order.ReceiverName  = command.ReceiverName;
+                order.ReceiverPhone = command.ReceiverPhone;
+                order.DeliveryNote  = command.DeliveryNote;
                 order.UpdatedBy     = command.UserId;
                 order.UpdatedAt     = Clock.Now();
 

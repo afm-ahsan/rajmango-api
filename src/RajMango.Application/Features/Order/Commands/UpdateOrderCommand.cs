@@ -14,6 +14,12 @@ namespace RajMango.Application.Features.Commands
 
         public string FallbackAddress { get; set; }
 
+        public string ReceiverName { get; set; }
+
+        public string ReceiverPhone { get; set; }
+
+        public string DeliveryNote { get; set; }
+
         public IEnumerable<OrderDetailInputDto> OrderDetails { get; set; }
     }
 }

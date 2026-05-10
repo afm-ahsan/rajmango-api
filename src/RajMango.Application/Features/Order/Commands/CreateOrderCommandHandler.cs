@@ -65,6 +65,9 @@ namespace RajMango.Application.Features.Commands
                     TotalAmount   = orderSummary.TotalAmount,
                     PaidAmount    = 0,
                     DueAmount     = orderSummary.TotalAmount,
+                    ReceiverName  = command.ReceiverName,
+                    ReceiverPhone = command.ReceiverPhone,
+                    DeliveryNote  = command.DeliveryNote,
                     CreatedBy     = command.UserId,
                 };
 
