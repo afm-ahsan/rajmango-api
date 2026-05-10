@@ -11,7 +11,10 @@
       "Bash(grep -v \"//\\\\|obj\\\\\\\\\")",
       "PowerShell(cd \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\"; $secret = -join \\(\\(65..90\\)+\\(97..122\\)+\\(48..57\\) | Get-Random -Count 48 | % {[char]$_}\\); dotnet user-secrets set \"Security:Jwt:ClientSecret\" $secret --project src/RajMango.WebApi)",
       "Bash(python -c ' *)",
-      "Bash(dotnet add *)"
+      "Bash(dotnet add *)",
+      "Bash(Get-ChildItem -Recurse \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\" -Filter \"*.cs\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Select-Object -First 50)"
     ]
   }
 }

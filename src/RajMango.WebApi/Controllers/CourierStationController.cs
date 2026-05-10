@@ -50,6 +50,24 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(query);
         }
 
+        /// <summary>
+        /// Returns active stations within radiusKm of the supplied coordinates, sorted by distance.
+        /// No authentication required — used from the order placement page.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("nearby")]
+        public async Task<ActionResult<Result<List<NearbyStationDto>>>> GetNearby(
+            [FromQuery] double latitude,
+            [FromQuery] double longitude,
+            [FromQuery] int radiusKm = 10,
+            [FromQuery] int maxResults = 10,
+            CancellationToken cancellationToken = default)
+        {
+            return await _mediator.Send(
+                new GetNearbyStationsQuery(latitude, longitude, radiusKm, maxResults),
+                cancellationToken);
+        }
+
         [HttpGet]
         [Route("paged")]
         public async Task<ActionResult<PaginatedResult<CourierStationDto>>> GetCategoryWithPagination([FromQuery] GetCourierStationWithPaginationQuery query)

@@ -4,6 +4,16 @@
     {
         public Security Security { get; set; }
         public ApiInfo ApiInfo { get; set; }
+        public BkashSettings Bkash { get; set; }
+    }
+
+    public class BkashSettings
+    {
+        public string BaseUrl { get; set; }
+        public string AppKey { get; set; }
+        public string AppSecret { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 
     public class Security

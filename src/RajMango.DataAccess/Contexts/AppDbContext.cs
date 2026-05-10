@@ -57,6 +57,9 @@ namespace RajMango.DataAccess.Contexts
         public virtual DbSet<ComplaintImage> ComplaintImages => Set<ComplaintImage>();
         public virtual DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+        // ❓ FAQ / Chatbot
+        public virtual DbSet<FaqItem> FaqItems => Set<FaqItem>();
+
 
         public virtual DbSet<TEntity> Get<TEntity>() where TEntity : class
         {
