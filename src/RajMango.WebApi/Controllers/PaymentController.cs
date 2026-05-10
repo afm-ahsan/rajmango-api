@@ -13,7 +13,7 @@ namespace RajMango.WebApi.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IMediator _mediator;
-        
+
         public PaymentController(IMediator mediator)
         {
             _mediator = mediator;
@@ -26,7 +26,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<GetPaymentByIdDto>>> GetById(int id) 
+        public async Task<ActionResult<Result<GetPaymentByIdDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetPaymentByIdQuery(id));
         }
@@ -37,47 +37,33 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(new GetPaymentCountQuery());
         }
 
-        [HttpGet]
-        [Route("paged")]
-        public async Task<ActionResult<PaginatedResult<GetPaymentWithPaginationDto>>> GetPaymentWithPagination([FromQuery] GetPaymentWithPaginationQuery query)
+        [HttpGet("paged")]
+        public async Task<ActionResult<PaginatedResult<GetPaymentWithPaginationDto>>> GetPaged([FromQuery] GetPaymentWithPaginationQuery query)
         {
             var validator = new GetPaymentWithPaginationValidator();
-
-            // Call Validate or ValidateAsync and pass the object which needs to be validated
             var result = validator.Validate(query);
 
-            if (result.IsValid)
+            if (!result.IsValid)
             {
-                return await _mediator.Send(query);
+                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errorMessages);
             }
 
-            var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
-            return BadRequest(errorMessages);
+            return await _mediator.Send(query);
         }
 
-        //[HttpGet]
-        //[Route("GetPagedAndSortedResult")]
-        //public async Task<IEnumerable<PaymentInformationDto>> GetPagedAndSortedResult([FromQuery] PagedAndSortedDto inputDto)
-        //{
-        //    try
-        //    {
-        //        var userInfo = await _userInformationRepository.GetAsync(filter: x => x.deleted_at == null,
-        //                                                        orderBy: x => x.OrderBy(o => o.id),
-        //                                                        inputDto.SkipCount,
-        //                                                        inputDto.MaxResultCount);
-        //        var mappedInfo = _mapper.Map<IEnumerable<PaymentInformationDto>>(userInfo);
-        //        return mappedInfo;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorHandler.Handle(ex);
-        //        throw;
-        //    }
-        //}
-
         [HttpPost]
-        public async Task<ActionResult<Result<int>>> Create(CreatePaymentCommand command)
+        public async Task<ActionResult<Result<int>>> Create([FromBody] CreatePaymentCommand command)
         {
+            var validator = new CreatePaymentCommandValidator();
+            var result = validator.Validate(command);
+
+            if (!result.IsValid)
+            {
+                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errorMessages);
+            }
+
             return await _mediator.Send(command);
         }
 
@@ -85,8 +71,15 @@ namespace RajMango.WebApi.Controllers
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdatePaymentCommand command)
         {
             if (id != command.Id)
-            {
                 return BadRequest();
+
+            var validator = new UpdatePaymentCommandValidator();
+            var result = validator.Validate(command);
+
+            if (!result.IsValid)
+            {
+                var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errorMessages);
             }
 
             return await _mediator.Send(command);

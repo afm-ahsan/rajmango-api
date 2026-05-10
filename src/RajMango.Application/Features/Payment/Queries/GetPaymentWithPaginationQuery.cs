@@ -10,13 +10,16 @@ namespace RajMango.Application.Features.Queries
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        /// <summary>Optional: filter payments for a specific order. 0 = all orders.</summary>
+        public int OrderId { get; set; }
 
         public GetPaymentWithPaginationQuery() { }
 
-        public GetPaymentWithPaginationQuery(int pageNumber, int pageSize)
+        public GetPaymentWithPaginationQuery(int pageNumber, int pageSize, int orderId = 0)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
+            OrderId = orderId;
         }
     }
 
@@ -31,8 +34,13 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<PaginatedResult<GetPaymentWithPaginationDto>> Handle(GetPaymentWithPaginationQuery query, CancellationToken cancellationToken)
         {
-            return await _dataContext.Get<Payment>()
-                .OrderBy(p => p.Id)
+            var q = _dataContext.Get<Payment>().AsQueryable();
+
+            if (query.OrderId > 0)
+                q = q.Where(p => p.OrderId == query.OrderId);
+
+            return await q
+                .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new GetPaymentWithPaginationDto
                 {
                     Id = p.Id,

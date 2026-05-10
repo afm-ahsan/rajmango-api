@@ -10,6 +10,5 @@ namespace RajMango.Application.Features.Commands
         public decimal PaidAmount { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public string TransactionId { get; set; }
-        public int CreatedBy { get; set; }
     }
 }

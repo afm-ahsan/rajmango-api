@@ -10,50 +10,63 @@ namespace RajMango.Application.Features.Commands
 {
     public class UpdatePaymentCommandHandler : IRequestHandler<UpdatePaymentCommand, Result<int>>
     {
-        private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UpdatePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public UpdatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService)
         {
-            _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<int>> Handle(UpdatePaymentCommand command, CancellationToken cancellationToken)
         {
-            try
-            {
-                var payment = await _dataContext.Get<Payment>().FindAsync(new object[] { command.Id }, cancellationToken);
-                if (payment == null)
-                    return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
+            var payment = await _dataContext.Get<Payment>()
+                .FirstOrDefaultAsync(p => p.Id == command.Id, cancellationToken);
 
-                payment.PaidAmount = command.PaidAmount;
-                payment.GrossAmount = command.PaidAmount;
-                payment.NetAmount = command.PaidAmount;
-                payment.PaymentMethod = command.PaymentMethod;
-                payment.TransactionId = command.TransactionId;
-                payment.UpdatedBy = command.UpdatedBy;
-                payment.UpdatedAt = Clock.Now();
+            if (payment == null)
+                return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
 
-                _dataContext.Get<Payment>().Update(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+            var order = await _dataContext.Get<Order>()
+                .FirstOrDefaultAsync(o => o.Id == payment.OrderId, cancellationToken);
 
-                var order = await _dataContext.Get<Order>().FindAsync(new object[] { payment.OrderId }, cancellationToken);
-                var allPayments = await _dataContext.Get<Payment>()
-                    .Where(p => p.OrderId == payment.OrderId)
-                    .ToListAsync(cancellationToken);
+            if (order == null)
+                return await Result<int>.FailureAsync("Associated order not found.");
 
-                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
-                _dataContext.Get<Order>().Update(order);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+            // Check overpayment: remove old payment amount then add new one
+            var otherPaymentsTotal = await _dataContext.Get<Payment>()
+                .Where(p => p.OrderId == payment.OrderId && p.Id != payment.Id)
+                .SumAsync(p => p.PaidAmount, cancellationToken);
 
-                return await Result<int>.SuccessAsync(payment.Id, "Payment updated.");
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.Handle(ex);
-            }
-            return await Result<int>.FailureAsync($"Payment update failed for Id {command.Id}.");
+            if (otherPaymentsTotal + command.PaidAmount > order.TotalAmount)
+                return await Result<int>.FailureAsync(
+                    $"Updated payment would exceed the order total of {order.TotalAmount:F2}.");
+
+            payment.PaidAmount    = command.PaidAmount;
+            payment.GrossAmount   = command.PaidAmount;
+            payment.NetAmount     = command.PaidAmount;
+            payment.PaymentMethod = command.PaymentMethod;
+            payment.TransactionId = command.TransactionId;
+            payment.UpdatedBy     = _currentUserService.UserId;
+            payment.UpdatedAt     = Clock.Now();
+
+            _dataContext.Get<Payment>().Update(payment);
+            await _dataContext.SaveChangesAsync(cancellationToken);
+
+            var allPayments = await _dataContext.Get<Payment>()
+                .Where(p => p.OrderId == payment.OrderId)
+                .ToListAsync(cancellationToken);
+
+            PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+
+            payment.DueAmount     = order.DueAmount;
+            payment.PaymentStatus = order.PaymentStatus;
+
+            _dataContext.Get<Order>().Update(order);
+            _dataContext.Get<Payment>().Update(payment);
+            await _dataContext.SaveChangesAsync(cancellationToken);
+
+            return await Result<int>.SuccessAsync(payment.Id, "Payment updated.");
         }
     }
 }

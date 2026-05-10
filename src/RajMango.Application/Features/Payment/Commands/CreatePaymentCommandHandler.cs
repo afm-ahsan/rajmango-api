@@ -10,53 +10,59 @@ namespace RajMango.Application.Features.Commands
 {
     internal class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Result<int>>
     {
-        private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CreatePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public CreatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService)
         {
-            _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<int>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
         {
-            try
+            var order = await _dataContext.Get<Order>()
+                .FirstOrDefaultAsync(o => o.Id == command.OrderId, cancellationToken);
+
+            if (order == null)
+                return await Result<int>.FailureAsync($"Order not found with Id {command.OrderId}.");
+
+            if (order.DueAmount <= 0)
+                return await Result<int>.FailureAsync("This order is already fully paid.");
+
+            if (command.PaidAmount > order.DueAmount)
+                return await Result<int>.FailureAsync(
+                    $"Payment of {command.PaidAmount:F2} exceeds the outstanding due amount of {order.DueAmount:F2}.");
+
+            var payment = new Payment
             {
-                var order = await _dataContext.Get<Order>().FindAsync(new object[] { command.OrderId }, cancellationToken);
-                if (order == null)
-                    return await Result<int>.FailureAsync($"Order not found with Id {command.OrderId}.");
+                OrderId       = command.OrderId,
+                PaidAmount    = command.PaidAmount,
+                GrossAmount   = command.PaidAmount,
+                NetAmount     = command.PaidAmount,
+                PaymentMethod = command.PaymentMethod,
+                TransactionId = command.TransactionId,
+                CreatedBy     = _currentUserService.UserId,
+                CreatedAt     = Clock.Now(),
+            };
 
-                var payment = new Payment
-                {
-                    OrderId = command.OrderId,
-                    PaidAmount = command.PaidAmount,
-                    GrossAmount = command.PaidAmount,
-                    NetAmount = command.PaidAmount,
-                    PaymentMethod = command.PaymentMethod,
-                    TransactionId = command.TransactionId,
-                    CreatedBy = command.CreatedBy,
-                    CreatedAt = Clock.Now(),
-                };
+            _dataContext.Get<Payment>().Add(payment);
+            await _dataContext.SaveChangesAsync(cancellationToken);
 
-                _dataContext.Get<Payment>().Add(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+            var allPayments = await _dataContext.Get<Payment>()
+                .Where(p => p.OrderId == command.OrderId)
+                .ToListAsync(cancellationToken);
 
-                var allPayments = await _dataContext.Get<Payment>()
-                    .Where(p => p.OrderId == command.OrderId)
-                    .ToListAsync(cancellationToken);
+            PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
 
-                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
-                _dataContext.Get<Order>().Update(order);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+            payment.DueAmount      = order.DueAmount;
+            payment.PaymentStatus  = order.PaymentStatus;
 
-                return await Result<int>.SuccessAsync(payment.Id, "Payment recorded.");
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.Handle(ex);
-            }
-            return await Result<int>.FailureAsync("Payment creation failed.");
+            _dataContext.Get<Order>().Update(order);
+            _dataContext.Get<Payment>().Update(payment);
+            await _dataContext.SaveChangesAsync(cancellationToken);
+
+            return await Result<int>.SuccessAsync(payment.Id, "Payment recorded.");
         }
     }
 }
