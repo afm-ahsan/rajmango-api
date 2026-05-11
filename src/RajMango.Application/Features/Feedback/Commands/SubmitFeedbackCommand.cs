@@ -14,6 +14,7 @@ namespace RajMango.Application.Features.Feedback.Commands
         public int OrderId { get; set; }
         public int Rating { get; set; }
         public string Note { get; set; }
+        public IEnumerable<string>? ImagePaths { get; set; }
     }
 
     public class SubmitFeedbackCommandValidator : AbstractValidator<SubmitFeedbackCommand>
@@ -25,6 +26,14 @@ namespace RajMango.Application.Features.Feedback.Commands
 
             RuleFor(x => x.Rating)
                 .InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
+
+            RuleFor(x => x.ImagePaths)
+                .Must(paths => paths == null || paths.Count() <= 3)
+                .WithMessage("A maximum of 3 images is allowed per feedback.");
+
+            RuleForEach(x => x.ImagePaths)
+                .NotEmpty().WithMessage("Image path must not be empty.")
+                .MaximumLength(512);
         }
     }
 
@@ -67,6 +76,13 @@ namespace RajMango.Application.Features.Feedback.Commands
                 CreatedBy = userId,
                 CreatedAt = Clock.Now(),
             };
+
+            if (command.ImagePaths?.Any() == true)
+            {
+                var sortOrder = 0;
+                foreach (var path in command.ImagePaths.Take(3))
+                    feedback.Images.Add(new FeedbackImage { ImagePath = path, SortOrder = sortOrder++, UploadedAt = Clock.Now() });
+            }
 
             _dataContext.Get<Domain.Entities.Feedback>().Add(feedback);
             await _dataContext.SaveChangesAsync(cancellationToken);

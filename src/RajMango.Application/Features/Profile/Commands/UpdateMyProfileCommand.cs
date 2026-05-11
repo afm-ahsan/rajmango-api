@@ -8,6 +8,7 @@ namespace RajMango.Application.Features.Commands
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
+        public string? ImagePath { get; set; }
 
         // Password change is optional. If NewPassword is provided, CurrentPassword is required.
         public string CurrentPassword { get; set; }

@@ -39,6 +39,7 @@
   
   <ItemGroup>
     <Folder Include="Resources\Images\" />
+    <Folder Include="wwwroot\" />
     <None Include="wwwroot\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

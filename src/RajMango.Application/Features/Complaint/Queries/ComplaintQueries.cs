@@ -18,6 +18,7 @@ namespace RajMango.Application.Features.Complaint.Queries
         public string Description { get; set; }
         public ComplaintStatus Status { get; set; }
         public string AdminNote { get; set; }
+        public List<string> ImagePaths { get; set; } = new();
         public int? ResolvedBy { get; set; }
         public DateTime? ResolvedAt { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -55,6 +56,7 @@ namespace RajMango.Application.Features.Complaint.Queries
                     Description  = c.Description,
                     Status       = c.Status,
                     AdminNote    = c.AdminNote,
+                    ImagePaths   = c.Images.OrderBy(i => i.SortOrder).Select(i => i.ImagePath).ToList(),
                     ResolvedBy   = c.ResolvedBy,
                     ResolvedAt   = c.ResolvedAt,
                     CreatedAt    = c.CreatedAt,
@@ -99,6 +101,7 @@ namespace RajMango.Application.Features.Complaint.Queries
                     Description = c.Description,
                     Status      = c.Status,
                     AdminNote   = c.AdminNote,
+                    ImagePaths  = c.Images.OrderBy(i => i.SortOrder).Select(i => i.ImagePath).ToList(),
                     ResolvedAt  = c.ResolvedAt,
                     CreatedAt   = c.CreatedAt,
                 })
@@ -135,6 +138,7 @@ namespace RajMango.Application.Features.Complaint.Queries
                     Description  = c.Description,
                     Status       = c.Status,
                     AdminNote    = c.AdminNote,
+                    ImagePaths   = c.Images.OrderBy(i => i.SortOrder).Select(i => i.ImagePath).ToList(),
                     ResolvedBy   = c.ResolvedBy,
                     ResolvedAt   = c.ResolvedAt,
                     CreatedAt    = c.CreatedAt,

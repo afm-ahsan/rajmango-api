@@ -15,6 +15,7 @@ namespace RajMango.Application.Features.Feedback.Queries
         public string CustomerName { get; set; }
         public int Rating { get; set; }
         public string Note { get; set; }
+        public List<string> ImagePaths { get; set; } = new();
         public DateTime CreatedAt { get; set; }
     }
 
@@ -48,6 +49,7 @@ namespace RajMango.Application.Features.Feedback.Queries
                     CustomerName = f.AppUser.FirstName + " " + f.AppUser.LastName,
                     Rating       = f.Rating,
                     Note         = f.Note,
+                    ImagePaths   = f.Images.OrderBy(i => i.SortOrder).Select(i => i.ImagePath).ToList(),
                     CreatedAt    = f.CreatedAt,
                 })
                 .FirstOrDefaultAsync(cancellationToken);
@@ -84,6 +86,7 @@ namespace RajMango.Application.Features.Feedback.Queries
                     CustomerName = f.AppUser.FirstName + " " + f.AppUser.LastName,
                     Rating       = f.Rating,
                     Note         = f.Note,
+                    ImagePaths   = f.Images.OrderBy(i => i.SortOrder).Select(i => i.ImagePath).ToList(),
                     CreatedAt    = f.CreatedAt,
                 })
                 .ToListAsync(cancellationToken);

@@ -60,6 +60,8 @@ namespace RajMango.Application.Features.Commands
                 user.FirstName   = command.FirstName;
                 user.LastName    = command.LastName;
                 user.PhoneNumber = command.PhoneNumber;
+                if (!string.IsNullOrWhiteSpace(command.ImagePath))
+                    user.ImagePath = command.ImagePath;
                 user.UpdatedAt   = Clock.Now();
                 user.UpdatedBy   = userId;
 

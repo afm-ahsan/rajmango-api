@@ -17,6 +17,7 @@ namespace RajMango.Application.Features.Complaint.Commands
         public int OrderId { get; set; }
         public ComplaintCategory Category { get; set; }
         public string Description { get; set; }
+        public IEnumerable<string>? ImagePaths { get; set; }
     }
 
     public class SubmitComplaintCommandValidator : AbstractValidator<SubmitComplaintCommand>
@@ -32,6 +33,14 @@ namespace RajMango.Application.Features.Complaint.Commands
 
             RuleFor(x => x.Category)
                 .IsInEnum().WithMessage("A valid complaint category must be selected.");
+
+            RuleFor(x => x.ImagePaths)
+                .Must(paths => paths == null || paths.Count() <= 3)
+                .WithMessage("A maximum of 3 images is allowed per complaint.");
+
+            RuleForEach(x => x.ImagePaths)
+                .NotEmpty().WithMessage("Image path must not be empty.")
+                .MaximumLength(512);
         }
     }
 
@@ -71,6 +80,13 @@ namespace RajMango.Application.Features.Complaint.Commands
                 CreatedBy   = userId,
                 CreatedAt   = Clock.Now(),
             };
+
+            if (command.ImagePaths?.Any() == true)
+            {
+                var sortOrder = 0;
+                foreach (var path in command.ImagePaths.Take(3))
+                    complaint.Images.Add(new Domain.Entities.ComplaintImage { ImagePath = path, SortOrder = sortOrder++, UploadedAt = Clock.Now() });
+            }
 
             _dataContext.Get<Domain.Entities.Complaint>().Add(complaint);
             await _dataContext.SaveChangesAsync(cancellationToken);
