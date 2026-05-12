@@ -19,7 +19,7 @@ namespace RajMango.Application.Extensions
 
         private static void AddAutoMapper(this IServiceCollection services)
         {
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
         }
 
         private static void AddMediator(this IServiceCollection services)

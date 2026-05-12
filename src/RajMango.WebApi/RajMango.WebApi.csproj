@@ -8,7 +8,8 @@
     <UserSecretsId>412e7ab9-9612-4a5f-8a4c-145a24f4a9ce</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.102.3" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
     <PackageReference Include="MediatR" Version="12.0.1" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
     <PackageReference Include="NSwag.CodeGeneration.TypeScript" Version="14.4.0" />
@@ -22,7 +23,6 @@
     <ProjectReference Include="..\RajMango.Infrastructure\RajMango.Infrastructure.csproj" />
     <ProjectReference Include="..\RajMango.Shared\RajMango.Shared.csproj" />
 	
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
@@ -38,7 +38,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Resources\Images\" />
+    <Folder Include="Resources\" />
     <Folder Include="wwwroot\" />
     <None Include="wwwroot\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

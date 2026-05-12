@@ -18,7 +18,14 @@
       "Bash(dotnet sln *)",
       "Bash(dotnet test *)",
       "PowerShell(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\" | ForEach-Object { $_.Name })",
-      "PowerShell(dotnet build *)"
+      "PowerShell(dotnet build *)",
+      "Bash(dotnet list *)",
+      "Bash(Select-String -Pattern \"System.Formats.Asn1|AutoMapper\")",
+      "Bash(Select-Object -Unique Line)",
+      "Bash(Format-Table -AutoSize)",
+      "WebFetch(domain:github.com)",
+      "PowerShell(Get-ChildItem *)",
+      "WebFetch(domain:www.nuget.org)"
     ]
   }
 }
