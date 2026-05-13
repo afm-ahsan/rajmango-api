@@ -4,10 +4,11 @@ using RajMango.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
     [ApiController]
     [Route("api/role")]
     public class RoleController : ControllerBase
@@ -20,18 +21,21 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequirePermission(Permissions.Roles.View)]
         public async Task<ActionResult<Result<List<GetAllRoleDto>>>> Get()
         {
             return await _mediator.Send(new GetAllRoleQuery());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<GetRoleByIdDto>>> GetById(int id) 
+        [RequirePermission(Permissions.Roles.View)]
+        public async Task<ActionResult<Result<GetRoleByIdDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetRoleByIdQuery(id));
         }
 
         [HttpGet("count")]
+        [RequirePermission(Permissions.Roles.View)]
         public async Task<ActionResult<Result<GetRoleCountDto>>> GetCount()
         {
             return await _mediator.Send(new GetRoleCountQuery());
@@ -39,6 +43,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
+        [RequirePermission(Permissions.Roles.View)]
         public async Task<ActionResult<PaginatedResult<GetRoleWithPaginationDto>>> GetRoleWithPagination([FromQuery] GetRoleWithPaginationQuery query)
         {
             var validator = new GetRoleWithPaginationValidator();
@@ -76,12 +81,14 @@ namespace RajMango.WebApi.Controllers
         //}
 
         [HttpPost]
+        [RequirePermission(Permissions.Roles.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateRoleCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
+        [RequirePermission(Permissions.Roles.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateRoleCommand command)
         {
             if (id != command.Id)
@@ -93,6 +100,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission(Permissions.Roles.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteRoleCommand { Id = id });

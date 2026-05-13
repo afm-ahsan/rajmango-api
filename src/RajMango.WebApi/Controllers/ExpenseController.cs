@@ -4,10 +4,11 @@ using RajMango.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
     [ApiController]
     [Route("api/expense")]
     public class ExpenseController : ControllerBase
@@ -20,18 +21,21 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequirePermission(Permissions.Expenses.View)]
         public async Task<ActionResult<Result<List<GetAllExpenseDto>>>> Get()
         {
             return await _mediator.Send(new GetAllExpenseQuery());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<GetExpenseByIdDto>>> GetById(int id) 
+        [RequirePermission(Permissions.Expenses.View)]
+        public async Task<ActionResult<Result<GetExpenseByIdDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetExpenseByIdQuery(id));
         }
 
         [HttpGet("count")]
+        [RequirePermission(Permissions.Expenses.View)]
         public async Task<ActionResult<Result<GetExpenseCountDto>>> GetCount()
         {
             return await _mediator.Send(new GetExpenseCountQuery());
@@ -39,6 +43,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
+        [RequirePermission(Permissions.Expenses.View)]
         public async Task<ActionResult<PaginatedResult<GetExpenseWithPaginationDto>>> GetExpenseWithPagination([FromQuery] GetExpenseWithPaginationQuery query)
         {
             var validator = new GetExpenseWithPaginationValidator();
@@ -76,12 +81,14 @@ namespace RajMango.WebApi.Controllers
         //}
 
         [HttpPost]
+        [RequirePermission(Permissions.Expenses.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateExpenseCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
+        [RequirePermission(Permissions.Expenses.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateExpenseCommand command)
         {
             if (id != command.Id)
@@ -93,6 +100,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission(Permissions.Expenses.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteExpenseCommand { Id = id });

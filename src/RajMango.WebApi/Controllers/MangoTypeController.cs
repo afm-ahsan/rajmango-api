@@ -4,6 +4,7 @@ using RajMango.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -76,14 +77,14 @@ namespace RajMango.WebApi.Controllers
         //}
 
         [HttpPost]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.MangoTypes.Manage)]
         public async Task<ActionResult<Result<int>>> Create(CreateMangoTypeCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.MangoTypes.Manage)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateMangoTypeCommand command)
         {
             if (id != command.Id)
@@ -95,7 +96,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.MangoTypes.Manage)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteMangoTypeCommand { Id = id });

@@ -4,6 +4,7 @@ using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
 using System.Text.Json;
+using SharedPermissions = RajMango.Shared.Permissions;
 
 namespace RajMango.DataAccess.Extensions
 {
@@ -19,8 +20,9 @@ namespace RajMango.DataAccess.Extensions
                     Name = "System Admin",
                     Code = "system_admin",
                     Description = "Full system access including user and role management.",
-                    PermissionJson = JsonSerializer.Serialize(new List<string> { "ALL" }),
+                    PermissionJson = RajMangoPermissionData.AdminPermissionJson(),
                     IsActive = true,
+                    IsSystemRole = true,
                     CreatedBy = 1,
                     CreatedAt = Clock.Now()
                 },
@@ -30,8 +32,9 @@ namespace RajMango.DataAccess.Extensions
                     Name = "Admin",
                     Code = "admin",
                     Description = "Standard administrative access excluding system-level configurations.",
-                    PermissionJson = JsonSerializer.Serialize(new List<string> { "ManageUsers", "ManageOrders", "ViewReports" }),
+                    PermissionJson = RajMangoPermissionData.AdminPermissionJson(),
                     IsActive = true,
+                    IsSystemRole = true,
                     CreatedBy = 1,
                     CreatedAt = Clock.Now()
                 },
@@ -41,8 +44,9 @@ namespace RajMango.DataAccess.Extensions
                     Name = "General",
                     Code = "general",
                     Description = "Standard user like a customer access only order related features",
-                    PermissionJson = JsonSerializer.Serialize(new List<string> { "ManageOrders", "ViewReports" }),
+                    PermissionJson = RajMangoPermissionData.GeneralPermissionJson(),
                     IsActive = true,
+                    IsSystemRole = true,
                     CreatedBy = 1,
                     CreatedAt = Clock.Now()
                 }
@@ -276,6 +280,51 @@ namespace RajMango.DataAccess.Extensions
                 new CourierAreaMap { Id = 11, CourierStationId = 11, Area = "Gazipur", CreatedAt = Clock.Now(), CreatedBy = 1 },
                 new CourierAreaMap { Id = 12, CourierStationId = 12, Area = "Gulshan 1", CreatedAt = Clock.Now(), CreatedBy = 1 }
             );
+        }
+
+        public static void LoadPermissionSeedData(this ModelBuilder modelBuilder)
+        {
+            var all = SharedPermissions.All;
+            var now = Clock.Now();
+
+            // Seed Permission rows (Id follows position in All list, 1-based)
+            var permissions = all.Select((name, index) => new Permission
+            {
+                Id = index + 1,
+                Name = name,
+                Module = name.Contains('.') ? name[..name.LastIndexOf('.')] : name,
+                Description = name,
+                IsActive = true,
+                CreatedBy = 1,
+                CreatedAt = now,
+            }).ToArray();
+
+            modelBuilder.Entity<Permission>().HasData(permissions);
+
+            // System Admin (RoleId=1) gets all permissions
+            var systemAdminRolePermissions = permissions
+                .Select(p => new RolePermission { RoleId = 1, PermissionId = p.Id })
+                .ToArray();
+
+            // Admin (RoleId=2) gets all permissions
+            var adminRolePermissions = permissions
+                .Select(p => new RolePermission { RoleId = 2, PermissionId = p.Id })
+                .ToArray();
+
+            // General (RoleId=3) gets a limited set
+            var generalPermissionNames = new HashSet<string>(
+                SharedPermissions.GeneralPermissions, StringComparer.OrdinalIgnoreCase);
+
+            var generalRolePermissions = permissions
+                .Where(p => generalPermissionNames.Contains(p.Name))
+                .Select(p => new RolePermission { RoleId = 3, PermissionId = p.Id })
+                .ToArray();
+
+            modelBuilder.Entity<RolePermission>().HasData(
+                systemAdminRolePermissions
+                    .Concat(adminRolePermissions)
+                    .Concat(generalRolePermissions)
+                    .ToArray());
         }
     }
 }

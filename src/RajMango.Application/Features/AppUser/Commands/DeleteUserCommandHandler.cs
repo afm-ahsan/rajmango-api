@@ -11,11 +11,13 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly IPermissionService _permissionService;
 
-        public DeleteUserCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public DeleteUserCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IPermissionService permissionService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _permissionService = permissionService;
         }
 
         public async Task<Result<int>> Handle(DeleteUserCommand command, CancellationToken cancellationToken)
@@ -32,6 +34,8 @@ namespace RajMango.Application.Features.Commands
                     }
 
                     _dataContext.Get<AppUser>().Remove(user);
+
+                    await _permissionService.InvalidateUserPermissionCacheAsync(user.Id, cancellationToken);
 
                     await _dataContext.SaveChangesAsync(cancellationToken);
 

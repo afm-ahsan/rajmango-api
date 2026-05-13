@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Queries;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 using RajMango.WebApi.Services;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
+    [RequirePermission(Permissions.Reports.View)]
     [ApiController]
     [Route("api/reports")]
     public class ReportController : ControllerBase

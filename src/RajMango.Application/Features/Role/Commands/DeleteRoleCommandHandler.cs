@@ -1,4 +1,5 @@
-﻿using RajMango.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -10,25 +11,35 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly IPermissionService _permissionService;
 
-        public DeleteRoleCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public DeleteRoleCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IPermissionService permissionService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _permissionService = permissionService;
         }
 
         public async Task<Result<int>> Handle(DeleteRoleCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _dataContext.Get<Role>().FindAsync(command.Id);
-                if (user != null)
+                var role = await _dataContext.Get<Role>().FindAsync(command.Id);
+                if (role != null)
                 {
-                    _dataContext.Get<Role>().Remove(user);
+                    var affectedUserIds = await _dataContext.Get<UserRole>()
+                        .Where(ur => ur.RoleId == command.Id)
+                        .Select(ur => ur.UserId)
+                        .ToListAsync(cancellationToken);
+
+                    _dataContext.Get<Role>().Remove(role);
 
                     await _dataContext.SaveChangesAsync(cancellationToken);
 
-                    return await Result<int>.SuccessAsync(user.Id, "Role is Deleted");
+                    foreach (var userId in affectedUserIds)
+                        await _permissionService.InvalidateUserPermissionCacheAsync(userId, cancellationToken);
+
+                    return await Result<int>.SuccessAsync(role.Id, "Role is Deleted");
                 }
             }
             catch (Exception ex)

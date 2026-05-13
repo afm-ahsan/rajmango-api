@@ -29,6 +29,9 @@ namespace RajMango.Domain.Entities
 
         public bool IsActive { get; set; }
 
+        /// <summary>Marks built-in system roles that cannot be deleted.</summary>
+        public bool IsSystemRole { get; set; }
+
         [NotMapped]
         public List<string> Permissions
         {
@@ -38,5 +41,7 @@ namespace RajMango.Domain.Entities
 
             set => PermissionJson = JsonSerializer.Serialize(value);
         }
+
+        public ICollection<RolePermission> RolePermissions { get; set; }
     }
 }

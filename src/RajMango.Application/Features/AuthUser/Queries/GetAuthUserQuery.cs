@@ -62,7 +62,10 @@ namespace RajMango.Application.Features.Queries
                     roleId = role.Id;
                     permissionJson = role.PermissionJson;
                     if (!string.IsNullOrEmpty(role.PermissionJson))
-                        permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson);
+                    {
+                        try { permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson); }
+                        catch { permissions = null; }
+                    }
                 }
             }
 
@@ -81,7 +84,7 @@ namespace RajMango.Application.Features.Queries
                 JwtAuth = jwtAuth,
                 RoleId = roleId,
                 PermissionJson = permissionJson,
-                Permissions = permissions,
+                Permissions = permissions ?? new List<PermissionModel>(),
             });
         }
 

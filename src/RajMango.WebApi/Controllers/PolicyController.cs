@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Policy;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -36,7 +37,8 @@ namespace RajMango.WebApi.Controllers
 
         /// <summary>Create or update a policy (admin only).</summary>
         [HttpPut]
-        [Authorize(Roles = "system_admin,admin")]
+        [Authorize]
+        [RequirePermission(Permissions.Policies.Manage)]
         public async Task<ActionResult<Result<int>>> Upsert([FromBody] UpsertPolicyCommand command)
         {
             var validator = new UpsertPolicyCommandValidator();

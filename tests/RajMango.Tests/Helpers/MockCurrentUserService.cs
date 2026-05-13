@@ -8,5 +8,6 @@ namespace RajMango.Tests.Helpers
         public string UserName { get; set; } = "test-user";
         public bool IsAuthenticated { get; set; } = true;
         public bool IsAdmin { get; set; } = false;
+        public bool IsSuperAdmin { get; set; } = false;
     }
 }

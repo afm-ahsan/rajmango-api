@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
@@ -8,6 +9,7 @@ using RajMango.Application.Interfaces;
 using RajMango.DataAccess.Extensions;
 using RajMango.Infrastructure.Extensions;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 using RajMango.WebApi.Hubs;
 using RajMango.WebApi.OpenApi;
 using RajMango.WebApi.Services;
@@ -91,6 +93,10 @@ builder
     .AddSwaggerGen();
 
 builder.Services.AddSignalR();
+
+// Permission-based authorization
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();

@@ -37,7 +37,12 @@ namespace RajMango.Application.Features.Queries
             var roleDto = _mapper.Map<GetRoleByIdDto>(role);
             if (!string.IsNullOrEmpty(role.PermissionJson))
             {
-                roleDto.Permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(roleDto.PermissionJson);
+                try { roleDto.Permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(roleDto.PermissionJson); }
+                catch { roleDto.Permissions = new List<PermissionModel>(); }
+            }
+            else
+            {
+                roleDto.Permissions = new List<PermissionModel>();
             }
             return await Result<GetRoleByIdDto>.SuccessAsync(roleDto);
         }

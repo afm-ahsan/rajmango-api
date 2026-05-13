@@ -22,6 +22,7 @@ namespace RajMango.Tests.Helpers
             mockUserService.Setup(x => x.UserName).Returns("test-user");
             mockUserService.Setup(x => x.IsAuthenticated).Returns(true);
             mockUserService.Setup(x => x.IsAdmin).Returns(false);
+            mockUserService.Setup(x => x.IsSuperAdmin).Returns(false);
 
             return new AppDbContext(options, mockUserService.Object);
         }

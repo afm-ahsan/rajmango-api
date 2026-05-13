@@ -5,6 +5,7 @@ using RajMango.Application.Features.Complaint.Commands;
 using RajMango.Application.Features.Complaint.Queries;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -49,7 +50,7 @@ namespace RajMango.WebApi.Controllers
 
         /// <summary>Get all complaints (admin only).</summary>
         [HttpGet]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Complaints.AdminView)]
         public async Task<ActionResult<Result<List<ComplaintDto>>>> GetAll()
         {
             return await _mediator.Send(new GetAllComplaintsQuery());
@@ -57,7 +58,7 @@ namespace RajMango.WebApi.Controllers
 
         /// <summary>Update complaint status (admin only).</summary>
         [HttpPatch("{id}/status")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Complaints.AdminManage)]
         public async Task<ActionResult<Result<int>>> UpdateStatus(int id, [FromBody] UpdateComplaintStatusCommand command)
         {
             if (id != command.Id)

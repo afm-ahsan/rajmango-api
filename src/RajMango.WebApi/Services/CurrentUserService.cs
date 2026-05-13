@@ -25,5 +25,8 @@ namespace RajMango.WebApi.Services
         public bool IsAdmin =>
             _httpContextAccessor.HttpContext?.User?.IsInRole("system_admin") == true ||
             _httpContextAccessor.HttpContext?.User?.IsInRole("admin") == true;
+
+        public bool IsSuperAdmin =>
+            _httpContextAccessor.HttpContext?.User?.IsInRole("system_admin") == true;
     }
 }

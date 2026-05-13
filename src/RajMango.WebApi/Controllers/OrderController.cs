@@ -5,6 +5,7 @@ using RajMango.Application.DTOs.Order;
 using RajMango.Application.Features.Commands;
 using RajMango.Application.Features.Queries;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -92,7 +93,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Orders.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateOrderCommand command)
         {
             if (id != command.Id)
@@ -110,7 +111,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPatch("{id}/status")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Orders.Update)]
         public async Task<ActionResult<Result<int>>> UpdateStatus(int id, [FromBody] UpdateOrderStatusCommand command)
         {
             if (id != command.Id)
@@ -120,7 +121,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Orders.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteOrderCommand { Id = id });

@@ -111,7 +111,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 351, DateTimeKind.Unspecified).AddTicks(1880),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 782, DateTimeKind.Unspecified).AddTicks(6962),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "systemadmin@rajmango.com",
@@ -121,7 +121,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGAnzVpoe8YSJFF6pA4RAVlsyLmoGzpgHrO/QVGUiXK8ygzq5sJi5BPLp9BEv53gsg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDFweH4cfqgkC8an/tycmQN5HYIQH402b0fZStaryS/bpNgOH2Un0X24Esj/iMKBrw==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -131,7 +131,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 428, DateTimeKind.Unspecified).AddTicks(2928),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 861, DateTimeKind.Unspecified).AddTicks(815),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "admin@rajmango.com",
@@ -141,7 +141,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKes+tgzlAA9GOmoxEccf73urcZ1GFOvvvho5JhdvAVUpYvvzbZxGdosFkhXaEFNQQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJkhaCoeRl9VBGsB61keEWli3NuxGtwTGghcQhF/B3LcUbwgI0sWEafgkI3fD+YxTA==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -151,7 +151,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(3141),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2122),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "general@rajmango.com",
@@ -161,7 +161,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAECazp3a74hyf9hcVl0KYJizOl87IIiFV2pzB3nzqrlspI1ZRI8FhryItlWr5W72ZtQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELRRRNm+FmocOgPPTHXOv15dT23Ti1qiav7uI6E/m+0GyJLDzeeXuJ7po8PpA98IkA==",
                             PhoneNumber = "01700000000",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -1093,7 +1093,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AverageWeight = "250-350g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4138),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6495),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A sweet and early-season mango, Gopalbhog is known for its rich aroma, fiberless flesh, and vibrant yellow skin. Popular in Rajshahi and Chapainawabganj.",
@@ -1110,7 +1110,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AverageWeight = "300-400g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4142),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6503),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Also known as Khirshapat, this premium mango is highly sought after for its buttery smooth texture and excellent sweetness. It’s the pride of Chapainawabganj.",
@@ -1127,7 +1127,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AverageWeight = "300-500g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4176),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6509),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Langra is a traditional mid-season mango with a distinct tangy-sweet taste. Its green skin remains even when ripe. Highly popular across Bangladesh.",
@@ -1144,7 +1144,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 4,
                             AverageWeight = "200-300g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4180),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6515),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A hybrid mango known for its long shelf life and rich aroma. Amrupali is intensely sweet and has a reddish hue when ripe. Great for gifting and exports.",
@@ -1161,7 +1161,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 5,
                             AverageWeight = "250-350g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4183),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6521),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A local variety with good sweetness and juiciness, Brindabon mangoes are medium-sized and ideal for table consumption. Rarely found outside local markets.",
@@ -1178,7 +1178,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 6,
                             AverageWeight = "500-700g",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Local).AddTicks(4186),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Local).AddTicks(6526),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Fazli mangoes are large, fleshy, and less fibrous, making them perfect for pulp and chutney. They are harvested late in the season and have excellent storage qualities.",
@@ -1459,6 +1459,698 @@ namespace RajMango.DataAccess.Migrations
                     b.ToTable("PaymentAttachments");
                 });
 
+            modelBuilder.Entity("RajMango.Domain.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Module")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user",
+                            Name = "user.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user",
+                            Name = "user.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user",
+                            Name = "user.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user",
+                            Name = "user.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "role.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "role",
+                            Name = "role.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "role.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "role",
+                            Name = "role.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "role.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "role",
+                            Name = "role.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "role.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "role",
+                            Name = "role.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order",
+                            Name = "order.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order",
+                            Name = "order.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order",
+                            Name = "order.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order",
+                            Name = "order.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "payment.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "payment",
+                            Name = "payment.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "payment.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "payment",
+                            Name = "payment.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "payment.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "payment",
+                            Name = "payment.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "payment.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "payment",
+                            Name = "payment.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense",
+                            Name = "expense.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense",
+                            Name = "expense.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense",
+                            Name = "expense.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense",
+                            Name = "expense.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.type.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense.type",
+                            Name = "expense.type.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.type.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense.type",
+                            Name = "expense.type.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.type.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense.type",
+                            Name = "expense.type.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "expense.type.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "expense.type",
+                            Name = "expense.type.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier",
+                            Name = "courier.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier",
+                            Name = "courier.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier",
+                            Name = "courier.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier",
+                            Name = "courier.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "customer.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "customer",
+                            Name = "customer.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "customer.create",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "customer",
+                            Name = "customer.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "customer.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "customer",
+                            Name = "customer.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "customer.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "customer",
+                            Name = "customer.delete",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "mango.type.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "mango.type",
+                            Name = "mango.type.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "mango.type.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "mango.type",
+                            Name = "mango.type.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "mango.availability.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "mango.availability",
+                            Name = "mango.availability.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "mango.availability.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "mango.availability",
+                            Name = "mango.availability.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "report.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "report",
+                            Name = "report.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "dashboard.admin.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "dashboard.admin",
+                            Name = "dashboard.admin.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 39,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "dashboard.customer.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "dashboard.customer",
+                            Name = "dashboard.customer.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 40,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "complaint.submit",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "complaint",
+                            Name = "complaint.submit",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 41,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "complaint.admin.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "complaint.admin",
+                            Name = "complaint.admin.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 42,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "complaint.admin.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "complaint.admin",
+                            Name = "complaint.admin.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 43,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "faq.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "faq",
+                            Name = "faq.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 44,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "policy.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "policy",
+                            Name = "policy.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 45,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "policy.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "policy",
+                            Name = "policy.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 46,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "feedback.admin.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "feedback.admin",
+                            Name = "feedback.admin.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 47,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.permission.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user.permission",
+                            Name = "user.permission.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 48,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.permission.grant",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user.permission",
+                            Name = "user.permission.grant",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 49,
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3047),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "user.permission.revoke",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "user.permission",
+                            Name = "user.permission.revoke",
+                            UpdatedBy = 0
+                        });
+                });
+
             modelBuilder.Entity("RajMango.Domain.Entities.Policy", b =>
                 {
                     b.Property<int>("Id")
@@ -1691,6 +2383,9 @@ namespace RajMango.DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsSystemRole")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1717,43 +2412,583 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             Code = "system_admin",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 279, DateTimeKind.Unspecified).AddTicks(5455),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 704, DateTimeKind.Unspecified).AddTicks(7958),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Full system access including user and role management.",
                             IsActive = true,
                             IsDeleted = false,
+                            IsSystemRole = true,
                             Name = "System Admin",
-                            PermissionJson = "[\"ALL\"]",
+                            PermissionJson = "[{\"Area\":\"Dashboard\",\"FeatureModels\":[{\"Id\":1,\"Title\":\"Admin Dashboard\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]},{\"Id\":2,\"Title\":\"Customer Dashboard\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]}]},{\"Area\":\"Mango Management\",\"FeatureModels\":[{\"Id\":3,\"Title\":\"Mango Types\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]},{\"Id\":4,\"Title\":\"Mango Availability\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]}]},{\"Area\":\"Order Management\",\"FeatureModels\":[{\"Id\":5,\"Title\":\"Orders\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Customer Management\",\"FeatureModels\":[{\"Id\":6,\"Title\":\"Customers\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Courier Management\",\"FeatureModels\":[{\"Id\":7,\"Title\":\"Couriers\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Payment Management\",\"FeatureModels\":[{\"Id\":8,\"Title\":\"Payments\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Expense Management\",\"FeatureModels\":[{\"Id\":9,\"Title\":\"Expenses\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":10,\"Title\":\"Expense Types\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Feedback & Complaints\",\"FeatureModels\":[{\"Id\":11,\"Title\":\"Feedback\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Admin View\",\"HasAccess\":true}]},{\"Id\":12,\"Title\":\"Complaints\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Submit\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Admin View\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Admin Manage\",\"HasAccess\":true}]}]},{\"Area\":\"Reports\",\"FeatureModels\":[{\"Id\":13,\"Title\":\"Reports\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]}]},{\"Area\":\"Administration\",\"FeatureModels\":[{\"Id\":14,\"Title\":\"Users\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":15,\"Title\":\"Roles\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":16,\"Title\":\"User Permissions\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Grant\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Revoke\",\"HasAccess\":true}]}]},{\"Area\":\"Configuration\",\"FeatureModels\":[{\"Id\":17,\"Title\":\"FAQ\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Manage\",\"HasAccess\":true}]},{\"Id\":18,\"Title\":\"Policies\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]}]}]",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 2,
                             Code = "admin",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 279, DateTimeKind.Unspecified).AddTicks(5487),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 704, DateTimeKind.Unspecified).AddTicks(7992),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard administrative access excluding system-level configurations.",
                             IsActive = true,
                             IsDeleted = false,
+                            IsSystemRole = true,
                             Name = "Admin",
-                            PermissionJson = "[\"ManageUsers\",\"ManageOrders\",\"ViewReports\"]",
+                            PermissionJson = "[{\"Area\":\"Dashboard\",\"FeatureModels\":[{\"Id\":1,\"Title\":\"Admin Dashboard\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]},{\"Id\":2,\"Title\":\"Customer Dashboard\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]}]},{\"Area\":\"Mango Management\",\"FeatureModels\":[{\"Id\":3,\"Title\":\"Mango Types\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]},{\"Id\":4,\"Title\":\"Mango Availability\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]}]},{\"Area\":\"Order Management\",\"FeatureModels\":[{\"Id\":5,\"Title\":\"Orders\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Customer Management\",\"FeatureModels\":[{\"Id\":6,\"Title\":\"Customers\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Courier Management\",\"FeatureModels\":[{\"Id\":7,\"Title\":\"Couriers\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Payment Management\",\"FeatureModels\":[{\"Id\":8,\"Title\":\"Payments\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Expense Management\",\"FeatureModels\":[{\"Id\":9,\"Title\":\"Expenses\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":10,\"Title\":\"Expense Types\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]}]},{\"Area\":\"Feedback & Complaints\",\"FeatureModels\":[{\"Id\":11,\"Title\":\"Feedback\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Admin View\",\"HasAccess\":true}]},{\"Id\":12,\"Title\":\"Complaints\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Submit\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Admin View\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Admin Manage\",\"HasAccess\":true}]}]},{\"Area\":\"Reports\",\"FeatureModels\":[{\"Id\":13,\"Title\":\"Reports\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true}]}]},{\"Area\":\"Administration\",\"FeatureModels\":[{\"Id\":14,\"Title\":\"Users\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":15,\"Title\":\"Roles\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Create\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Update\",\"HasAccess\":true},{\"Id\":4,\"Action\":\"Delete\",\"HasAccess\":true}]},{\"Id\":16,\"Title\":\"User Permissions\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Grant\",\"HasAccess\":true},{\"Id\":3,\"Action\":\"Revoke\",\"HasAccess\":true}]}]},{\"Area\":\"Configuration\",\"FeatureModels\":[{\"Id\":17,\"Title\":\"FAQ\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"Manage\",\"HasAccess\":true}]},{\"Id\":18,\"Title\":\"Policies\",\"HasAccess\":true,\"ActionModels\":[{\"Id\":1,\"Action\":\"View\",\"HasAccess\":true},{\"Id\":2,\"Action\":\"Manage\",\"HasAccess\":true}]}]}]",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 3,
                             Code = "general",
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 279, DateTimeKind.Unspecified).AddTicks(5510),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 704, DateTimeKind.Unspecified).AddTicks(8016),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard user like a customer access only order related features",
                             IsActive = true,
                             IsDeleted = false,
+                            IsSystemRole = true,
                             Name = "General",
                             PermissionJson = "[\"ManageOrders\",\"ViewReports\"]",
                             UpdatedBy = 0
+                        });
+                });
+
+            modelBuilder.Entity("RajMango.Domain.Entities.RolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 10
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 11
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 12
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 13
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 14
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 16
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 17
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 18
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 19
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 20
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 22
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 23
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 24
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 25
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 26
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 27
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 28
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 29
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 30
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 31
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 32
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 34
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 36
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 40
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 41
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 42
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 43
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 44
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 45
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 46
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 47
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 48
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 49
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 10
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 11
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 12
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 13
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 14
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 16
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 17
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 18
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 19
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 20
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 22
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 23
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 24
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 25
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 26
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 27
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 28
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 29
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 30
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 31
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 32
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 34
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 36
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 40
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 41
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 42
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 43
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 44
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 45
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 46
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 47
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 48
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 49
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 10
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 40
                         });
                 });
 
@@ -1819,6 +3054,24 @@ namespace RajMango.DataAccess.Migrations
                     b.ToTable("UserAddresses");
                 });
 
+            modelBuilder.Entity("RajMango.Domain.Entities.UserPermission", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsGranted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("UserPermissions");
+                });
+
             modelBuilder.Entity("RajMango.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
@@ -1870,8 +3123,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4033),
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4031),
+                            AssignedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2977),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2974),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -1882,8 +3135,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4042),
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4041),
+                            AssignedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2992),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2989),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -1894,8 +3147,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4048),
-                            CreatedAt = new DateTime(2026, 5, 10, 23, 26, 37, 504, DateTimeKind.Unspecified).AddTicks(4046),
+                            AssignedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(3001),
+                            CreatedAt = new DateTime(2026, 5, 13, 22, 34, 6, 965, DateTimeKind.Unspecified).AddTicks(2998),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -2134,6 +3387,25 @@ namespace RajMango.DataAccess.Migrations
                     b.Navigation("Payment");
                 });
 
+            modelBuilder.Entity("RajMango.Domain.Entities.RolePermission", b =>
+                {
+                    b.HasOne("RajMango.Domain.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RajMango.Domain.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("RajMango.Domain.Entities.UserAddress", b =>
                 {
                     b.HasOne("RajMango.Domain.Entities.AppUser", "AppUser")
@@ -2143,6 +3415,25 @@ namespace RajMango.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("RajMango.Domain.Entities.UserPermission", b =>
+                {
+                    b.HasOne("RajMango.Domain.Entities.Permission", "Permission")
+                        .WithMany("UserPermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RajMango.Domain.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Permission");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.UserRole", b =>
@@ -2203,6 +3494,18 @@ namespace RajMango.DataAccess.Migrations
             modelBuilder.Entity("RajMango.Domain.Entities.Payment", b =>
                 {
                     b.Navigation("PaymentAttachments");
+                });
+
+            modelBuilder.Entity("RajMango.Domain.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserPermissions");
+                });
+
+            modelBuilder.Entity("RajMango.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
                 });
 #pragma warning restore 612, 618
         }

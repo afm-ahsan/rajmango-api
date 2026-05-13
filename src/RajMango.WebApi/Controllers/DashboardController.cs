@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Queries;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet("admin")]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Dashboard.AdminView)]
         public async Task<ActionResult<Result<AdminDashboardDto>>> GetAdminDashboard()
         {
             return await _mediator.Send(new GetAdminDashboardQuery());

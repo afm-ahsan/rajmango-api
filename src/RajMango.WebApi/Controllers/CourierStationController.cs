@@ -5,54 +5,60 @@ using RajMango.Application.DTOs;
 using RajMango.Application.Features;
 using RajMango.Application.Features.Commands;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
     [ApiController]
     [Route("api/courier-station")]
     public class CourierStationController : ControllerBase
     {
         private readonly IMediator _mediator;
-        
+
         public CourierStationController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
+        [RequirePermission(Permissions.Couriers.View)]
         public async Task<ActionResult<Result<List<CourierStationDto>>>> Get()
         {
             return await _mediator.Send(new GetAllCourierStationQuery());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<CourierStationDto>>> GetById(int id) 
+        [RequirePermission(Permissions.Couriers.View)]
+        public async Task<ActionResult<Result<CourierStationDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetCourierStationByIdQuery(id));
         }
 
         [HttpGet("count")]
+        [RequirePermission(Permissions.Couriers.View)]
         public async Task<ActionResult<Result<int>>> GetCount()
         {
             return await _mediator.Send(new GetCourierStationCountQuery());
         }
 
         [HttpGet("dropdown")]
+        [RequirePermission(Permissions.Couriers.View)]
         public async Task<ActionResult<Result<List<CourierStationDropdownDto>>>> GetDropdown()
         {
             return await _mediator.Send(new GetCourierStationDropdownQuery());
         }
 
         [HttpGet("available")]
+        [RequirePermission(Permissions.Couriers.View)]
         public async Task<ActionResult<Result<List<AvailableCourierStationDto>>>> GetStationsByArea([FromQuery] AvailableCourierStationQuery query)
         {
             return await _mediator.Send(query);
         }
 
         /// <summary>
-        /// Returns active stations within radiusKm of the supplied coordinates, sorted by distance.
-        /// No authentication required — used from the order placement page.
+        /// Returns active stations within radiusKm of the supplied coordinates.
+        /// Public — used from the order placement page.
         /// </summary>
         [AllowAnonymous]
         [HttpGet("nearby")]
@@ -70,11 +76,10 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
+        [RequirePermission(Permissions.Couriers.View)]
         public async Task<ActionResult<PaginatedResult<CourierStationDto>>> GetCategoryWithPagination([FromQuery] GetCourierStationWithPaginationQuery query)
         {
             var validator = new GetCourierStationWithPaginationValidator();
-
-            // Call Validate or ValidateAsync and pass the object which needs to be validated
             var result = validator.Validate(query);
 
             if (result.IsValid)
@@ -86,33 +91,15 @@ namespace RajMango.WebApi.Controllers
             return BadRequest(errorMessages);
         }
 
-        //[HttpGet]
-        //[Route("GetPagedAndSortedResult")]
-        //public async Task<IEnumerable<CategoryInformationDto>> GetPagedAndSortedResult([FromQuery] PagedAndSortedDto inputDto)
-        //{
-        //    try
-        //    {
-        //        var userInfo = await _userInformationRepository.GetAsync(filter: x => x.deleted_at == null,
-        //                                                        orderBy: x => x.OrderBy(o => o.id),
-        //                                                        inputDto.SkipCount,
-        //                                                        inputDto.MaxResultCount);
-        //        var mappedInfo = _mapper.Map<IEnumerable<CategoryInformationDto>>(userInfo);
-        //        return mappedInfo;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _errorHandler.Handle(ex);
-        //        throw;
-        //    }
-        //}
-
         [HttpPost]
+        [RequirePermission(Permissions.Couriers.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateCourierStationCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
+        [RequirePermission(Permissions.Couriers.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateCourierStationCommand command)
         {
             if (id != command.Id)
@@ -124,6 +111,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission(Permissions.Couriers.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteCourierStationCommand { Id = id });

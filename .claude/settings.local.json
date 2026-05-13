@@ -25,7 +25,23 @@
       "Bash(Format-Table -AutoSize)",
       "WebFetch(domain:github.com)",
       "PowerShell(Get-ChildItem *)",
-      "WebFetch(domain:www.nuget.org)"
+      "WebFetch(domain:www.nuget.org)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path . -Directory)",
+      "PowerShell(head *)",
+      "Bash(New-Item -ItemType Directory -Force \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\\\\UserPermission\\\\Queries\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\\\\UserPermission\\\\Commands\")",
+      "Bash(Write-Output \"Done\")",
+      "PowerShell(New-Item *)",
+      "Bash(sqlcmd -S localhost\\\\SQLEXPRESS -d RajMangoDB -Q \"SELECT Id, Name, LEFT\\(PermissionJson, 120\\) AS PermissionJsonPreview FROM Roles WHERE Id IN \\(1,2,3\\)\")",
+      "Bash(sqlcmd -S \"\\(localdb\\)\\\\MSSQLLocalDB\" -d RajMangoDB -Q \"SELECT Id, Name, LEFT\\(PermissionJson, 120\\) AS PermissionJsonPreview FROM Roles WHERE Id IN \\(1,2,3\\)\")",
+      "Bash(findstr -i \"connection\\\\|server\\\\|database\")",
+      "Bash(findstr -i \"connection\\\\|Default\")",
+      "Bash(sqlcmd *)",
+      "Bash(dotnet script *)",
+      "Bash(del ApplyPermissionFix.cs)"
     ]
   }
 }

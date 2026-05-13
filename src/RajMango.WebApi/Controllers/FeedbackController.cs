@@ -5,6 +5,7 @@ using RajMango.Application.Features.Feedback.Commands;
 using RajMango.Application.Features.Feedback.Queries;
 using RajMango.Shared;
 using FluentValidation;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -45,7 +46,7 @@ namespace RajMango.WebApi.Controllers
 
         /// <summary>Get all feedback (admin only).</summary>
         [HttpGet]
-        [Authorize(Roles = "system_admin,admin")]
+        [RequirePermission(Permissions.Feedback.AdminView)]
         public async Task<ActionResult<Result<List<FeedbackDto>>>> GetAll()
         {
             return await _mediator.Send(new GetAllFeedbackQuery());

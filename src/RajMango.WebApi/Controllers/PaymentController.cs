@@ -4,10 +4,11 @@ using RajMango.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
     [ApiController]
     [Route("api/payment")]
     public class PaymentController : ControllerBase
@@ -20,24 +21,28 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequirePermission(Permissions.Payments.View)]
         public async Task<ActionResult<Result<List<GetAllPaymentDto>>>> Get()
         {
             return await _mediator.Send(new GetAllPaymentQuery());
         }
 
         [HttpGet("{id}")]
+        [RequirePermission(Permissions.Payments.View)]
         public async Task<ActionResult<Result<GetPaymentByIdDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetPaymentByIdQuery(id));
         }
 
         [HttpGet("count")]
+        [RequirePermission(Permissions.Payments.View)]
         public async Task<ActionResult<Result<GetPaymentCountDto>>> GetCount()
         {
             return await _mediator.Send(new GetPaymentCountQuery());
         }
 
         [HttpGet("paged")]
+        [RequirePermission(Permissions.Payments.View)]
         public async Task<ActionResult<PaginatedResult<GetPaymentWithPaginationDto>>> GetPaged([FromQuery] GetPaymentWithPaginationQuery query)
         {
             var validator = new GetPaymentWithPaginationValidator();
@@ -53,6 +58,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPost]
+        [RequirePermission(Permissions.Payments.Create)]
         public async Task<ActionResult<Result<int>>> Create([FromBody] CreatePaymentCommand command)
         {
             var validator = new CreatePaymentCommandValidator();
@@ -68,6 +74,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequirePermission(Permissions.Payments.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdatePaymentCommand command)
         {
             if (id != command.Id)
@@ -86,6 +93,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission(Permissions.Payments.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeletePaymentCommand { Id = id });

@@ -13,14 +13,17 @@ namespace RajMango.Application.Features.Commands
         private readonly IPasswordHasher<AppUser> _passwordHasher;
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly IPermissionService _permissionService;
 
         public UpdateUserCommandHandler(IPasswordHasher<AppUser> passwordHasher,
                                         IErrorHandler errorHandler,
-                                        IDataContext dataContext)
+                                        IDataContext dataContext,
+                                        IPermissionService permissionService)
         {
             _passwordHasher = passwordHasher;
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _permissionService = permissionService;
         }
 
         public async Task<Result<int>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -61,6 +64,8 @@ namespace RajMango.Application.Features.Commands
                     }
 
                     await _dataContext.SaveChangesAsync(cancellationToken);
+
+                    await _permissionService.InvalidateUserPermissionCacheAsync(command.Id, cancellationToken);
 
                     return await Result<int>.SuccessAsync(user.Id, "User Information Updated Successfully.");
                 }

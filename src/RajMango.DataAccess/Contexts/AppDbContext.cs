@@ -20,6 +20,9 @@ namespace RajMango.DataAccess.Contexts
         public virtual DbSet<AppUser> Users => Set<AppUser>();
         public virtual DbSet<Role> Roles => Set<Role>();
         public virtual DbSet<UserRole> UserRoles => Set<UserRole>();
+        public virtual DbSet<Permission> Permissions => Set<Permission>();
+        public virtual DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public virtual DbSet<UserPermission> UserPermissions => Set<UserPermission>();
         public virtual DbSet<JwtAuth> JwtAuths => Set<JwtAuth>();
         public virtual DbSet<UserAddress> UserAddresses => Set<UserAddress>();
         public virtual DbSet<Customer> Customers => Set<Customer>();
@@ -76,8 +79,9 @@ namespace RajMango.DataAccess.Contexts
             // 2. Apply global decimal(18,2) precision
             modelBuilder.ApplyGlobalDecimalPrecision();
 
-            // 3. Seed system roles and user
+            // 3. Seed system roles, users and permission data
             modelBuilder.LoadSystemLevelSeedData();
+            modelBuilder.LoadPermissionSeedData();
             modelBuilder.LoadOtherSeedData();
 
             // 4. Apply soft-delete query filters globally

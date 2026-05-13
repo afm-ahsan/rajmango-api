@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.Features.Faq;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -27,7 +28,8 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>Admin — full list including inactive items.</summary>
-        [Authorize(Roles = "system_admin,admin")]
+        [Authorize]
+        [RequirePermission(Permissions.Faq.Manage)]
         [HttpGet]
         public async Task<ActionResult<Result<List<FaqItemDto>>>> GetAll(CancellationToken cancellationToken)
         {
@@ -35,7 +37,8 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>Admin — create or update a FAQ item (Id = 0 to create).</summary>
-        [Authorize(Roles = "system_admin,admin")]
+        [Authorize]
+        [RequirePermission(Permissions.Faq.Manage)]
         [HttpPut]
         public async Task<ActionResult<Result<int>>> Upsert(
             [FromBody] UpsertFaqItemCommand command, CancellationToken cancellationToken)
@@ -49,7 +52,8 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>Admin — delete a FAQ item.</summary>
-        [Authorize(Roles = "system_admin,admin")]
+        [Authorize]
+        [RequirePermission(Permissions.Faq.Manage)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Result<int>>> Delete(int id, CancellationToken cancellationToken)
         {

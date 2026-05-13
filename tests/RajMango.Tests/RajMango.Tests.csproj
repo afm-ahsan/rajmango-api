@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\src\RajMango.Application\RajMango.Application.csproj" />
     <ProjectReference Include="..\..\src\RajMango.DataAccess\RajMango.DataAccess.csproj" />
     <ProjectReference Include="..\..\src\RajMango.Domain\RajMango.Domain.csproj" />
+    <ProjectReference Include="..\..\src\RajMango.Infrastructure\RajMango.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\RajMango.Shared\RajMango.Shared.csproj" />
   </ItemGroup>
 

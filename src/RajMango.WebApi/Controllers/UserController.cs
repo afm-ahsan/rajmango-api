@@ -5,10 +5,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.DTOs;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin,admin")]
+    [Authorize]
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase
@@ -21,18 +22,21 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequirePermission(Permissions.Users.View)]
         public async Task<ActionResult<Result<List<AppUserDto>>>> Get()
         {
             return await _mediator.Send(new GetAllUserQuery());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<AppUserDto>>> GetById(int id) 
+        [RequirePermission(Permissions.Users.View)]
+        public async Task<ActionResult<Result<AppUserDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetUserByIdQuery(id));
         }
 
         [HttpGet("count")]
+        [RequirePermission(Permissions.Users.View)]
         public async Task<ActionResult<Result<int>>> GetCount()
         {
             return await _mediator.Send(new GetUserCountQuery());
@@ -40,6 +44,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
+        [RequirePermission(Permissions.Users.View)]
         public async Task<ActionResult<PaginatedResult<AppUserDto>>> GetUserWithPagination([FromQuery] GetUserWithPaginationQuery query)
         {
             var validator = new GetUserWithPaginationValidator();
@@ -77,12 +82,14 @@ namespace RajMango.WebApi.Controllers
         //}
 
         [HttpPost]
+        [RequirePermission(Permissions.Users.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateUserCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
+        [RequirePermission(Permissions.Users.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateUserCommand command)
         {
             if (id != command.Id)
@@ -94,6 +101,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission(Permissions.Users.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteUserCommand { Id = id });
