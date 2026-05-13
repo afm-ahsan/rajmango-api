@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin")]
+    [Authorize(Roles = "system_admin,admin")]
     [ApiController]
     [Route("api/role")]
     public class RoleController : ControllerBase

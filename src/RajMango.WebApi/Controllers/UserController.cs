@@ -8,7 +8,7 @@ using RajMango.Application.DTOs;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize(Roles = "system_admin")]
+    [Authorize(Roles = "system_admin,admin")]
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase
