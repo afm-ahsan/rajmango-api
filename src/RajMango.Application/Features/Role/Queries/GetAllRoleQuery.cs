@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using RajMango.Application.Common;
 using RajMango.Application.DTOs;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace RajMango.Application.Features.Queries
 {
@@ -30,10 +30,7 @@ namespace RajMango.Application.Features.Queries
                   .ToListAsync(cancellationToken);
             
             foreach (var role in roles)
-            {
-                if (string.IsNullOrEmpty(role.PermissionJson)) continue;
-                role.Permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson);
-            }
+                role.Permissions = PermissionMigrationHelper.DeserializeToFlatPermissions(role.PermissionJson);
 
             return await Result<List<GetAllRoleDto>>.SuccessAsync(roles);
         }

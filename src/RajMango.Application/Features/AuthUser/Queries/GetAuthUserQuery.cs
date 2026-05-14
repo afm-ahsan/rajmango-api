@@ -1,3 +1,4 @@
+using RajMango.Application.Common;
 using RajMango.Application.DTOs;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -6,7 +7,6 @@ using RajMango.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace RajMango.Application.Features.Queries
 {
@@ -49,8 +49,7 @@ namespace RajMango.Application.Features.Queries
             // Fetch role before token generation so the role claim is embedded in the JWT
             string roleCode = null;
             int? roleId = null;
-            string permissionJson = null;
-            List<PermissionModel> permissions = null;
+            List<string> permissions = null;
 
             var userRole = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(p => p.UserId == user.Id, cancellationToken);
             if (userRole != null)
@@ -60,12 +59,7 @@ namespace RajMango.Application.Features.Queries
                 {
                     roleCode = role.Code;
                     roleId = role.Id;
-                    permissionJson = role.PermissionJson;
-                    if (!string.IsNullOrEmpty(role.PermissionJson))
-                    {
-                        try { permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson); }
-                        catch { permissions = null; }
-                    }
+                    permissions = PermissionMigrationHelper.DeserializeToFlatPermissions(role.PermissionJson);
                 }
             }
 
@@ -83,8 +77,7 @@ namespace RajMango.Application.Features.Queries
                 AuthToken = jwtAuth.AuthToken,
                 JwtAuth = jwtAuth,
                 RoleId = roleId,
-                PermissionJson = permissionJson,
-                Permissions = permissions ?? new List<PermissionModel>(),
+                Permissions = permissions ?? new List<string>(),
             });
         }
 

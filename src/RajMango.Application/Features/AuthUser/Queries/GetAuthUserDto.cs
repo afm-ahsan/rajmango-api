@@ -19,8 +19,7 @@ namespace RajMango.Application.Features.Queries
 
         public int? RoleId { get; set; }
 
-        public string PermissionJson { get; set; }
-        public List<PermissionModel> Permissions { get; set; }
+        public List<string> Permissions { get; set; } = new();
     }
 
     public class AuthUserRole

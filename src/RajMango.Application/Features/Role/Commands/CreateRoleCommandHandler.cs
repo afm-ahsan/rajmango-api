@@ -28,8 +28,8 @@ namespace RajMango.Application.Features.Commands
             try
             {
                 command.CreatedAt = Clock.Now();
-                command.PermissionJson = JsonConvert.SerializeObject(command.Permissions);
                 var mappedEntity = _mapper.Map<Role>(command);
+                mappedEntity.PermissionJson = JsonConvert.SerializeObject(command.Permissions);
                 _dataContext.Get<Role>().Add(mappedEntity);
                 await _dataContext.SaveChangesAsync(cancellationToken);
                 return await Result<int>.SuccessAsync(mappedEntity.Id, "Role is Created.");

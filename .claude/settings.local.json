@@ -41,7 +41,16 @@
       "Bash(findstr -i \"connection\\\\|Default\")",
       "Bash(sqlcmd *)",
       "Bash(dotnet script *)",
-      "Bash(del ApplyPermissionFix.cs)"
+      "Bash(del ApplyPermissionFix.cs)",
+      "Bash(xargs grep -l \"Login\\\\|Authenticate\")",
+      "Bash(Start-Process -NoNewWindow dotnet -ArgumentList \"run --no-build\" -PassThru)",
+      "Bash(Select-Object -ExpandProperty Id)",
+      "Bash(dotnet run *)",
+      "Bash(curl *)",
+      "Bash(kill 15532)",
+      "Bash(taskkill /PID 15532 /F)",
+      "PowerShell(Stop-Process *)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }

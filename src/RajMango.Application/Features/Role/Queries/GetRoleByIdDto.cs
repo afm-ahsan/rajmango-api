@@ -1,4 +1,5 @@
 ﻿using RajMango.Application.DTOs;
+using System.Text.Json.Serialization;
 
 namespace RajMango.Application.Features.Queries
 {
@@ -8,7 +9,10 @@ namespace RajMango.Application.Features.Queries
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
+
+        [JsonIgnore]
         public string PermissionJson { get; set; }
-        public List<PermissionModel> Permissions { get; set; }
+
+        public List<string> Permissions { get; set; } = new();
     }
 }

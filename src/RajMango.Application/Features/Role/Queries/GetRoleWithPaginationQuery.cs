@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using RajMango.Application.Common;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
 using MediatR;
-using Newtonsoft.Json;
-using System.Data;
 
 namespace RajMango.Application.Features.Queries
 {
@@ -44,10 +43,7 @@ namespace RajMango.Application.Features.Queries
                    .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
             foreach (var role in paginatedRoles.Data)
-            {
-                if(string.IsNullOrEmpty(role.PermissionJson)) continue;
-                role.Permissions = JsonConvert.DeserializeObject<List<PermissionModel>>(role.PermissionJson);
-            }
+                role.Permissions = PermissionMigrationHelper.DeserializeToFlatPermissions(role.PermissionJson);
             return paginatedRoles;
         }
     }
