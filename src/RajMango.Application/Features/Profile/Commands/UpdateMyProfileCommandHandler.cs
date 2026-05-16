@@ -60,8 +60,11 @@ namespace RajMango.Application.Features.Commands
                 user.FirstName   = command.FirstName;
                 user.LastName    = command.LastName;
                 user.PhoneNumber = command.PhoneNumber;
-                if (!string.IsNullOrWhiteSpace(command.ImagePath))
-                    user.ImagePath = command.ImagePath;
+                // null  → field absent in JSON → don't touch the stored path
+                // ""    → client explicitly cleared the photo → set to null in DB
+                // value → new upload path → store it
+                if (command.ImagePath != null)
+                    user.ImagePath = string.IsNullOrEmpty(command.ImagePath) ? null : command.ImagePath;
 
                 _dataContext.Get<AppUser>().Update(user);
                 await _dataContext.SaveChangesAsync(cancellationToken);

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using RajMango.Application.Interfaces;
 //using System.Net.Http.Headers;
 
 namespace RajMango.WebApi.Controllers
@@ -10,6 +11,89 @@ namespace RajMango.WebApi.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
+        private readonly IFileStorageService _fileStorage;
+
+        public FileController(IFileStorageService fileStorage)
+        {
+            _fileStorage = fileStorage;
+        }
+
+        // ── New endpoints (used by Angular FileService) ──────────────────────
+
+        [HttpPost("upload"), DisableRequestSizeLimit]
+        public async Task<IActionResult> Upload(
+            IFormFile file,
+            [FromQuery] string domain = "general",
+            [FromQuery] string? prefix = null,
+            [FromQuery] int? entityId = null,
+            CancellationToken ct = default)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file provided.");
+
+            try
+            {
+                var relativePath = await _fileStorage.SaveAsync(
+                    file.OpenReadStream(),
+                    file.FileName,
+                    file.ContentType,
+                    file.Length,
+                    domain,
+                    prefix ?? "file",
+                    entityId,
+                    ct);
+
+                return Ok(new { imagePath = relativePath });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete(
+            [FromQuery] string relativePath,
+            CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return BadRequest(new { message = "relativePath is required." });
+
+            try
+            {
+                await _fileStorage.DeleteAsync(relativePath, ct);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("download"), DisableRequestSizeLimit]
+        public async Task<IActionResult> Download([FromQuery] string relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return BadRequest("relativePath is required.");
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",
+                relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var memory = new MemoryStream();
+            await using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, GetContentType(filePath), Path.GetFileName(filePath));
+        }
+
+        // ── Legacy endpoints (kept for any existing usages) ──────────────────
+
         [HttpPost, DisableRequestSizeLimit]
         [Route("upload-image")]
         public async Task<IActionResult> UploadImage()
@@ -75,25 +159,6 @@ namespace RajMango.WebApi.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex}");
             }
-        }
-
-        [HttpGet, DisableRequestSizeLimit]
-        [Route("download")]
-        public async Task<IActionResult> Download([FromQuery] string fileUrl)
-        {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), fileUrl);
-
-            if (!System.IO.File.Exists(filePath))
-                return NotFound();
-
-            var memory = new MemoryStream();
-            await using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-
-            return File(memory, GetContentType(filePath), filePath);
         }
 
         [HttpGet, DisableRequestSizeLimit]

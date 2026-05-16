@@ -72,7 +72,7 @@ namespace RajMango.Application.Features.Queries
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                ImagePath = "/assets/media/avatars/300-1.jpg",
+                ImagePath = user.ImagePath,
                 PhoneNumber = user.PhoneNumber,
                 AuthToken = jwtAuth.AuthToken,
                 JwtAuth = jwtAuth,
