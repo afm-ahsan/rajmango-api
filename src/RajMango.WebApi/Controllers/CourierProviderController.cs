@@ -22,28 +22,28 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierProviders.View)]
         public async Task<ActionResult<Result<List<CourierProviderDto>>>> Get()
         {
             return await _mediator.Send(new GetAllCourierProviderQuery());
         }
 
         [HttpGet("{id}")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierProviders.View)]
         public async Task<ActionResult<Result<CourierProviderDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetCourierProviderByIdQuery(id));
         }
 
         [HttpGet("count")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierProviders.View)]
         public async Task<ActionResult<Result<int>>> GetCount()
         {
             return await _mediator.Send(new GetCourierProviderCountQuery());
         }
 
         [HttpGet("dropdown")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierProviders.View)]
         public async Task<ActionResult<Result<List<CourierProviderDropdownDto>>>> GetDropdown()
         {
             return await _mediator.Send(new GetCourierProviderDropdownQuery());
@@ -51,7 +51,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierProviders.View)]
         public async Task<ActionResult<PaginatedResult<CourierProviderDto>>> GetCategoryWithPagination([FromQuery] GetCourierProviderWithPaginationQuery query)
         {
             var validator = new GetCourierProviderWithPaginationValidator();
@@ -68,14 +68,14 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPost]
-        [RequirePermission(Permissions.Couriers.Create)]
+        [RequirePermission(Permissions.CourierProviders.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateCourierProviderCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
-        [RequirePermission(Permissions.Couriers.Update)]
+        [RequirePermission(Permissions.CourierProviders.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateCourierProviderCommand command)
         {
             if (id != command.Id)
@@ -87,7 +87,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequirePermission(Permissions.Couriers.Delete)]
+        [RequirePermission(Permissions.CourierProviders.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteCourierProviderCommand { Id = id });

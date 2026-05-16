@@ -48,8 +48,6 @@ builder.Services.AddApplicationLayer();
 builder.Services.AddInfrastructureLayer(configuration);
 builder.Services.AddDataAccessLayer(configuration);
 
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
-
 builder.Services.Configure<FormOptions>(o =>
 {
     o.ValueLengthLimit = int.MaxValue;

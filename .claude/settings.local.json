@@ -50,7 +50,8 @@
       "Bash(kill 15532)",
       "Bash(taskkill /PID 15532 /F)",
       "PowerShell(Stop-Process *)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "PowerShell(\\(Get-Item \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.WebApi\\\\bin\\\\Debug\\\\net8.0\\\\Microsoft.Data.SqlClient.dll\"\\).VersionInfo | Select-Object FileVersion, ProductVersion)"
     ]
   }
 }

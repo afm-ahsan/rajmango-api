@@ -62,6 +62,30 @@ namespace RajMango.Shared
             public const string Delete = "courier.delete";
         }
 
+        public static class CourierProviders
+        {
+            public const string View   = "courier-provider.view";
+            public const string Create = "courier-provider.create";
+            public const string Update = "courier-provider.update";
+            public const string Delete = "courier-provider.delete";
+        }
+
+        public static class CourierStations
+        {
+            public const string View   = "courier-station.view";
+            public const string Create = "courier-station.create";
+            public const string Update = "courier-station.update";
+            public const string Delete = "courier-station.delete";
+        }
+
+        public static class CourierAreaMaps
+        {
+            public const string View   = "courier-area-map.view";
+            public const string Create = "courier-area-map.create";
+            public const string Update = "courier-area-map.update";
+            public const string Delete = "courier-area-map.delete";
+        }
+
         public static class Customers
         {
             public const string View   = "customer.view";
@@ -143,6 +167,9 @@ namespace RajMango.Shared
             Policies.View, Policies.Manage,
             Feedback.AdminView,
             UserPermissions.View, UserPermissions.Grant, UserPermissions.Revoke,
+            CourierProviders.View, CourierProviders.Create, CourierProviders.Update, CourierProviders.Delete,
+            CourierStations.View, CourierStations.Create, CourierStations.Update, CourierStations.Delete,
+            CourierAreaMaps.View, CourierAreaMaps.Create, CourierAreaMaps.Update, CourierAreaMaps.Delete,
         };
 
         /// <summary>Permissions granted to the Admin role.</summary>

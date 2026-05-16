@@ -83,6 +83,9 @@ namespace RajMango.DataAccess.Contexts
             modelBuilder.LoadSystemLevelSeedData();
             modelBuilder.LoadPermissionSeedData();
             modelBuilder.LoadOtherSeedData();
+            modelBuilder.LoadCourierProviderSeedData();
+            modelBuilder.LoadCourierStationSeedData();
+            modelBuilder.LoadCourierAreaMapSeedData();
 
             // 4. Apply soft-delete query filters globally
             modelBuilder.ApplySoftDeleteQueryFilter();

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
@@ -14,19 +13,17 @@ namespace RajMango.Application.Features
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public string SortBy { get; set; }
-        public string SortDirection { get; set; }
+        public string SortOrder { get; set; }
         public string Filter { get; set; }
     }
 
     public class GetCourierStationWithPaginationQueryHandler : IRequestHandler<GetCourierStationWithPaginationQuery, PaginatedResult<CourierStationDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public GetCourierStationWithPaginationQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetCourierStationWithPaginationQueryHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<PaginatedResult<CourierStationDto>> Handle(GetCourierStationWithPaginationQuery query, CancellationToken cancellationToken)
@@ -35,7 +32,7 @@ namespace RajMango.Application.Features
                                                   .Include(p => p.CourierProvider)
                                                   .AsQueryable();
 
-            courierStationQuery = GetSortableQuery(courierStationQuery, query.Filter, query.SortBy, query.SortDirection == "asc");
+            courierStationQuery = GetSortableQuery(courierStationQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
 
             var pagedCourierStations = await courierStationQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
@@ -85,6 +82,9 @@ namespace RajMango.Application.Features
                     break;
                 case "area":
                     query = ascending ? query.OrderBy(e => e.Area) : query.OrderByDescending(e => e.Area);
+                    break;
+                default:
+                    query = query.OrderBy(e => e.Id);
                     break;
             }
 

@@ -22,35 +22,35 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<List<CourierStationDto>>>> Get()
         {
             return await _mediator.Send(new GetAllCourierStationQuery());
         }
 
         [HttpGet("{id}")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<CourierStationDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetCourierStationByIdQuery(id));
         }
 
         [HttpGet("count")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<int>>> GetCount()
         {
             return await _mediator.Send(new GetCourierStationCountQuery());
         }
 
         [HttpGet("dropdown")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<List<CourierStationDropdownDto>>>> GetDropdown()
         {
             return await _mediator.Send(new GetCourierStationDropdownQuery());
         }
 
         [HttpGet("available")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<List<AvailableCourierStationDto>>>> GetStationsByArea([FromQuery] AvailableCourierStationQuery query)
         {
             return await _mediator.Send(query);
@@ -76,7 +76,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<PaginatedResult<CourierStationDto>>> GetCategoryWithPagination([FromQuery] GetCourierStationWithPaginationQuery query)
         {
             var validator = new GetCourierStationWithPaginationValidator();
@@ -92,14 +92,14 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPost]
-        [RequirePermission(Permissions.Couriers.Create)]
+        [RequirePermission(Permissions.CourierStations.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateCourierStationCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
-        [RequirePermission(Permissions.Couriers.Update)]
+        [RequirePermission(Permissions.CourierStations.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateCourierStationCommand command)
         {
             if (id != command.Id)
@@ -111,7 +111,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequirePermission(Permissions.Couriers.Delete)]
+        [RequirePermission(Permissions.CourierStations.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteCourierStationCommand { Id = id });

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
 using RajMango.Application.Interfaces.Repositories;
@@ -13,7 +12,7 @@ namespace RajMango.Application.Features
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public string SortBy { get; set; }
-        public string SortDirection { get; set; }
+        public string SortOrder { get; set; }
         public string Filter { get; set; }
         public int UserId { get; set; }
     }
@@ -21,19 +20,17 @@ namespace RajMango.Application.Features
     public class GetCourierProviderWithPaginationQueryHandler : IRequestHandler<GetCourierProviderWithPaginationQuery, PaginatedResult<CourierProviderDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public GetCourierProviderWithPaginationQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetCourierProviderWithPaginationQueryHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<PaginatedResult<CourierProviderDto>> Handle(GetCourierProviderWithPaginationQuery query, CancellationToken cancellationToken)
         {
             var courierProviderQuery = _dataContext.Get<CourierProvider>().AsQueryable();
 
-            courierProviderQuery = GetSortableQuery(courierProviderQuery, query.Filter, query.SortBy, query.SortDirection == "asc");
+            courierProviderQuery = GetSortableQuery(courierProviderQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
 
             var pagedCourierProviders = await courierProviderQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
@@ -69,7 +66,10 @@ namespace RajMango.Application.Features
                     break;
                 case "description":
                     query = ascending ? query.OrderBy(e => e.Description) : query.OrderByDescending(e => e.Description);
-                    break;                
+                    break;
+                default:
+                    query = query.OrderBy(e => e.Id);
+                    break;
             }
 
             return query;

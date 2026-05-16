@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
@@ -14,7 +13,7 @@ namespace RajMango.Application.Features
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public string SortBy { get; set; }
-        public string SortDirection { get; set; }
+        public string SortOrder { get; set; }
         public string Filter { get; set; }
         public int UserId { get; set; }
     }
@@ -22,19 +21,17 @@ namespace RajMango.Application.Features
     public class GetCourierAreaMapWithPaginationQueryHandler : IRequestHandler<GetCourierAreaMapWithPaginationQuery, PaginatedResult<CourierAreaMapDto>>
     {
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public GetCourierAreaMapWithPaginationQueryHandler(IDataContext dataContext, IMapper mapper)
+        public GetCourierAreaMapWithPaginationQueryHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<PaginatedResult<CourierAreaMapDto>> Handle(GetCourierAreaMapWithPaginationQuery query, CancellationToken cancellationToken)
         {
             var courierAreaMapQuery = _dataContext.Get<CourierAreaMap>().Include(p => p.CourierStation).AsQueryable();
 
-            courierAreaMapQuery = GetSortableQuery(courierAreaMapQuery, query.Filter, query.SortBy, query.SortDirection == "asc");
+            courierAreaMapQuery = GetSortableQuery(courierAreaMapQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
 
             var pagedCourierAreaMaps = await courierAreaMapQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
@@ -63,9 +60,13 @@ namespace RajMango.Application.Features
 
             switch (sortBy)
             {
+                case "name":
                 case "area":
                     query = ascending ? query.OrderBy(e => e.Area) : query.OrderByDescending(e => e.Area);
-                    break;             
+                    break;
+                default:
+                    query = query.OrderBy(e => e.Id);
+                    break;
             }
 
             return query;

@@ -23,28 +23,28 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<Result<List<CourierAreaMapDto>>>> Get()
         {
             return await _mediator.Send(new GetAllCourierAreaMapQuery());
         }
 
         [HttpGet("{id}")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<Result<CourierAreaMapDto>>> GetById(int id)
         {
             return await _mediator.Send(new GetCourierAreaMapByIdQuery(id));
         }
 
         [HttpGet("count")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<Result<int>>> GetCount()
         {
             return await _mediator.Send(new GetCourierAreaMapCountQuery());
         }
 
         [HttpGet("dropdown")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<Result<List<CourierAreaDropdownDto>>>> GetDropdown()
         {
             return await _mediator.Send(new GetCourierAreaDropdownQuery());
@@ -52,7 +52,7 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet]
         [Route("paged")]
-        [RequirePermission(Permissions.Couriers.View)]
+        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<PaginatedResult<CourierAreaMapDto>>> GetCategoryWithPagination([FromQuery] GetCourierAreaMapWithPaginationQuery query)
         {
             var validator = new GetCourierAreaMapWithPaginationValidator();
@@ -68,14 +68,14 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPost]
-        [RequirePermission(Permissions.Couriers.Create)]
+        [RequirePermission(Permissions.CourierAreaMaps.Create)]
         public async Task<ActionResult<Result<int>>> Create(CreateCourierAreaMapCommand command)
         {
             return await _mediator.Send(command);
         }
 
         [HttpPut("{id}")]
-        [RequirePermission(Permissions.Couriers.Update)]
+        [RequirePermission(Permissions.CourierAreaMaps.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateCourierAreaMapCommand command)
         {
             if (id != command.Id)
@@ -87,10 +87,10 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequirePermission(Permissions.Couriers.Delete)]
+        [RequirePermission(Permissions.CourierAreaMaps.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
-            return await _mediator.Send(new DeleteCourierProviderCommand { Id = id });
+            return await _mediator.Send(new DeleteCourierAreaMapCommand { Id = id });
         }
     }
 }
