@@ -84,6 +84,25 @@ builder
         };
 #pragma warning restore CS8604 // Possible null reference argument.
 
+        // SignalR cannot send Authorization headers, so it passes the token in the query string.
+        // ASP.NET Core docs recommend reading it here only for hub paths.
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments("/hubs/rajmango"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+
         configuration.Bind($"{nameof(AppSettings.Security)}:{nameof(AppSettings.Security.Jwt)}", options);
     })
     .Services
@@ -91,6 +110,19 @@ builder
     .AddSwaggerGen();
 
 builder.Services.AddSignalR();
+
+// CORS — credentials (JWT cookies / SignalR) require explicit origins; AllowAnyOrigin is forbidden here
+const string CorsPolicyName = "RajMangoCors";
+var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? Array.Empty<string>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CorsPolicyName, policy => policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+});
 
 // Permission-based authorization
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
@@ -115,10 +147,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+app.UseCors(CorsPolicyName);
 
 app.UseStaticFiles(); // serves wwwroot — /uploads/... paths are public from here
 
@@ -127,7 +156,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<RajMangoHub>("/hubs/rajmango");
+app.MapHub<RajMangoHub>("/hubs/rajmango").RequireCors(CorsPolicyName);
 
 app.Run();
 
