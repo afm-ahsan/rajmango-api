@@ -12,18 +12,15 @@ namespace RajMango.Application.Features.Commands
     internal class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Result<int>>
     {
         private readonly IDataContext _dataContext;
-        private readonly ICurrentUserService _currentUserService;
         private readonly INotificationService _notificationService;
         private readonly IRealtimeService _realtime;
 
         public CreatePaymentCommandHandler(
             IDataContext dataContext,
-            ICurrentUserService currentUserService,
             INotificationService notificationService,
             IRealtimeService realtime)
         {
             _dataContext = dataContext;
-            _currentUserService = currentUserService;
             _notificationService = notificationService;
             _realtime = realtime;
         }
@@ -51,8 +48,6 @@ namespace RajMango.Application.Features.Commands
                 NetAmount     = command.PaidAmount,
                 PaymentMethod = command.PaymentMethod,
                 TransactionId = command.TransactionId,
-                CreatedBy     = _currentUserService.UserId,
-                CreatedAt     = Clock.Now(),
             };
 
             _dataContext.Get<Payment>().Add(payment);

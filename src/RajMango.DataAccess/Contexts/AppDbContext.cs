@@ -3,6 +3,7 @@ using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.DataAccess.Extensions;
 using RajMango.Domain.Entities;
+using RajMango.Infrastructure.Persistence;
 
 namespace RajMango.DataAccess.Contexts
 {
@@ -95,16 +96,16 @@ namespace RajMango.DataAccess.Contexts
             //modelBuilder.RestrictAllCascadeDeletes();
         }
 
-        //public override int SaveChanges()
-        //{
-        //    AuditingHelper.ApplyAuditing(ChangeTracker, _currentUserService);
-        //    return base.SaveChanges();
-        //}
+        public override int SaveChanges()
+        {
+            AuditingHelper.ApplyAuditing(ChangeTracker, _currentUserService);
+            return base.SaveChanges();
+        }
 
-        //public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        //{
-        //    AuditingHelper.ApplyAuditing(ChangeTracker, _currentUserService);
-        //    return await base.SaveChangesAsync(cancellationToken);
-        //}
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            AuditingHelper.ApplyAuditing(ChangeTracker, _currentUserService);
+            return await base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

@@ -46,8 +46,6 @@ namespace RajMango.Application.Features.Commands
                     PricePerKg  = command.PricePerKg,
                     Status      = command.Status,
                     Notes       = command.Notes,
-                    CreatedBy   = command.CreatedBy,
-                    CreatedAt   = Clock.Now(),
                 };
 
                 _dataContext.Get<MangoAvailability>().Add(availability);

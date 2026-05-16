@@ -46,8 +46,6 @@ namespace RajMango.Application.Features.Commands
                     PostalCode  = command.PostalCode,
                     AddressType = command.AddressType,
                     IsPrimary   = command.IsPrimary,
-                    CreatedBy   = userId,
-                    CreatedAt   = Clock.Now(),
                 };
 
                 _dataContext.Get<UserAddress>().Add(address);

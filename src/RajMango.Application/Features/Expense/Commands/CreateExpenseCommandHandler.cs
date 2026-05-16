@@ -27,7 +27,6 @@ namespace RajMango.Application.Features.Commands
         {
             try
             {
-                command.CreatedAt = Clock.Now();
                 var mappedEntity = _mapper.Map<Expense>(command);
                 _dataContext.Get<Expense>().Add(mappedEntity);
                 await _dataContext.SaveChangesAsync(cancellationToken);

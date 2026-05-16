@@ -62,8 +62,6 @@ namespace RajMango.Application.Features.Commands
                 user.PhoneNumber = command.PhoneNumber;
                 if (!string.IsNullOrWhiteSpace(command.ImagePath))
                     user.ImagePath = command.ImagePath;
-                user.UpdatedAt   = Clock.Now();
-                user.UpdatedBy   = userId;
 
                 _dataContext.Get<AppUser>().Update(user);
                 await _dataContext.SaveChangesAsync(cancellationToken);

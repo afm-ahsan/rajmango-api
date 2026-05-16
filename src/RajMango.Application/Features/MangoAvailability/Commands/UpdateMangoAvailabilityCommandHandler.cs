@@ -37,8 +37,6 @@ namespace RajMango.Application.Features.Commands
                 availability.PricePerKg = command.PricePerKg;
                 availability.Status     = command.Status;
                 availability.Notes      = command.Notes;
-                availability.UpdatedBy  = command.UpdatedBy;
-                availability.UpdatedAt  = Clock.Now();
 
                 _dataContext.Get<MangoAvailability>().Update(availability);
                 await _dataContext.SaveChangesAsync(cancellationToken);

@@ -77,7 +77,6 @@ namespace RajMango.Application.Features.Commands
                     ReceiverName  = command.ReceiverName,
                     ReceiverPhone = command.ReceiverPhone,
                     DeliveryNote  = command.DeliveryNote,
-                    CreatedBy     = command.UserId,
                 };
 
                 if (command.CourierStationId != null)

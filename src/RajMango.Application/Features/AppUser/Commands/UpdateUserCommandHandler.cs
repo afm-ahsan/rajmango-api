@@ -38,7 +38,6 @@ namespace RajMango.Application.Features.Commands
                     user.Email = command.Email;
                     user.PhoneNumber = command.PhoneNumber;
                     user.IsActive = command.IsActive;
-                    user.UpdatedAt = Clock.Now();
 
                     if (!string.IsNullOrWhiteSpace(command.Password))
                     {

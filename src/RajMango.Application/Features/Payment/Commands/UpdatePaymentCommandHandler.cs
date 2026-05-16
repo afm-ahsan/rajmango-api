@@ -11,12 +11,10 @@ namespace RajMango.Application.Features.Commands
     public class UpdatePaymentCommandHandler : IRequestHandler<UpdatePaymentCommand, Result<int>>
     {
         private readonly IDataContext _dataContext;
-        private readonly ICurrentUserService _currentUserService;
 
-        public UpdatePaymentCommandHandler(IDataContext dataContext, ICurrentUserService currentUserService)
+        public UpdatePaymentCommandHandler(IDataContext dataContext)
         {
             _dataContext = dataContext;
-            _currentUserService = currentUserService;
         }
 
         public async Task<Result<int>> Handle(UpdatePaymentCommand command, CancellationToken cancellationToken)
@@ -47,8 +45,6 @@ namespace RajMango.Application.Features.Commands
             payment.NetAmount     = command.PaidAmount;
             payment.PaymentMethod = command.PaymentMethod;
             payment.TransactionId = command.TransactionId;
-            payment.UpdatedBy     = _currentUserService.UserId;
-            payment.UpdatedAt     = Clock.Now();
 
             _dataContext.Get<Payment>().Update(payment);
             await _dataContext.SaveChangesAsync(cancellationToken);

@@ -58,7 +58,9 @@
       "Bash(Get-Process -Name \"RajMango.WebApi\" -ErrorAction SilentlyContinue)",
       "Bash(Stop-Process -Force -ErrorAction SilentlyContinue)",
       "Bash(Write-Host \"Done\")",
-      "PowerShell(Get-Process *)"
+      "PowerShell(Get-Process *)",
+      "Bash(cd /d \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\")",
+      "Bash(Get-ChildItem -Recurse -Directory)"
     ]
   }
 }

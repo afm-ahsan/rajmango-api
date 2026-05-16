@@ -79,8 +79,6 @@ namespace RajMango.Application.Features.Commands
                 order.ReceiverName  = command.ReceiverName;
                 order.ReceiverPhone = command.ReceiverPhone;
                 order.DeliveryNote  = command.DeliveryNote;
-                order.UpdatedBy     = command.UserId;
-                order.UpdatedAt     = Clock.Now();
 
                 if (command.CourierStationId != null)
                 {

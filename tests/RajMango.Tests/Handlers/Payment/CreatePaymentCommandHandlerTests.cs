@@ -11,15 +11,11 @@ namespace RajMango.Tests.Handlers.Payment
 {
     public class CreatePaymentCommandHandlerTests
     {
-        private readonly Mock<ICurrentUserService> _userService;
         private readonly Mock<INotificationService> _notification;
         private readonly Mock<IRealtimeService> _realtime;
 
         public CreatePaymentCommandHandlerTests()
         {
-            _userService = new Mock<ICurrentUserService>();
-            _userService.Setup(x => x.UserId).Returns(1);
-
             _notification = new Mock<INotificationService>();
             _notification.Setup(x => x.SendPaymentReceivedAsync(It.IsAny<int>(), It.IsAny<string>(),
                 It.IsAny<decimal>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
@@ -35,7 +31,7 @@ namespace RajMango.Tests.Handlers.Payment
         public async Task Handle_OrderNotFound_ReturnsFailure()
         {
             using var db = TestDbContextFactory.Create();
-            var handler = new CreatePaymentCommandHandler(db, _userService.Object, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
             var command = new CreatePaymentCommand { OrderId = 999, PaidAmount = 100, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -49,7 +45,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 0);
-            var handler = new CreatePaymentCommandHandler(db, _userService.Object, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 100, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -63,7 +59,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 200);
-            var handler = new CreatePaymentCommandHandler(db, _userService.Object, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 300, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -77,7 +73,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 500);
-            var handler = new CreatePaymentCommandHandler(db, _userService.Object, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 200, PaymentMethod = PaymentMethod.Cash, TransactionId = "TXN001" };
 
             var result = await handler.Handle(command, CancellationToken.None);

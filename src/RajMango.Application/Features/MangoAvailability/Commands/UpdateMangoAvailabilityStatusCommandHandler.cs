@@ -39,8 +39,6 @@ namespace RajMango.Application.Features.Commands
                     return await Result<int>.FailureAsync($"Mango availability not found with Id {command.Id}.");
 
                 availability.Status    = command.NewStatus;
-                availability.UpdatedBy = command.UpdatedBy;
-                availability.UpdatedAt = Clock.Now();
 
                 _dataContext.Get<MangoAvailability>().Update(availability);
                 await _dataContext.SaveChangesAsync(cancellationToken);

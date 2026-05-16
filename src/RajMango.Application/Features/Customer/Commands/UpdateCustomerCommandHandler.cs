@@ -35,8 +35,6 @@ namespace RajMango.Application.Features.Commands
                 customer.AddressLine2 = command.AddressLine2;
                 customer.CustomerType = command.CustomerType;
                 customer.IsActive     = command.IsActive;
-                customer.UpdatedBy    = command.UpdatedBy;
-                customer.UpdatedAt    = Clock.Now();
 
                 _dataContext.Get<Customer>().Update(customer);
                 await _dataContext.SaveChangesAsync(cancellationToken);

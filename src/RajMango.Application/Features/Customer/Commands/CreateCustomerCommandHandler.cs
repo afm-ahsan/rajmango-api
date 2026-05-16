@@ -33,8 +33,6 @@ namespace RajMango.Application.Features.Commands
                     AddressLine2 = command.AddressLine2,
                     CustomerType = command.CustomerType,
                     IsActive     = command.IsActive,
-                    CreatedBy    = command.CreatedBy,
-                    CreatedAt    = Clock.Now(),
                 };
 
                 _dataContext.Get<Customer>().Add(customer);

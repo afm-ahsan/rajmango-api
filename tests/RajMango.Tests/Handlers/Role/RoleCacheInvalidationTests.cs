@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentAssertions;
 using Moq;
 using RajMango.Application.Features.Commands;
@@ -33,11 +32,7 @@ namespace RajMango.Tests.Handlers.Role
             var (roleId, userIds) = SeedRoleWithUsers(db, userCount: 2);
             var permSvc = NoOpPermissionService();
 
-            var mapper = new Mock<IMapper>();
-            mapper.Setup(m => m.Map<Domain.Entities.Role>(It.IsAny<UpdateRoleCommand>()))
-                .Returns((UpdateRoleCommand cmd) => new Domain.Entities.Role { Id = cmd.Id, Name = cmd.Name ?? "Updated", Code = "test" });
-
-            var handler = new UpdateRoleCommandHandler(NoOpErrorHandler(), db, mapper.Object, permSvc.Object);
+            var handler = new UpdateRoleCommandHandler(NoOpErrorHandler(), db, permSvc.Object);
             var command = new UpdateRoleCommand { Id = roleId, Name = "Updated Role", IsActive = true };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -55,8 +50,7 @@ namespace RajMango.Tests.Handlers.Role
             using var db = TestDbContextFactory.Create();
             var permSvc = NoOpPermissionService();
 
-            var mapper = new Mock<IMapper>();
-            var handler = new UpdateRoleCommandHandler(NoOpErrorHandler(), db, mapper.Object, permSvc.Object);
+            var handler = new UpdateRoleCommandHandler(NoOpErrorHandler(), db, permSvc.Object);
             var command = new UpdateRoleCommand { Id = 9999, Name = "Ghost" };
 
             var result = await handler.Handle(command, CancellationToken.None);

@@ -37,8 +37,6 @@ namespace RajMango.Application.Features.Commands
                     role.Description = command.Description;
                     role.IsActive = command.IsActive;
                     role.PermissionJson = JsonConvert.SerializeObject(command.Permissions);
-                    role.UpdatedAt = Clock.Now();
-                    
                     _dataContext.Get<Role>().Update(role);
                     
                     await _dataContext.SaveChangesAsync(cancellationToken);

@@ -53,8 +53,6 @@ namespace RajMango.Application.Features.Commands
                         $"Cannot transition order from {order.OrderStatus} to {command.NewStatus}.");
 
                 order.OrderStatus = command.NewStatus;
-                order.UpdatedBy = command.UpdatedBy;
-                order.UpdatedAt = Clock.Now();
 
                 if (!string.IsNullOrWhiteSpace(command.TrackingNumber))
                     order.TrackingNumber = command.TrackingNumber;

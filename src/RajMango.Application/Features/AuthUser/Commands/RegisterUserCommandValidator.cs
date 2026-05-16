@@ -27,6 +27,7 @@ namespace RajMango.Application.Features.Commands
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters.")
+                .MaximumLength(100).WithMessage("Password must not exceed 100 characters.")
                 .Must(HasUppercase).WithMessage("Password must contain at least one uppercase letter.")
                 .Must(HasLowercase).WithMessage("Password must contain at least one lowercase letter.")
                 .Must(HasDigit).WithMessage("Password must contain at least one number.")

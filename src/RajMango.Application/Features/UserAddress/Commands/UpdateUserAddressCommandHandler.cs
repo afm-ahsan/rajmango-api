@@ -49,8 +49,6 @@ namespace RajMango.Application.Features.Commands
                 address.PostalCode  = command.PostalCode;
                 address.AddressType = command.AddressType;
                 address.IsPrimary   = command.IsPrimary;
-                address.UpdatedBy   = userId;
-                address.UpdatedAt   = Clock.Now();
 
                 _dataContext.Get<UserAddress>().Update(address);
                 await _dataContext.SaveChangesAsync(cancellationToken);

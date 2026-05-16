@@ -27,7 +27,6 @@ namespace RajMango.Application.Features.Commands
                 var user = await _dataContext.Get<ExpenseType>().FindAsync(command.Id);
                 if (user != null)
                 {
-                    command.UpdatedAt = Clock.Now();
                     var mappedEntity = _mapper.Map<ExpenseType>(command);
                     
                     _dataContext.Get<ExpenseType>().Update(mappedEntity);

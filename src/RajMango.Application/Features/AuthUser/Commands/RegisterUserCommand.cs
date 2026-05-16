@@ -24,7 +24,6 @@ namespace RajMango.Application.Features.Commands
         public string Email { get; set; }
 
         [Required]
-        [StringLength(15)]
         public string Password { get; set; }
     }
 }
