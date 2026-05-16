@@ -21,7 +21,6 @@ namespace RajMango.Application.Features
         public async Task<Result<List<CourierProviderDropdownDto>>> Handle(GetCourierProviderDropdownQuery query, CancellationToken cancellationToken)
         {
             var dropdownDtos = await _dataContext.Get<CourierProvider>()
-               .Where(x => !x.IsDeleted)
                .OrderBy(x => x.Name)
                .Select(x => new CourierProviderDropdownDto
                {

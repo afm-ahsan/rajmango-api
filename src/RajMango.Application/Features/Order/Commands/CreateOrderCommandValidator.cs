@@ -8,10 +8,6 @@ namespace RajMango.Application.Features.Commands
     {
         public CreateOrderCommandValidator()
         {
-            RuleFor(x => x.UserId)
-                .GreaterThan(0)
-                .WithMessage("A valid user is required.");
-
             RuleFor(x => x.OrderDetails)
                 .NotEmpty()
                 .WithMessage("At least one order line is required.");

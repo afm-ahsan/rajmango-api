@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RajMango.Domain.Entities
 {
     [Table("Orders")]
-    public class Order : FullAuditedEntity, IHasId<int>, ISoftDelete
+    public class Order : FullAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

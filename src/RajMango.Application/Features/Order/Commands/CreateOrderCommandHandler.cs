@@ -16,17 +16,20 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
         private readonly INotificationService _notification;
         private readonly IRealtimeService _realtime;
 
         public CreateOrderCommandHandler(
             IErrorHandler errorHandler,
             IDataContext dataContext,
+            ICurrentUserService currentUserService,
             INotificationService notification,
             IRealtimeService realtime)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
             _notification = notification;
             _realtime = realtime;
         }
@@ -35,6 +38,9 @@ namespace RajMango.Application.Features.Commands
         {
             try
             {
+                if (!_currentUserService.IsAuthenticated || _currentUserService.UserId <= 0)
+                    return await Result<int>.FailureAsync("An authenticated user is required to create an order.");
+
                 var today = Clock.Now().Date;
                 var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
 
@@ -68,7 +74,7 @@ namespace RajMango.Application.Features.Commands
 
                 var newOrder = new Order
                 {
-                    UserId        = command.UserId,
+                    UserId        = _currentUserService.UserId,
                     OrderNumber   = orderNumber,
                     TotalQuantity = orderSummary.TotalQuantity,
                     TotalAmount   = orderSummary.TotalAmount,
