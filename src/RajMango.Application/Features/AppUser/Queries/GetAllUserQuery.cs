@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs;
 using RajMango.Application.Interfaces.Repositories;
@@ -20,38 +20,30 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<Result<List<AppUserDto>>> Handle(GetAllUserQuery query, CancellationToken cancellationToken)
         {
-            var users = await _dataContext.Get<AppUser>()
-                                          .ToListAsync(cancellationToken);
-
-            var userDtos = new List<AppUserDto>();
-            foreach (var user in users)
-            {
-                var orderDto = new AppUserDto
+            var userDtos = await (
+                from user in _dataContext.Get<AppUser>()
+                join userRole in _dataContext.Get<UserRole>() on user.Id equals userRole.UserId into userRoles
+                from userRole in userRoles.DefaultIfEmpty()
+                join role in _dataContext.Get<Role>() on userRole.RoleId equals role.Id into roles
+                from role in roles.DefaultIfEmpty()
+                select new AppUserDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
-                    IsActive = user.IsActive,
-                    EmailConfirmed = user.EmailConfirmed,
                     PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                    EmailConfirmed = user.EmailConfirmed,
+                    ImagePath = user.ImagePath ?? "/assets/media/avatars/300-1.jpg",
+                    IsActive = user.IsActive,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt,
-                };
-
-                userDtos.Add(orderDto);
-            }
-
-            var roleList = await _dataContext.Get<UserRole>().ToListAsync(cancellationToken);
-            foreach (var userDto in userDtos)
-            {
-                var role = roleList.FirstOrDefault(p => p.UserId == userDto.Id);
-                if (role != null)
-                {
-                    userDto.RoleId = role.RoleId;
+                    RoleId = userRole == null ? 0 : userRole.RoleId,
+                    RoleName = role == null ? null : role.Name,
                 }
-            }
+            ).ToListAsync(cancellationToken);
 
             return await Result<List<AppUserDto>>.SuccessAsync(userDtos);
         }

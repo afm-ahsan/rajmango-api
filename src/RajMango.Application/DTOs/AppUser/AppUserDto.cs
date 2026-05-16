@@ -10,10 +10,9 @@
         public bool PhoneNumberConfirmed { get; set; }
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
-        public string Password { get; set; }
-        public string PasswordHash { get; set; }
-        public int AccessFailedCount { get; set; }
+        public string ImagePath { get; set; }
         public bool IsActive { get; set; }
         public int RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 }

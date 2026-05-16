@@ -66,7 +66,10 @@ namespace RajMango.Application.Profiles
             CreateMap<Customer, UpdateCustomerCommand>();
             CreateMap<UpdateCustomerCommand, Customer>();
             CreateMap<Customer, GetAllCustomerDto>();
-            CreateMap<Customer, GetCustomerWithPaginationDto>();
+            CreateMap<Customer, GetCustomerWithPaginationDto>()
+                .ForMember(d => d.Name,        opt => opt.MapFrom(s => s.FullName))
+                .ForMember(d => d.PhoneNumber, opt => opt.MapFrom(s => s.PhoneNumber1))
+                .ForMember(d => d.Address,     opt => opt.MapFrom(s => s.AddressLine1));
             CreateMap<GetCustomerByIdDto, Customer>();
             CreateMap<Customer, GetCustomerByIdDto>();
 

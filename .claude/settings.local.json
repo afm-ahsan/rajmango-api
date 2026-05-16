@@ -51,7 +51,13 @@
       "Bash(taskkill /PID 15532 /F)",
       "PowerShell(Stop-Process *)",
       "Bash(python3 -c ' *)",
-      "PowerShell(\\(Get-Item \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.WebApi\\\\bin\\\\Debug\\\\net8.0\\\\Microsoft.Data.SqlClient.dll\"\\).VersionInfo | Select-Object FileVersion, ProductVersion)"
+      "PowerShell(\\(Get-Item \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.WebApi\\\\bin\\\\Debug\\\\net8.0\\\\Microsoft.Data.SqlClient.dll\"\\).VersionInfo | Select-Object FileVersion, ProductVersion)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\features\" -Directory)",
+      "Bash(npx ng *)",
+      "Bash(Stop-Process -Id 21840 -Force -ErrorAction SilentlyContinue)",
+      "Bash(Get-Process -Name \"RajMango.WebApi\" -ErrorAction SilentlyContinue)",
+      "Bash(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "Bash(Write-Host \"Done\")"
     ]
   }
 }

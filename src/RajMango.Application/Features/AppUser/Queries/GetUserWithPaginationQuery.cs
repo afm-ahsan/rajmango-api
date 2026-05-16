@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.DTOs;
 using RajMango.Application.Extensions;
@@ -28,73 +28,52 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<PaginatedResult<AppUserDto>> Handle(GetUserWithPaginationQuery query, CancellationToken cancellationToken)
         {
-            var userQuery = _dataContext.Get<AppUser>()
-                                         .AsQueryable();
-            userQuery = GetSortableQuery(userQuery, query.Filter, query.SortBy, query.SortOrder == "asc");
+            var userQuery = BuildQuery(query.Filter, query.SortBy, query.SortOrder == "asc");
 
-            var users = await userQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+            var paginated = await userQuery.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
-            var userDtos = new List<AppUserDto>();
-            foreach (var user in users.Data)
-            {
-                var orderDto = new AppUserDto
+            return PaginatedResult<AppUserDto>.Create(paginated.Data, paginated.TotalCount, query.PageNumber, query.PageSize);
+        }
+
+        private IQueryable<AppUserDto> BuildQuery(string filter, string sortBy, bool ascending)
+        {
+            var query =
+                from user in _dataContext.Get<AppUser>()
+                join userRole in _dataContext.Get<UserRole>() on user.Id equals userRole.UserId into userRoles
+                from userRole in userRoles.DefaultIfEmpty()
+                join role in _dataContext.Get<Role>() on userRole.RoleId equals role.Id into roles
+                from role in roles.DefaultIfEmpty()
+                select new AppUserDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
-                    IsActive = user.IsActive,
-                    EmailConfirmed = user.EmailConfirmed,
                     PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                    EmailConfirmed = user.EmailConfirmed,
+                    ImagePath = user.ImagePath ?? "/assets/media/avatars/300-1.jpg",
+                    IsActive = user.IsActive,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt,
+                    RoleId = userRole == null ? 0 : userRole.RoleId,
+                    RoleName = role == null ? null : role.Name,
                 };
 
-                userDtos.Add(orderDto);
-            }
-
-            var roleList = await _dataContext.Get<UserRole>().ToListAsync(cancellationToken);
-            foreach (var userDto in userDtos)
-            {
-                var role = roleList.FirstOrDefault(p => p.UserId == userDto.Id);
-                if (role != null)
-                {
-                    userDto.RoleId = role.RoleId;
-                }
-            }
-
-            return new PaginatedResult<AppUserDto>(succeeded: true, data: userDtos, pageNumber: query.PageNumber, pageSize: query.PageSize);
-        }
-
-        public IQueryable<AppUser> GetSortableQuery(IQueryable<AppUser> query, string filter, string sortBy, bool ascending)
-        {
             if (!string.IsNullOrEmpty(filter))
-            {
-                query = query.Where(s => s.FirstName.Contains(filter));
-            }
+                query = query.Where(u => u.FirstName.Contains(filter) || u.LastName.Contains(filter) || u.Email.Contains(filter));
 
-            switch (sortBy)
+            query = sortBy switch
             {
-                case "userName":
-                    query = ascending ? query.OrderBy(e => e.UserName) : query.OrderByDescending(e => e.UserName);
-                    break;
-                case "firstName":
-                    query = ascending ? query.OrderBy(e => e.FirstName) : query.OrderByDescending(e => e.FirstName);
-                    break;
-                case "lastName":
-                    query = ascending ? query.OrderBy(e => e.LastName) : query.OrderByDescending(e => e.LastName);
-                    break;
-                case "email":
-                    query = ascending ? query.OrderBy(e => e.Email) : query.OrderByDescending(e => e.Email);
-                    break;
-                case "phoneNumber":
-                    query = ascending ? query.OrderBy(e => e.PhoneNumber) : query.OrderByDescending(e => e.PhoneNumber);
-                    break;
-                case "isActive":
-                    query = ascending ? query.OrderBy(e => e.IsActive) : query.OrderByDescending(e => e.IsActive);
-                    break;
-            }
+                "userName" => ascending ? query.OrderBy(u => u.UserName) : query.OrderByDescending(u => u.UserName),
+                "firstName" => ascending ? query.OrderBy(u => u.FirstName) : query.OrderByDescending(u => u.FirstName),
+                "lastName" => ascending ? query.OrderBy(u => u.LastName) : query.OrderByDescending(u => u.LastName),
+                "email" => ascending ? query.OrderBy(u => u.Email) : query.OrderByDescending(u => u.Email),
+                "phoneNumber" => ascending ? query.OrderBy(u => u.PhoneNumber) : query.OrderByDescending(u => u.PhoneNumber),
+                "isActive" => ascending ? query.OrderBy(u => u.IsActive) : query.OrderByDescending(u => u.IsActive),
+                _ => query.OrderBy(u => u.Id),
+            };
 
             return query;
         }
