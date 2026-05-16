@@ -1,11 +1,10 @@
-﻿using AutoMapper;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
-using MediatR;
-using Newtonsoft.Json;
 
 namespace RajMango.Application.Features.Commands
 {
@@ -13,14 +12,12 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
         private readonly IPermissionService _permissionService;
 
-        public UpdateRoleCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IMapper mapper, IPermissionService permissionService)
+        public UpdateRoleCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IPermissionService permissionService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
-            _mapper = mapper;
             _permissionService = permissionService;
         }
 
@@ -41,7 +38,9 @@ namespace RajMango.Application.Features.Commands
                     role.IsActive = command.IsActive;
                     role.PermissionJson = JsonConvert.SerializeObject(command.Permissions);
                     role.UpdatedAt = Clock.Now();
-
+                    
+                    _dataContext.Get<Role>().Update(role);
+                    
                     await _dataContext.SaveChangesAsync(cancellationToken);
 
                     foreach (var userId in affectedUserIds)
