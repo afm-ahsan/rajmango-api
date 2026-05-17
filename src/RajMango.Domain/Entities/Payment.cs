@@ -41,6 +41,25 @@ namespace RajMango.Domain.Entities
 
         public PaymentMethod PaymentMethod { get; set; }
 
+        // bKash gateway fields — null for non-bKash payments
+        [StringLength(100)]
+        public string GatewayPaymentId { get; set; }
+
+        [StringLength(100)]
+        public string GatewayTransactionId { get; set; }
+
+        [StringLength(100)]
+        public string MerchantInvoiceNumber { get; set; }
+
+        [StringLength(50)]
+        public string BkashCallbackStatus { get; set; }
+
+        public string RawCreateResponse { get; set; }
+
+        public string RawExecuteResponse { get; set; }
+
+        public DateTime? PaidAt { get; set; }
+
         public ICollection<PaymentAttachment> PaymentAttachments { get; set; } = new List<PaymentAttachment>();
     }
 }

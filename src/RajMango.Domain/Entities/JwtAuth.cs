@@ -31,10 +31,13 @@ namespace RajMango.Domain.Entities
         public DateTime ExpiresIn { get; set; }
 
         public bool IsRevoked { get; set; } = false;
-        
+
         public DateTime? RevokedAt { get; set; }
 
-        public int RevokedBy { get; set; }
+        public int? RevokedBy { get; set; }
+
+        [ForeignKey(nameof(RevokedBy))]
+        public AppUser RevokedByUser { get; set; }
 
         [StringLength(50)]
         public string IpAddress { get; set; }

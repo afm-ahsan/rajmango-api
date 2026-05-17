@@ -1,7 +1,5 @@
 namespace RajMango.Application.Interfaces
 {
-    public record BkashTokenResponse(string IdToken, string RefreshToken);
-
     public record BkashCreatePaymentResponse(
         string PaymentId,
         string BkashUrl,
@@ -18,19 +16,29 @@ namespace RajMango.Application.Interfaces
         string StatusCode,
         string StatusMessage);
 
+    public record BkashQueryPaymentResponse(
+        string PaymentId,
+        string TrxId,
+        string Amount,
+        string TransactionStatus,
+        string StatusCode,
+        string StatusMessage);
+
     public interface IBkashService
     {
-        Task<BkashTokenResponse> GrantTokenAsync(CancellationToken cancellationToken = default);
+        // Token management is internal; callers do not receive or pass tokens.
 
         Task<BkashCreatePaymentResponse> CreatePaymentAsync(
-            string idToken,
             string merchantInvoiceNumber,
             decimal amount,
             string payerReference,
             CancellationToken cancellationToken = default);
 
         Task<BkashExecutePaymentResponse> ExecutePaymentAsync(
-            string idToken,
+            string paymentId,
+            CancellationToken cancellationToken = default);
+
+        Task<BkashQueryPaymentResponse> QueryPaymentAsync(
             string paymentId,
             CancellationToken cancellationToken = default);
     }

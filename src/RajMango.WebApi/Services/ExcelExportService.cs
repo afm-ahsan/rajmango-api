@@ -105,7 +105,7 @@ namespace RajMango.WebApi.Services
 
             ws.Cell(4, 1).Value = "Total Expenses"; ws.Cell(4, 2).Value = (double)report.TotalAmount;
 
-            var headers = new[] { "Date", "Type", "Name", "Paid To", "Amount", "Method", "Transaction ID" };
+            var headers = new[] { "Date", "Type", "Name", "Paid To", "Amount", "Method", "Payment Reference" };
             for (int i = 0; i < headers.Length; i++)
             {
                 ws.Cell(6, i + 1).Value = headers[i];
@@ -122,7 +122,7 @@ namespace RajMango.WebApi.Services
                 ws.Cell(row, 4).Value = e.PaidTo;
                 ws.Cell(row, 5).Value = (double)e.Amount;
                 ws.Cell(row, 6).Value = e.PaymentMethod.ToString();
-                ws.Cell(row, 7).Value = e.TransactionId;
+                ws.Cell(row, 7).Value = e.PaymentReference;
                 row++;
             }
 

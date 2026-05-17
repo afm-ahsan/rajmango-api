@@ -9,6 +9,7 @@ namespace RajMango.Application.Features.Queries
         public string Description { get; set; }
         public int ExpenseTypeId { get; set; }
         public decimal Amount { get; set; }
+        public string PaymentReference { get; set; }
         public bool IsActive { get; set; }
     }
 }

@@ -1083,9 +1083,9 @@ namespace RajMango.DataAccess.Migrations
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
 
-                    b.Property<string>("TransactionId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1354,7 +1354,7 @@ namespace RajMango.DataAccess.Migrations
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RevokedBy")
+                    b.Property<int?>("RevokedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -1367,6 +1367,8 @@ namespace RajMango.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RevokedBy");
 
                     b.HasIndex("UserId");
 
@@ -1831,7 +1833,34 @@ namespace RajMango.DataAccess.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("GatewayPaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("GatewayTransactionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("MerchantInvoiceNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("BkashCallbackStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RawCreateResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RawExecuteResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GatewayPaymentId");
 
                     b.HasIndex("OrderId");
 
@@ -2816,12 +2845,6 @@ namespace RajMango.DataAccess.Migrations
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("SeasonEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("SeasonStart")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
@@ -3976,11 +3999,18 @@ namespace RajMango.DataAccess.Migrations
 
             modelBuilder.Entity("RajMango.Domain.Entities.JwtAuth", b =>
                 {
+                    b.HasOne("RajMango.Domain.Entities.AppUser", "RevokedByUser")
+                        .WithMany()
+                        .HasForeignKey("RevokedBy")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("RajMango.Domain.Entities.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("RevokedByUser");
 
                     b.Navigation("User");
                 });

@@ -1,14 +1,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RajMango.Application.Features.Bkash;
+using RajMango.Application.DTOs.Bkash;
+using RajMango.Application.Features.Commands;
+using RajMango.Application.Features.Queries;
 using RajMango.Shared;
 
 namespace RajMango.WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
-    [Route("api/bkash")]
+    [Route("api/payments")]
     public class BkashController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,35 +20,53 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>
-        /// Step 1: Initiate a bKash payment for an order.
-        /// Returns a paymentId and bkashUrl to redirect the user to bKash.
+        /// Initiate a bKash tokenized payment for an order.
+        /// Returns the bKash checkout URL; the frontend must redirect the customer there.
         /// </summary>
-        [HttpPost("initiate")]
-        public async Task<ActionResult<Result<InitiateBkashPaymentResponse>>> Initiate(
-            [FromBody] InitiateBkashPaymentCommand command, CancellationToken cancellationToken)
+        [Authorize]
+        [HttpPost("bkash/create")]
+        public async Task<ActionResult<Result<BkashInitiateResponseDto>>> Create(
+            [FromBody] InitiateBkashPaymentCommand command,
+            CancellationToken cancellationToken)
         {
-            var validator = new InitiateBkashPaymentCommandValidator();
-            var result = validator.Validate(command);
-            if (!result.IsValid)
-                return BadRequest(result.Errors.Select(e => e.ErrorMessage));
+            if (command.OrderId <= 0)
+                return BadRequest("A valid OrderId is required.");
 
             return await _mediator.Send(command, cancellationToken);
         }
 
         /// <summary>
-        /// Step 2: Execute the bKash payment after the user approves on the bKash page.
-        /// The frontend sends back the paymentId received from the bKash callback URL.
+        /// bKash payment callback.
+        /// Called by the bKash gateway after the customer completes, cancels, or fails payment.
+        /// Always performs a browser redirect — never returns JSON.
         /// </summary>
-        [HttpPost("execute")]
-        public async Task<ActionResult<Result<int>>> Execute(
-            [FromBody] ExecuteBkashPaymentCommand command, CancellationToken cancellationToken)
+        [AllowAnonymous]
+        [HttpGet("bkash/callback")]
+        public async Task<IActionResult> Callback(
+            [FromQuery] string paymentID,
+            [FromQuery] string status,
+            CancellationToken cancellationToken)
         {
-            var validator = new ExecuteBkashPaymentCommandValidator();
-            var result = validator.Validate(command);
-            if (!result.IsValid)
-                return BadRequest(result.Errors.Select(e => e.ErrorMessage));
+            var result = await _mediator.Send(new BkashCallbackCommand
+            {
+                PaymentId = paymentID,
+                Status = status,
+            }, cancellationToken);
 
-            return await _mediator.Send(command, cancellationToken);
+            return Redirect(result.RedirectUrl);
+        }
+
+        /// <summary>
+        /// Get all payments for a specific order.
+        /// Customers see only their own orders; admins see all.
+        /// </summary>
+        [Authorize]
+        [HttpGet("order/{orderId:int}")]
+        public async Task<ActionResult<Result<List<GetOrderPaymentDto>>>> GetByOrder(
+            int orderId,
+            CancellationToken cancellationToken)
+        {
+            return await _mediator.Send(new GetOrderPaymentsQuery(orderId), cancellationToken);
         }
     }
 }

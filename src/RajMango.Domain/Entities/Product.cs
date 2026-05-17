@@ -41,10 +41,6 @@ namespace RajMango.Domain.Entities
         [StringLength(100)]
         public string OriginRegion { get; set; } 
 
-        public DateTime? SeasonStart { get; set; }
-
-        public DateTime? SeasonEnd { get; set; }
-
         public UnitType UnitType { get; set; } = UnitType.None;
 
         public bool IsSeasonal { get; set; } = true;

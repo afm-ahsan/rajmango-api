@@ -33,7 +33,7 @@ namespace RajMango.Application.Features.Queries
         public string ExpenseTypeName { get; set; }
         public string Name { get; set; }
         public DateTime ExpenseDate { get; set; }
-        public string TransactionId { get; set; }
+        public string PaymentReference { get; set; }
         public string PaidTo { get; set; }
         public decimal Amount { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
@@ -69,7 +69,7 @@ namespace RajMango.Application.Features.Queries
                     ExpenseTypeName = e.ExpenseType.Name,
                     Name            = e.Name,
                     ExpenseDate     = e.ExpenseDate,
-                    TransactionId   = e.TransactionId,
+                    PaymentReference   = e.PaymentReference,
                     PaidTo          = e.PaidTo,
                     Amount          = e.Amount,
                     PaymentMethod   = e.PaymentMethod,

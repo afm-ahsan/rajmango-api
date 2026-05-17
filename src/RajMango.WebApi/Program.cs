@@ -21,6 +21,20 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+// Fail-fast: required secrets must be non-empty before any service is registered.
+// Dev: set via `dotnet user-secrets`.  Prod: set env vars listed in .env.example.
+var jwtSecret = configuration["Security:Jwt:ClientSecret"];
+if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
+    throw new InvalidOperationException(
+        "SECURITY__JWT__CLIENTSECRET is missing or shorter than 32 characters. " +
+        "Set it via user secrets (dev) or the SECURITY__JWT__CLIENTSECRET environment variable (prod).");
+
+var connString = configuration.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(connString))
+    throw new InvalidOperationException(
+        "ConnectionStrings:Default is not set. " +
+        "Set it via user secrets (dev) or the CONNECTIONSTRINGS__DEFAULT environment variable (prod).");
+
 //Register IHttpContextAccessor
 //builder.Services.AddHttpContextAccessor();
 

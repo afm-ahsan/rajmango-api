@@ -29,8 +29,8 @@ namespace RajMango.Domain.Entities
 
         public DateTime ExpenseDate { get; set; }
 
-        [StringLength(50)]
-        public string TransactionId { get; set; }
+        [StringLength(100)]
+        public string PaymentReference { get; set; }
 
         [StringLength(100)]
         public string PaidTo { get; set; }

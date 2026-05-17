@@ -68,7 +68,13 @@
       "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"class AppUserDto\" -Context 0,35 | Select-Object -First 1 | ForEach-Object { $_.Line; $_.Context.PostContext })",
       "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"class UpdateUserCommand\" -Context 0,25 | Select-Object -First 1 | ForEach-Object { $_.Line; $_.Context.PostContext })",
       "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"AppUserDto|UpdateUserCommand\" | Select-Object -First 5 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line\\)\" })",
-      "PowerShell(dotnet run *)"
+      "PowerShell(dotnet run *)",
+      "Bash(Stop-Process -Id 33240 -Force -ErrorAction SilentlyContinue)",
+      "Bash(Start-Sleep -Seconds 2)",
+      "Bash(Select-String -Pattern \"error|Error|warning CS|Build succeeded|Build FAILED\")",
+      "Bash(Select-Object -First 30)",
+      "PowerShell(Invoke-Sqlcmd *)",
+      "PowerShell(sqlcmd *)"
     ]
   }
 }

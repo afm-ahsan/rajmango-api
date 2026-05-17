@@ -15,6 +15,12 @@
         public string AppSecret { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        // Full URL bKash will call after customer completes/cancels/fails payment
+        public string CallbackUrl { get; set; }
+        // Frontend pages to redirect to after callback is processed
+        public string FrontendSuccessUrl { get; set; }
+        public string FrontendFailureUrl { get; set; }
+        public bool SandboxMode { get; set; } = true;
     }
 
     public class RedisSettings

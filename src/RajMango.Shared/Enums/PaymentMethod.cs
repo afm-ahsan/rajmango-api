@@ -11,6 +11,7 @@
         DebitCard = 5,     // Debit Card
         VisaCard = 6,      // Visa Card
         MasterCard = 7,    // Master Card
-        Wallet = 8         // In-app or system wallet
+        Wallet = 8,        // In-app or system wallet
+        Bkash = 9          // bKash tokenized checkout
     }
 }
