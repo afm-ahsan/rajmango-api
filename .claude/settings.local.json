@@ -60,7 +60,15 @@
       "Bash(Write-Host \"Done\")",
       "PowerShell(Get-Process *)",
       "Bash(cd /d \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\")",
-      "Bash(Get-ChildItem -Recurse -Directory)"
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\" -Recurse -Filter \"*CommandHandler.cs\")",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\" -Recurse -Filter \"*DeletePayment*Handler.cs\")",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\" -Force -Recurse -Depth 4 | Where-Object { $_.Name -match \"appsettings|secrets|\\\\.env|docker|Dockerfile|\\\\.pfx|\\\\.p12|\\\\.cer|coverage|TestResults|\\\\.DS_Store|Thumbs\\\\.db|\\\\.idea|\\\\.vscode\" } | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"class AppUserDto\" -Context 0,30 | Select-Object -First 1 | ForEach-Object { $_.Line; $_.Context.PostContext })",
+      "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"class AppUserDto\" -Context 0,35 | Select-Object -First 1 | ForEach-Object { $_.Line; $_.Context.PostContext })",
+      "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"class UpdateUserCommand\" -Context 0,25 | Select-Object -First 1 | ForEach-Object { $_.Line; $_.Context.PostContext })",
+      "PowerShell(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\services\\\\client-proxy.ts\" -Pattern \"AppUserDto|UpdateUserCommand\" | Select-Object -First 5 | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line\\)\" })",
+      "PowerShell(dotnet run *)"
     ]
   }
 }

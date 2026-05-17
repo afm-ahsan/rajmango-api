@@ -11,58 +11,66 @@ namespace RajMango.Application.Features.Commands
     public class UpdatePaymentCommandHandler : IRequestHandler<UpdatePaymentCommand, Result<int>>
     {
         private readonly IDataContext _dataContext;
+        private readonly IPaymentLock _paymentLock;
 
-        public UpdatePaymentCommandHandler(IDataContext dataContext)
+        public UpdatePaymentCommandHandler(IDataContext dataContext, IPaymentLock paymentLock)
         {
             _dataContext = dataContext;
+            _paymentLock = paymentLock;
         }
 
         public async Task<Result<int>> Handle(UpdatePaymentCommand command, CancellationToken cancellationToken)
         {
-            var payment = await _dataContext.Get<Payment>()
-                .FirstOrDefaultAsync(p => p.Id == command.Id, cancellationToken);
-
-            if (payment == null)
+            // Outside lock: fast existence check (no entity tracking — keeps re-fetch inside lock fresh)
+            var paymentExists = await _dataContext.Get<Payment>()
+                .AnyAsync(p => p.Id == command.Id, cancellationToken);
+            if (!paymentExists)
                 return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
 
-            var order = await _dataContext.Get<Order>()
-                .FirstOrDefaultAsync(o => o.Id == payment.OrderId, cancellationToken);
+            // Critical section: re-check overpayment and persist atomically
+            using (await _paymentLock.AcquireAsync())
+            {
+                var payment = await _dataContext.Get<Payment>()
+                    .FirstOrDefaultAsync(p => p.Id == command.Id, cancellationToken);
 
-            if (order == null)
-                return await Result<int>.FailureAsync("Associated order not found.");
+                var order = await _dataContext.Get<Order>()
+                    .FirstOrDefaultAsync(o => o.Id == payment.OrderId, cancellationToken);
 
-            // Check overpayment: remove old payment amount then add new one
-            var otherPaymentsTotal = await _dataContext.Get<Payment>()
-                .Where(p => p.OrderId == payment.OrderId && p.Id != payment.Id)
-                .SumAsync(p => p.PaidAmount, cancellationToken);
+                if (order == null)
+                    return await Result<int>.FailureAsync("Associated order not found.");
 
-            if (otherPaymentsTotal + command.PaidAmount > order.TotalAmount)
-                return await Result<int>.FailureAsync(
-                    $"Updated payment would exceed the order total of {order.TotalAmount:F2}.");
+                var otherPaymentsTotal = await _dataContext.Get<Payment>()
+                    .Where(p => p.OrderId == payment.OrderId && p.Id != payment.Id)
+                    .SumAsync(p => p.PaidAmount, cancellationToken);
 
-            payment.PaidAmount    = command.PaidAmount;
-            payment.GrossAmount   = command.PaidAmount;
-            payment.NetAmount     = command.PaidAmount;
-            payment.PaymentMethod = command.PaymentMethod;
-            payment.TransactionId = command.TransactionId;
+                if (otherPaymentsTotal + command.PaidAmount > order.TotalAmount)
+                    return await Result<int>.FailureAsync(
+                        $"Updated payment would exceed the order total of {order.TotalAmount:F2}.");
 
-            _dataContext.Get<Payment>().Update(payment);
-            await _dataContext.SaveChangesAsync(cancellationToken);
+                payment.PaidAmount    = command.PaidAmount;
+                payment.GrossAmount   = command.PaidAmount;
+                payment.NetAmount     = command.PaidAmount;
+                payment.PaymentMethod = command.PaymentMethod;
+                payment.TransactionId = command.TransactionId;
 
-            var allPayments = await _dataContext.Get<Payment>()
-                .Where(p => p.OrderId == payment.OrderId)
-                .ToListAsync(cancellationToken);
+                _dataContext.Get<Payment>().Update(payment);
+                await _dataContext.SaveChangesAsync(cancellationToken);
 
-            PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                var allPayments = await _dataContext.Get<Payment>()
+                    .Where(p => p.OrderId == payment.OrderId)
+                    .ToListAsync(cancellationToken);
 
-            payment.DueAmount     = order.DueAmount;
-            payment.PaymentStatus = order.PaymentStatus;
+                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
 
-            _dataContext.Get<Order>().Update(order);
-            _dataContext.Get<Payment>().Update(payment);
-            await _dataContext.SaveChangesAsync(cancellationToken);
+                payment.DueAmount     = order.DueAmount;
+                payment.PaymentStatus = order.PaymentStatus;
 
-            return await Result<int>.SuccessAsync(payment.Id, "Payment updated.");
+                _dataContext.Get<Order>().Update(order);
+                _dataContext.Get<Payment>().Update(payment);
+                await _dataContext.SaveChangesAsync(cancellationToken);
+
+                return await Result<int>.SuccessAsync(payment.Id, "Payment updated.");
+            }
         }
     }
 }

@@ -12,35 +12,49 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly IPaymentLock _paymentLock;
 
-        public DeletePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public DeletePaymentCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IPaymentLock paymentLock)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _paymentLock = paymentLock;
         }
 
         public async Task<Result<int>> Handle(DeletePaymentCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var payment = await _dataContext.Get<Payment>().FindAsync(new object[] { command.Id }, cancellationToken);
-                if (payment == null)
+                var exists = await _dataContext.Get<Payment>().AnyAsync(p => p.Id == command.Id, cancellationToken);
+                if (!exists)
                     return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
 
-                var orderId = payment.OrderId;
-                _dataContext.Get<Payment>().Remove(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+                int paymentId;
+                using (await _paymentLock.AcquireAsync())
+                {
+                    var payment = await _dataContext.Get<Payment>()
+                        .FirstOrDefaultAsync(p => p.Id == command.Id, cancellationToken);
+                    if (payment == null)
+                        return await Result<int>.FailureAsync($"Payment not found with Id {command.Id}.");
 
-                var order = await _dataContext.Get<Order>().FindAsync(new object[] { orderId }, cancellationToken);
-                var remainingPayments = await _dataContext.Get<Payment>()
-                    .Where(p => p.OrderId == orderId)
-                    .ToListAsync(cancellationToken);
+                    paymentId = payment.Id;
+                    var orderId = payment.OrderId;
 
-                PaymentSyncHelper.SyncOrderPaymentState(order, remainingPayments);
-                _dataContext.Get<Order>().Update(order);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+                    _dataContext.Get<Payment>().Remove(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
 
-                return await Result<int>.SuccessAsync(payment.Id, "Payment deleted.");
+                    var order = await _dataContext.Get<Order>()
+                        .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+                    var remainingPayments = await _dataContext.Get<Payment>()
+                        .Where(p => p.OrderId == orderId)
+                        .ToListAsync(cancellationToken);
+
+                    PaymentSyncHelper.SyncOrderPaymentState(order, remainingPayments);
+                    _dataContext.Get<Order>().Update(order);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                }
+
+                return await Result<int>.SuccessAsync(paymentId, "Payment deleted.");
             }
             catch (Exception ex)
             {

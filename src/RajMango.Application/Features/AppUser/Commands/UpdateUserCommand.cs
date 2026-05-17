@@ -28,12 +28,11 @@ namespace RajMango.Application.Features.Commands
         public string Email { get; set; }
         //public bool EmailConfirmed { get; set; }
 
-        [Required]
         [StringLength(15)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [StringLength(512)]
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
 
         //public int AccessFailedCount { get; set; }
 

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using RajMango.Application.Features.Commands;
+using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
@@ -15,6 +16,7 @@ namespace RajMango.Tests.Handlers.Order
         private readonly Mock<IErrorHandler> _errorHandler = new();
         private readonly Mock<INotificationService> _notification = new();
         private readonly Mock<IRealtimeService> _realtime = new();
+        private readonly IOrderCreationLock _orderCreationLock = new OrderCreationLock();
 
         public CreateOrderCommandHandlerTests()
         {
@@ -43,7 +45,8 @@ namespace RajMango.Tests.Handlers.Order
                 db,
                 currentUser,
                 _notification.Object,
-                _realtime.Object);
+                _realtime.Object,
+                _orderCreationLock);
 
             var command = BuildValidCommand(userId: 999);
 
@@ -72,7 +75,8 @@ namespace RajMango.Tests.Handlers.Order
                 db,
                 currentUser,
                 _notification.Object,
-                _realtime.Object);
+                _realtime.Object,
+                _orderCreationLock);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 
@@ -97,7 +101,8 @@ namespace RajMango.Tests.Handlers.Order
                 db,
                 currentUser,
                 _notification.Object,
-                _realtime.Object);
+                _realtime.Object,
+                _orderCreationLock);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 

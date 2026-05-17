@@ -19,19 +19,22 @@ namespace RajMango.Application.Features.Commands
         private readonly ICurrentUserService _currentUserService;
         private readonly INotificationService _notification;
         private readonly IRealtimeService _realtime;
+        private readonly IOrderCreationLock _orderCreationLock;
 
         public CreateOrderCommandHandler(
             IErrorHandler errorHandler,
             IDataContext dataContext,
             ICurrentUserService currentUserService,
             INotificationService notification,
-            IRealtimeService realtime)
+            IRealtimeService realtime,
+            IOrderCreationLock orderCreationLock)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
             _currentUserService = currentUserService;
             _notification = notification;
             _realtime = realtime;
+            _orderCreationLock = orderCreationLock;
         }
 
         public async Task<Result<int>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
@@ -44,7 +47,7 @@ namespace RajMango.Application.Features.Commands
                 var today = Clock.Now().Date;
                 var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
 
-                // Resolve active MangoAvailability for each requested mango type
+                // Resolve active MangoAvailability for each requested mango type (read-only, outside lock)
                 var availabilities = await _dataContext.Get<MangoAvailability>()
                     .Include(a => a.MangoType)
                     .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
@@ -66,53 +69,57 @@ namespace RajMango.Application.Features.Commands
                         $"The following mango types are not currently available: {string.Join(", ", names)}.");
                 }
 
-                // Backend-authoritative prices: MangoTypeId → PricePerKg
                 var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
 
-                var orderNumber  = await GenerateOrderNumber();
-                var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
-
-                var newOrder = new Order
+                // Critical section: order number generation and persistence are serialized
+                Order newOrder;
+                using (await _orderCreationLock.AcquireAsync())
                 {
-                    UserId        = _currentUserService.UserId,
-                    OrderNumber   = orderNumber,
-                    TotalQuantity = orderSummary.TotalQuantity,
-                    TotalAmount   = orderSummary.TotalAmount,
-                    PaidAmount    = 0,
-                    DueAmount     = orderSummary.TotalAmount,
-                    ReceiverName  = command.ReceiverName,
-                    ReceiverPhone = command.ReceiverPhone,
-                    DeliveryNote  = command.DeliveryNote,
-                };
+                    var orderNumber  = await GenerateOrderNumber();
+                    var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
 
-                if (command.CourierStationId != null)
-                    newOrder.CourierStationId = command.CourierStationId;
-                else
-                    newOrder.FallbackAddress = command.FallbackAddress;
-
-                _dataContext.Get<Order>().Add(newOrder);
-                await _dataContext.SaveChangesAsync(cancellationToken);
-
-                foreach (var detail in command.OrderDetails)
-                {
-                    var crateWeight = DomainUtils.GetCrateWeight(detail.CrateType);
-                    var pricePerKg  = priceMap[detail.MangoTypeId];
-                    var lineKg      = detail.Quantity * crateWeight;
-
-                    newOrder.OrderDetails.Add(new OrderDetail
+                    newOrder = new Order
                     {
-                        OrderId     = newOrder.Id,
-                        MangoTypeId = detail.MangoTypeId,
-                        CrateType   = detail.CrateType,
-                        Quantity    = detail.Quantity,
-                        UnitPrice   = pricePerKg,
-                        Discount    = detail.Discount,
-                        TotalPrice  = lineKg * pricePerKg - detail.Discount,
-                        Note        = detail.Note,
-                    });
-                }
+                        UserId        = _currentUserService.UserId,
+                        OrderNumber   = orderNumber,
+                        TotalQuantity = orderSummary.TotalQuantity,
+                        TotalAmount   = orderSummary.TotalAmount,
+                        PaidAmount    = 0,
+                        DueAmount     = orderSummary.TotalAmount,
+                        ReceiverName  = command.ReceiverName,
+                        ReceiverPhone = command.ReceiverPhone,
+                        DeliveryNote  = command.DeliveryNote,
+                    };
 
-                await _dataContext.SaveChangesAsync(cancellationToken);
+                    if (command.CourierStationId != null)
+                        newOrder.CourierStationId = command.CourierStationId;
+                    else
+                        newOrder.FallbackAddress = command.FallbackAddress;
+
+                    _dataContext.Get<Order>().Add(newOrder);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+
+                    foreach (var detail in command.OrderDetails)
+                    {
+                        var crateWeight = DomainUtils.GetCrateWeight(detail.CrateType);
+                        var pricePerKg  = priceMap[detail.MangoTypeId];
+                        var lineKg      = detail.Quantity * crateWeight;
+
+                        newOrder.OrderDetails.Add(new OrderDetail
+                        {
+                            OrderId     = newOrder.Id,
+                            MangoTypeId = detail.MangoTypeId,
+                            CrateType   = detail.CrateType,
+                            Quantity    = detail.Quantity,
+                            UnitPrice   = pricePerKg,
+                            Discount    = detail.Discount,
+                            TotalPrice  = lineKg * pricePerKg - detail.Discount,
+                            Note        = detail.Note,
+                        });
+                    }
+
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                }
 
                 await _notification.SendOrderConfirmedAsync(newOrder.UserId, newOrder.OrderNumber, cancellationToken);
                 await _realtime.SendToAdminsAsync(RealtimeEvents.OrderCreated,

@@ -44,6 +44,9 @@ namespace RajMango.Application.Features.Commands
                         var passwordHash = _passwordHasher.HashPassword(user, command.Password);
                         user.PasswordHash = passwordHash;
                     }
+
+                    if (command.ImagePath != null)
+                        user.ImagePath = string.IsNullOrEmpty(command.ImagePath) ? null : command.ImagePath;
                     
                     _dataContext.Get<AppUser>().Update(user);
 

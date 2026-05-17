@@ -42,13 +42,18 @@ namespace RajMango.Application.Features.Queries
                 IsActive             = user.IsActive,
                 EmailConfirmed       = user.EmailConfirmed,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                ImagePath            = user.ImagePath,
                 CreatedAt            = user.CreatedAt,
                 UpdatedAt            = user.UpdatedAt,
             };
 
             var userRole = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(r => r.UserId == query.Id, cancellationToken);
             if (userRole != null)
+            {
                 dto.RoleId = userRole.RoleId;
+                var role = await _dataContext.Get<Role>().FirstOrDefaultAsync(r => r.Id == userRole.RoleId, cancellationToken);
+                dto.RoleName = role?.Name;
+            }
 
             return await Result<AppUserDto>.SuccessAsync(dto);
         }

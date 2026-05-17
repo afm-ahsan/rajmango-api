@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using RajMango.Application.Features.Commands;
+using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Domain.Entities;
 using RajMango.Shared.Enums;
@@ -13,6 +14,7 @@ namespace RajMango.Tests.Handlers.Payment
     {
         private readonly Mock<INotificationService> _notification;
         private readonly Mock<IRealtimeService> _realtime;
+        private readonly IPaymentLock _paymentLock = new PaymentLock();
 
         public CreatePaymentCommandHandlerTests()
         {
@@ -31,7 +33,7 @@ namespace RajMango.Tests.Handlers.Payment
         public async Task Handle_OrderNotFound_ReturnsFailure()
         {
             using var db = TestDbContextFactory.Create();
-            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object, _paymentLock);
             var command = new CreatePaymentCommand { OrderId = 999, PaidAmount = 100, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -45,7 +47,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 0);
-            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object, _paymentLock);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 100, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -59,7 +61,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 200);
-            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object, _paymentLock);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 300, PaymentMethod = PaymentMethod.Cash };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -73,7 +75,7 @@ namespace RajMango.Tests.Handlers.Payment
         {
             using var db = TestDbContextFactory.Create();
             var order = SeedOrder(db, totalAmount: 500, dueAmount: 500);
-            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object);
+            var handler = new CreatePaymentCommandHandler(db, _notification.Object, _realtime.Object, _paymentLock);
             var command = new CreatePaymentCommand { OrderId = order.Id, PaidAmount = 200, PaymentMethod = PaymentMethod.Cash, TransactionId = "TXN001" };
 
             var result = await handler.Handle(command, CancellationToken.None);

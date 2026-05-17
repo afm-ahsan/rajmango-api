@@ -6,9 +6,8 @@ namespace RajMango.ClientGen.NSwag
     {
         public string Generate(JsonSchema schema, string typeNameHint, IEnumerable<string> reservedTypeNames)
         {
-            // Strip namespace and apply "I" prefix
-            var rawName = typeNameHint.Split('.').Last();
-            var name = rawName.StartsWith("I") ? rawName : $"I{rawName}";
+            // Strip C# namespace prefix (e.g. "RajMango.Application.DTOs.AppUserDto" → "AppUserDto")
+            var name = typeNameHint.Split('.').Last();
 
             var finalName = name;
             int i = 1;
