@@ -64,6 +64,9 @@ namespace RajMango.DataAccess.Contexts
         // ❓ FAQ / Chatbot
         public virtual DbSet<FaqItem> FaqItems => Set<FaqItem>();
 
+        // 🔢 Sequences
+        public virtual DbSet<OrderNumberCounter> OrderNumberCounters => Set<OrderNumberCounter>();
+
 
         public virtual DbSet<TEntity> Get<TEntity>() where TEntity : class
         {

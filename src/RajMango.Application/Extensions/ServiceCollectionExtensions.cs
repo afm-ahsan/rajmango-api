@@ -39,7 +39,7 @@ namespace RajMango.Application.Extensions
         private static void RegistrationLock(this IServiceCollection services)
         {
             services.AddTransient<IRegistrationLock, RegistrationLock>();
-            services.AddTransient<IOrderCreationLock, OrderCreationLock>();
+            services.AddSingleton<IOrderCreationLock, OrderCreationLock>();
             services.AddTransient<IPaymentLock, PaymentLock>();
             services.AddTransient<IUserAddressLock, UserAddressLock>();
         }

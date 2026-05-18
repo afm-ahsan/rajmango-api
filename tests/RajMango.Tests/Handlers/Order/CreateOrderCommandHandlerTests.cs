@@ -17,6 +17,7 @@ namespace RajMango.Tests.Handlers.Order
         private readonly Mock<INotificationService> _notification = new();
         private readonly Mock<IRealtimeService> _realtime = new();
         private readonly IOrderCreationLock _orderCreationLock = new OrderCreationLock();
+        private readonly Mock<IOrderNumberService> _orderNumberService = new();
 
         public CreateOrderCommandHandlerTests()
         {
@@ -31,6 +32,10 @@ namespace RajMango.Tests.Handlers.Order
                     It.IsAny<object>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
+
+            _orderNumberService
+                .Setup(x => x.GenerateAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync("202605180001");
         }
 
         [Fact]
@@ -46,7 +51,8 @@ namespace RajMango.Tests.Handlers.Order
                 currentUser,
                 _notification.Object,
                 _realtime.Object,
-                _orderCreationLock);
+                _orderCreationLock,
+                _orderNumberService.Object);
 
             var command = BuildValidCommand(userId: 999);
 
@@ -76,7 +82,8 @@ namespace RajMango.Tests.Handlers.Order
                 currentUser,
                 _notification.Object,
                 _realtime.Object,
-                _orderCreationLock);
+                _orderCreationLock,
+                _orderNumberService.Object);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 
@@ -102,7 +109,8 @@ namespace RajMango.Tests.Handlers.Order
                 currentUser,
                 _notification.Object,
                 _realtime.Object,
-                _orderCreationLock);
+                _orderCreationLock,
+                _orderNumberService.Object);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 

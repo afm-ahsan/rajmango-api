@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.DataAccess.Contexts;
 using RajMango.DataAccess.Repositories;
+using RajMango.DataAccess.Services;
 
 namespace RajMango.DataAccess.Extensions
 {
@@ -39,7 +41,8 @@ namespace RajMango.DataAccess.Extensions
             services
                 .AddScoped(typeof(IDataContext), typeof(AppDbContext))
                 .AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork))
-                .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+                .AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+                .AddTransient<IOrderNumberService, OrderNumberService>();
             //.AddTransient<IPlayerRepository, PlayerRepository>();
         }
     }

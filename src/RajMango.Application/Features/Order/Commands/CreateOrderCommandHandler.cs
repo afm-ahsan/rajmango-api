@@ -8,7 +8,6 @@ using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
 using RajMango.Shared.Utils;
-using System.Globalization;
 
 namespace RajMango.Application.Features.Commands
 {
@@ -20,6 +19,7 @@ namespace RajMango.Application.Features.Commands
         private readonly INotificationService _notification;
         private readonly IRealtimeService _realtime;
         private readonly IOrderCreationLock _orderCreationLock;
+        private readonly IOrderNumberService _orderNumberService;
 
         public CreateOrderCommandHandler(
             IErrorHandler errorHandler,
@@ -27,7 +27,8 @@ namespace RajMango.Application.Features.Commands
             ICurrentUserService currentUserService,
             INotificationService notification,
             IRealtimeService realtime,
-            IOrderCreationLock orderCreationLock)
+            IOrderCreationLock orderCreationLock,
+            IOrderNumberService orderNumberService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
@@ -35,6 +36,7 @@ namespace RajMango.Application.Features.Commands
             _notification = notification;
             _realtime = realtime;
             _orderCreationLock = orderCreationLock;
+            _orderNumberService = orderNumberService;
         }
 
         public async Task<Result<int>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
@@ -51,9 +53,10 @@ namespace RajMango.Application.Features.Commands
                 var availabilities = await _dataContext.Get<MangoAvailability>()
                     .Include(a => a.MangoType)
                     .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
-                             && a.Status == MangoAvailabilityStatus.Available
-                             && a.StartDate.Date <= today
-                             && a.EndDate.Date >= today)
+                             && a.Status == MangoAvailabilityStatus.Available)
+                             //TODO
+                             //&& a.StartDate.Date <= today
+                             //&& a.EndDate.Date >= today)
                     .ToListAsync(cancellationToken);
 
                 var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
@@ -75,7 +78,7 @@ namespace RajMango.Application.Features.Commands
                 Order newOrder;
                 using (await _orderCreationLock.AcquireAsync())
                 {
-                    var orderNumber  = await GenerateOrderNumber();
+                    var orderNumber  = await _orderNumberService.GenerateAsync(cancellationToken);
                     var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
 
                     newOrder = new Order
@@ -135,14 +138,5 @@ namespace RajMango.Application.Features.Commands
             return await Result<int>.FailureAsync("Order creation failed.");
         }
 
-        private async Task<string> GenerateOrderNumber(DateTime? date = null)
-        {
-            var today = (date ?? Clock.Now()).Date;
-            var countToday = await _dataContext.Get<Order>()
-                .Where(x => x.OrderDate.Date == today)
-                .CountAsync();
-            var formattedDate = today.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-            return $"{formattedDate}{(countToday + 1):D2}";
-        }
     }
 }
