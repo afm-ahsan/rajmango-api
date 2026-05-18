@@ -6,6 +6,7 @@
         public ApiInfo ApiInfo { get; set; }
         public BkashSettings Bkash { get; set; }
         public RedisSettings Redis { get; set; }
+        public CloudflareTurnstileSettings CloudflareTurnstile { get; set; }
     }
 
     public class BkashSettings
@@ -42,6 +43,11 @@
         public string Authority { get; set; }
         public string SecurityScheme { get; set; }
         public string Description { get; set; }
+    }
+
+    public class CloudflareTurnstileSettings
+    {
+        public string SecretKey { get; set; }
     }
 
     public class ApiInfo

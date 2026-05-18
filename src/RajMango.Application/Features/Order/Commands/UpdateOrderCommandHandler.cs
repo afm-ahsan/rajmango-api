@@ -14,11 +14,16 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UpdateOrderCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
+        public UpdateOrderCommandHandler(
+            IErrorHandler errorHandler,
+            IDataContext dataContext,
+            ICurrentUserService currentUserService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<int>> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
@@ -28,6 +33,18 @@ namespace RajMango.Application.Features.Commands
                 var order = await _dataContext.Get<Order>().FindAsync(new object[] { command.Id }, cancellationToken);
                 if (order == null)
                     return await Result<int>.FailureAsync($"Order not found with Id {command.Id}.");
+
+                var isPrivileged = _currentUserService.IsAdmin || _currentUserService.IsSuperAdmin;
+
+                if (!isPrivileged)
+                {
+                    if (order.UserId != _currentUserService.UserId)
+                        return await Result<int>.FailureAsync("You are not authorized to edit this order.");
+
+                    if (order.OrderStatus != OrderStatus.Pending)
+                        return await Result<int>.FailureAsync(
+                            $"Order {order.OrderNumber} can no longer be edited. Only pending orders can be modified.");
+                }
 
                 if (order.OrderStatus is OrderStatus.Shipped
                                       or OrderStatus.Delivered

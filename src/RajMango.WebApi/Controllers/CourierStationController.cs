@@ -50,7 +50,7 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet("available")]
-        [RequirePermission(Permissions.CourierStations.View)]
+        //[RequirePermission(Permissions.CourierStations.View)]
         public async Task<ActionResult<Result<List<AvailableCourierStationDto>>>> GetStationsByArea([FromQuery] AvailableCourierStationQuery query)
         {
             return await _mediator.Send(query);

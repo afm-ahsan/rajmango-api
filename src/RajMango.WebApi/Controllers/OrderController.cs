@@ -93,7 +93,6 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [RequirePermission(Permissions.Orders.Update)]
         public async Task<ActionResult<Result<int>>> Put(int id, [FromBody] UpdateOrderCommand command)
         {
             if (id != command.Id)
@@ -121,7 +120,6 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [RequirePermission(Permissions.Orders.Delete)]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {
             return await _mediator.Send(new DeleteOrderCommand { Id = id });

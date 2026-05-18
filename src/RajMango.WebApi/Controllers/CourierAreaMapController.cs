@@ -44,7 +44,6 @@ namespace RajMango.WebApi.Controllers
         }
 
         [HttpGet("dropdown")]
-        [RequirePermission(Permissions.CourierAreaMaps.View)]
         public async Task<ActionResult<Result<List<CourierAreaDropdownDto>>>> GetDropdown()
         {
             return await _mediator.Send(new GetCourierAreaDropdownQuery());

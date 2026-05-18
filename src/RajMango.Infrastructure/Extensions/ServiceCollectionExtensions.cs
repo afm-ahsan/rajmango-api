@@ -32,7 +32,13 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IBkashService, BkashService>()
                 .AddTransient<ICacheService, RedisCacheService>()
                 .AddTransient<IFileStorageService, LocalFileStorageService>()
+                .AddTransient<ITurnstileVerificationService, TurnstileVerificationService>()
                 .AddScoped<IPermissionService, PermissionService>();
+
+            services.AddHttpClient("Turnstile", (_, client) =>
+            {
+                client.BaseAddress = new Uri("https://challenges.cloudflare.com/turnstile/v0/");
+            });
 
             services.AddHttpClient("Bkash", (sp, client) =>
             {
