@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RajMango.Application.Features.Commands;
 using RajMango.Application.Features.Queries;
 using RajMango.Shared;
@@ -14,11 +15,13 @@ namespace RajMango.WebApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<AuthController> _logger;
+        private readonly AppSettings _appSettings;
 
-        public AuthController(IMediator mediator, ILogger<AuthController> logger)
+        public AuthController(IMediator mediator, ILogger<AuthController> logger, IOptions<AppSettings> appSettings)
         {
             _mediator = mediator;
             _logger = logger;
+            _appSettings = appSettings.Value;
         }
 
         [HttpPost("login")]
@@ -33,6 +36,18 @@ namespace RajMango.WebApi.Controllers
         {
             _logger.LogInformation("POST /validate token endpoint was called at {Time}", DateTime.UtcNow);
             return await _mediator.Send(command);
+        }
+
+        [HttpGet("config")]
+        public IActionResult GetConfig()
+        {
+            var ts = _appSettings?.CloudflareTurnstile;
+            var enabled = ts?.Enabled ?? false;
+            return Ok(new
+            {
+                enabled,
+                siteKey = enabled ? (ts!.SiteKey ?? string.Empty) : string.Empty,
+            });
         }
 
         [HttpPost("registration")]

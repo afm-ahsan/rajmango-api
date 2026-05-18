@@ -47,7 +47,10 @@
 
     public class CloudflareTurnstileSettings
     {
+        public bool Enabled { get; set; } = false;
+        public string SiteKey { get; set; }
         public string SecretKey { get; set; }
+        public string VerifyUrl { get; set; } = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
     }
 
     public class ApiInfo

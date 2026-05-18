@@ -23,25 +23,38 @@ namespace RajMango.Infrastructure.Services
             IHttpClientFactory httpClientFactory,
             ILogger<TurnstileVerificationService> logger)
         {
-            _settings = options.Value.CloudflareTurnstile
-                ?? throw new InvalidOperationException("CloudflareTurnstile settings are not configured.");
+            _settings = options.Value?.CloudflareTurnstile ?? new CloudflareTurnstileSettings();
             _httpClientFactory = httpClientFactory;
             _logger = logger;
         }
 
         public async Task<bool> VerifyAsync(string token, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(token))
-                return false;
+            if (!_settings.Enabled)
+            {
+                _logger.LogDebug("Cloudflare Turnstile is disabled. Skipping verification.");
+                return true;
+            }
 
             if (string.IsNullOrWhiteSpace(_settings.SecretKey))
             {
-                _logger.LogWarning("Cloudflare Turnstile SecretKey is not configured. Skipping verification.");
+                _logger.LogError("Cloudflare Turnstile is enabled but SecretKey is not configured. " +
+                                 "Set CLOUDFLARETURNSTILE__SECRETKEY environment variable.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                _logger.LogWarning("Turnstile token is missing from request.");
                 return false;
             }
 
             try
             {
+                var verifyUrl = string.IsNullOrWhiteSpace(_settings.VerifyUrl)
+                    ? "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+                    : _settings.VerifyUrl;
+
                 var client = _httpClientFactory.CreateClient("Turnstile");
                 var formData = new FormUrlEncodedContent(new[]
                 {
@@ -49,7 +62,7 @@ namespace RajMango.Infrastructure.Services
                     new KeyValuePair<string, string>("response", token),
                 });
 
-                var response = await client.PostAsync("siteverify", formData, cancellationToken);
+                var response = await client.PostAsync(verifyUrl, formData, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning("Turnstile siteverify returned HTTP {StatusCode}.", response.StatusCode);
@@ -58,7 +71,12 @@ namespace RajMango.Infrastructure.Services
 
                 var body = await response.Content.ReadAsStringAsync(cancellationToken);
                 using var doc = JsonDocument.Parse(body);
-                return doc.RootElement.TryGetProperty("success", out var successProp) && successProp.GetBoolean();
+                var success = doc.RootElement.TryGetProperty("success", out var successProp) && successProp.GetBoolean();
+
+                if (!success)
+                    _logger.LogWarning("Turnstile verification rejected token. Response: {Body}", body);
+
+                return success;
             }
             catch (Exception ex)
             {

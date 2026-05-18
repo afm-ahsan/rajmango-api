@@ -35,10 +35,7 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<ITurnstileVerificationService, TurnstileVerificationService>()
                 .AddScoped<IPermissionService, PermissionService>();
 
-            services.AddHttpClient("Turnstile", (_, client) =>
-            {
-                client.BaseAddress = new Uri("https://challenges.cloudflare.com/turnstile/v0/");
-            });
+            services.AddHttpClient("Turnstile");
 
             services.AddHttpClient("Bkash", (sp, client) =>
             {
