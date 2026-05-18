@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -33,15 +34,27 @@ namespace RajMango.Application.Features.Commands
             {
                 try
                 {
+                    var normalizedPhone = BangladeshPhoneNormalizer.Normalize(command.PhoneNumber)!;
+                    var emailLower      = command.Email.Trim().ToLower();
+
+                    var emailTaken = await _dataContext.Get<AppUser>()
+                        .AnyAsync(u => u.Email.ToLower() == emailLower, cancellationToken);
+                    if (emailTaken)
+                        return await Result<int>.FailureAsync("Email address already exists.");
+
+                    var phoneTaken = await _dataContext.Get<AppUser>()
+                        .AnyAsync(u => u.PhoneNumber == normalizedPhone, cancellationToken);
+                    if (phoneTaken)
+                        return await Result<int>.FailureAsync("Phone number already exists.");
+
                     var userName = await GenerateUniqueUserNameAsync(command.FirstName, command.LastName);
-                    var passwordHash = _passwordHasher.HashPassword(new AppUser(), command.Password);
                     var newUser = new AppUser
                     {
                         UserName = userName,
                         FirstName = command.FirstName,
                         LastName = command.LastName,
-                        Email = command.Email,
-                        PhoneNumber = command.PhoneNumber,
+                        Email = command.Email.Trim(),
+                        PhoneNumber = normalizedPhone,
                         IsActive = true,
                         EmailConfirmed = false,
                         PhoneNumberConfirmed = false,

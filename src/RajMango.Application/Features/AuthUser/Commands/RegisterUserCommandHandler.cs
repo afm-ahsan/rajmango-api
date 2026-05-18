@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -41,16 +42,19 @@ namespace RajMango.Application.Features.Commands
             {
                 try
                 {
+                    var normalizedPhone = BangladeshPhoneNormalizer.Normalize(command.PhoneNumber)!;
+                    var emailLower      = command.Email.Trim().ToLower();
+
                     // Uniqueness checks
                     var emailTaken = await _dataContext.Get<AppUser>()
-                        .AnyAsync(u => u.Email == command.Email, cancellationToken);
+                        .AnyAsync(u => u.Email.ToLower() == emailLower, cancellationToken);
                     if (emailTaken)
-                        return await Result<int>.FailureAsync("An account with this email address already exists.");
+                        return await Result<int>.FailureAsync("Email address already exists.");
 
                     var phoneTaken = await _dataContext.Get<AppUser>()
-                        .AnyAsync(u => u.PhoneNumber == command.PhoneNumber, cancellationToken);
+                        .AnyAsync(u => u.PhoneNumber == normalizedPhone, cancellationToken);
                     if (phoneTaken)
-                        return await Result<int>.FailureAsync("An account with this phone number already exists.");
+                        return await Result<int>.FailureAsync("Phone number already exists.");
 
                     var userName     = await GenerateUniqueUserNameAsync(command.FirstName, command.LastName);
                     var passwordHash = _passwordHasher.HashPassword(null, command.Password);
@@ -60,8 +64,8 @@ namespace RajMango.Application.Features.Commands
                         UserName             = userName,
                         FirstName            = command.FirstName,
                         LastName             = command.LastName,
-                        Email                = command.Email,
-                        PhoneNumber          = command.PhoneNumber,
+                        Email                = command.Email.Trim(),
+                        PhoneNumber          = normalizedPhone,
                         PasswordHash         = passwordHash,
                         IsActive             = true,
                         EmailConfirmed       = false,
@@ -88,8 +92,8 @@ namespace RajMango.Application.Features.Commands
                         UserId       = newUser.Id,
                         FirstName    = command.FirstName,
                         LastName     = command.LastName,
-                        PhoneNumber1 = command.PhoneNumber,
-                        Email        = command.Email,
+                        PhoneNumber1 = normalizedPhone,
+                        Email        = command.Email.Trim(),
                         CustomerType = CustomerType.Regular,
                         IsActive     = true,
                         CreatedBy    = newUser.Id,

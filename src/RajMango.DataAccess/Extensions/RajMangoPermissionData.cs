@@ -8,7 +8,7 @@ namespace RajMango.DataAccess.Extensions
         public static string AdminPermissionJson() =>
             JsonSerializer.Serialize(Permissions.AdminPermissions);
 
-        public static string GeneralPermissionJson() =>
+        public static string SelfRegisterPermissionJson() =>
             JsonSerializer.Serialize(Permissions.GeneralPermissions);
     }
 }

@@ -178,10 +178,11 @@ namespace RajMango.Shared
         /// <summary>Permissions granted to the General (customer) role.</summary>
         public static IReadOnlyList<string> GeneralPermissions => new[]
         {
-            Orders.View, Orders.Create,
+            Orders.View, Orders.Create, Orders.Update, Orders.Delete,
             MangoTypes.View, MangoAvailability.View,
             Dashboard.CustomerView,
             Complaints.Submit,
+            Policies.View,
         };
     }
 }

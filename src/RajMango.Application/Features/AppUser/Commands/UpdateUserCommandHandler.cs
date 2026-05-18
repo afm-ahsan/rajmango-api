@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RajMango.Application.Common;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -35,8 +36,8 @@ namespace RajMango.Application.Features.Commands
                 {
                     user.FirstName = command.FirstName;
                     user.LastName = command.LastName;
-                    user.Email = command.Email;
-                    user.PhoneNumber = command.PhoneNumber;
+                    user.Email = command.Email.Trim();
+                    user.PhoneNumber = BangladeshPhoneNormalizer.Normalize(command.PhoneNumber) ?? command.PhoneNumber;
                     user.IsActive = command.IsActive;
 
                     if (!string.IsNullOrWhiteSpace(command.Password))

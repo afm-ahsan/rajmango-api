@@ -7,6 +7,8 @@ namespace RajMango.Domain.Entities
 {
     [Table("AppUsers")]
     [Index(nameof(UserName), IsUnique = true)]
+    [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(PhoneNumber), IsUnique = true)]
     public class AppUser : FullAuditedEntity, IHasId<int>
     {
         [Key]
@@ -29,8 +31,8 @@ namespace RajMango.Domain.Entities
         public string FullName => $"{FirstName} {LastName}";
 
         [Required]
-        [StringLength(15)]
-        public string PhoneNumber { get; set; }        
+        [StringLength(30)]
+        public string PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
 
         [Required]

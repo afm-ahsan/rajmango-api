@@ -82,8 +82,8 @@ namespace RajMango.DataAccess.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -100,6 +100,12 @@ namespace RajMango.DataAccess.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -122,7 +128,7 @@ namespace RajMango.DataAccess.Migrations
                             IsLocked = false,
                             LastName = "Admin",
                             PasswordHash = "AQAAAAIAAYagAAAAEDE/v9e0mVuBEu6lrnlF/4j9+zEAOk/hYcYGWjbtkXcT3g+m/IXMuAehq/e7fg22EQ==",
-                            PhoneNumber = "01700000000",
+                            PhoneNumber = "+8801700000001",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
                             UserName = "SA1000"
@@ -142,7 +148,7 @@ namespace RajMango.DataAccess.Migrations
                             IsLocked = false,
                             LastName = "User",
                             PasswordHash = "AQAAAAIAAYagAAAAEB6l+JawdWyWIZi8NF2uC+Amnzxl76IrPFjNoP+XYX/UEgvngFA9xQ5EritkrN91tw==",
-                            PhoneNumber = "01700000000",
+                            PhoneNumber = "+8801700000002",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
                             UserName = "AU2000"
@@ -162,7 +168,7 @@ namespace RajMango.DataAccess.Migrations
                             IsLocked = false,
                             LastName = "User",
                             PasswordHash = "AQAAAAIAAYagAAAAEGX8doiEh5x2yHLQxzr7uK867tcQNM+m1lYJz6fmjiV1CufysvzQUCMP+DltPde92A==",
-                            PhoneNumber = "01700000000",
+                            PhoneNumber = "+8801700000003",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
                             UserName = "GU3000"

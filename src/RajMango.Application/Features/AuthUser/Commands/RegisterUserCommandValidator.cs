@@ -1,4 +1,5 @@
 using FluentValidation;
+using RajMango.Application.Common;
 using System.Text.RegularExpressions;
 
 namespace RajMango.Application.Features.Commands
@@ -17,7 +18,8 @@ namespace RajMango.Application.Features.Commands
 
             RuleFor(x => x.PhoneNumber)
                 .NotEmpty().WithMessage("Phone number is required.")
-                .MaximumLength(15).WithMessage("Phone number must not exceed 15 characters.");
+                .Must(p => BangladeshPhoneNormalizer.IsValid(BangladeshPhoneNormalizer.Normalize(p)))
+                .WithMessage("Please enter a valid Bangladesh mobile number.");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")

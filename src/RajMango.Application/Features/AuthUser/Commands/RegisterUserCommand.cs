@@ -15,7 +15,7 @@ namespace RajMango.Application.Features.Commands
         public string LastName { get; set; }
         
         [Required]
-        [StringLength(15)]
+        [StringLength(20)]
         public string PhoneNumber { get; set; }
 
         [Required]

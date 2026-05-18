@@ -139,7 +139,7 @@ namespace RajMango.Tests.Handlers.Auth
             var result2 = await handler.Handle(command2, CancellationToken.None);
 
             result2.Succeeded.Should().BeFalse();
-            result2.Messages.Should().Contain(m => m.Contains("email"));
+            result2.Messages.Should().Contain(m => m.Contains("email", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]

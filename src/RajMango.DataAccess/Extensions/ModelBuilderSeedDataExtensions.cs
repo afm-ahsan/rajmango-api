@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
-using System.Text.Json;
 using SharedPermissions = RajMango.Shared.Permissions;
 
 namespace RajMango.DataAccess.Extensions
@@ -41,10 +40,10 @@ namespace RajMango.DataAccess.Extensions
                 new Role
                 {
                     Id = 3,
-                    Name = "General",
-                    Code = "general",
+                    Name = "Self Register",
+                    Code = "self_register",
                     Description = "Standard user like a customer access only order related features",
-                    PermissionJson = RajMangoPermissionData.GeneralPermissionJson(),
+                    PermissionJson = RajMangoPermissionData.SelfRegisterPermissionJson(),
                     IsActive = true,
                     IsSystemRole = true,
                     CreatedBy = 1,
@@ -57,12 +56,12 @@ namespace RajMango.DataAccess.Extensions
                 new AppUser
                 {
                     Id = 1,
-                    UserName = "SA1000",
+                    UserName = "SA1722",
                     FirstName = "System",
                     LastName = "Admin",
-                    PhoneNumber = "01700000000",
+                    PhoneNumber = "+8801717441690",
                     PhoneNumberConfirmed = true,
-                    Email = "systemadmin@rajmango.com",
+                    Email = "sysadmin@rajmango.com",
                     EmailConfirmed = true,
                     PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, "SysAdmin@1690#"),
                     AccessFailedCount = 0,
@@ -74,10 +73,10 @@ namespace RajMango.DataAccess.Extensions
                 new AppUser
                 {
                     Id = 2,
-                    UserName = "AU2000",
+                    UserName = "AU1982",
                     FirstName = "Admin",
                     LastName = "User",
-                    PhoneNumber = "01700000000",
+                    PhoneNumber = "+8801323993377",
                     PhoneNumberConfirmed = true,
                     Email = "admin@rajmango.com",
                     EmailConfirmed = true,
@@ -91,14 +90,14 @@ namespace RajMango.DataAccess.Extensions
                 new AppUser
                 {
                     Id = 3,
-                    UserName = "GU3000",
-                    FirstName = "General",
-                    LastName = "User",
-                    PhoneNumber = "01700000000",
+                    UserName = "SR3300",
+                    FirstName = "Self",
+                    LastName = "Register",
+                    PhoneNumber = "+8801323993388",
                     PhoneNumberConfirmed = true,
-                    Email = "general@rajmango.com",
+                    Email = "sr@rajmango.com",
                     EmailConfirmed = true,
-                    PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, "General@1690#"),
+                    PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, "Self@1690#"),
                     AccessFailedCount = 0,
                     IsLocked = false,
                     IsActive = true,
@@ -151,7 +150,7 @@ namespace RajMango.DataAccess.Extensions
                     ImagePath = "/uploads/mango-types/2026/05/mango-type-1-gopalbhog.jpg",
                     Sequence = 1,
                     Region = "Rajshahi",
-                    AverageWeight = "250-350g",
+                    AverageWeight = "325-350g",
                     MangoGrade = MangoGrade.Premium,
                     SweetnessLevel = SweetnessLevel.VeryHigh,
                     CreatedAt = DateTime.Now,
@@ -165,7 +164,7 @@ namespace RajMango.DataAccess.Extensions
                 ImagePath = "/uploads/mango-types/2026/05/mango-type-2-himsagor.jpg",
                 Sequence = 2,
                 Region = "Chapainawabganj",
-                AverageWeight = "300-400g",
+                AverageWeight = "400-425g",
                 MangoGrade = MangoGrade.Premium,
                 SweetnessLevel = SweetnessLevel.VeryHigh,
                 CreatedAt = DateTime.Now,
@@ -179,7 +178,7 @@ namespace RajMango.DataAccess.Extensions
                 ImagePath = "/uploads/mango-types/2026/05/mango-type-3-langra.jpg",
                 Sequence = 3,
                 Region = "Rajshahi",
-                AverageWeight = "300-500g",
+                AverageWeight = "375-400g",
                 MangoGrade = MangoGrade.Standard,
                 SweetnessLevel = SweetnessLevel.High,
                 CreatedAt = DateTime.Now,
@@ -193,7 +192,7 @@ namespace RajMango.DataAccess.Extensions
                 ImagePath = "/uploads/mango-types/2026/05/mango-type-4-amrupali.jpg",
                 Sequence = 4,
                 Region = "Rajshahi",
-                AverageWeight = "200-300g",
+                AverageWeight = "250-300g",
                 MangoGrade = MangoGrade.Premium,
                 SweetnessLevel = SweetnessLevel.High,
                 CreatedAt = DateTime.Now,
@@ -207,7 +206,7 @@ namespace RajMango.DataAccess.Extensions
                 ImagePath = "/uploads/mango-types/2026/05/mango-type-5-brindabon.jpg",
                 Sequence = 5,
                 Region = "Brindabonpur",
-                AverageWeight = "250-350g",
+                AverageWeight = "250-275g",
                 MangoGrade = MangoGrade.Standard,
                 SweetnessLevel = SweetnessLevel.Medium,
                 CreatedAt = DateTime.Now,
@@ -221,7 +220,7 @@ namespace RajMango.DataAccess.Extensions
                 ImagePath = "/uploads/mango-types/2026/05/mango-type-6-fazli.jpg",
                 Sequence = 6,
                 Region = "Rajshahi",
-                AverageWeight = "500-700g",
+                AverageWeight = "850-950g",
                 MangoGrade = MangoGrade.Standard,
                 SweetnessLevel = SweetnessLevel.Medium,
                 CreatedAt = DateTime.Now,
