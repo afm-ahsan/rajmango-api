@@ -76,7 +76,9 @@
       "PowerShell(Invoke-Sqlcmd *)",
       "PowerShell(sqlcmd *)",
       "PowerShell(Get-Content *)",
-      "Bash(Remove-Item *)"
+      "Bash(Remove-Item *)",
+      "Bash(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\app.module.ts\" -Pattern \"APP_INITIALIZER|AppConfigService|loadConfig\")",
+      "Bash(findstr *)"
     ]
   }
 }
