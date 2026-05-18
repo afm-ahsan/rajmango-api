@@ -74,7 +74,8 @@
       "Bash(Select-String -Pattern \"error|Error|warning CS|Build succeeded|Build FAILED\")",
       "Bash(Select-Object -First 30)",
       "PowerShell(Invoke-Sqlcmd *)",
-      "PowerShell(sqlcmd *)"
+      "PowerShell(sqlcmd *)",
+      "PowerShell(Get-Content *)"
     ]
   }
 }

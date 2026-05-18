@@ -9,9 +9,9 @@ namespace RajMango.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Feedback> builder)
         {
             builder.HasOne(f => f.Order)
-                   .WithMany()
+                   .WithMany(o => o.Feedbacks)
                    .HasForeignKey(f => f.OrderId)
-                   .OnDelete(DeleteBehavior.Restrict); // Prevent cascade
+                   .OnDelete(DeleteBehavior.Restrict);
 
             // You can add more config here if needed (e.g. indexes, defaults)
         }

@@ -146,10 +146,18 @@ builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { error = "An unexpected error occurred." });
+        });
+    });
     app.UseHsts();
 }
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || configuration.GetValue<bool>("Swagger:Enabled"))
 {
     app
     .UseSwagger()
