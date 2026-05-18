@@ -62,9 +62,9 @@ namespace RajMango.Application.Features.Commands
                 var availabilities = await _dataContext.Get<MangoAvailability>()
                     .Include(a => a.MangoType)
                     .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
-                             && a.Status == MangoAvailabilityStatus.Available
-                             && a.StartDate.Date <= today
-                             && a.EndDate.Date >= today)
+                             && a.Status == MangoAvailabilityStatus.Available)
+                             //&& a.StartDate.Date <= today
+                             //&& a.EndDate.Date >= today)
                     .ToListAsync(cancellationToken);
 
                 var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
@@ -90,12 +90,13 @@ namespace RajMango.Application.Features.Commands
                 foreach (var d in existingDetails)
                     _dataContext.Get<OrderDetail>().Remove(d);
 
-                order.TotalQuantity = orderSummary.TotalQuantity;
-                order.TotalAmount   = orderSummary.TotalAmount;
-                order.DueAmount     = orderSummary.TotalAmount - order.PaidAmount;
-                order.ReceiverName  = command.ReceiverName;
-                order.ReceiverPhone = command.ReceiverPhone;
-                order.DeliveryNote  = command.DeliveryNote;
+                order.TotalQuantity        = orderSummary.TotalQuantity;
+                order.TotalAmount          = orderSummary.TotalAmount;
+                order.DueAmount            = orderSummary.TotalAmount - order.PaidAmount;
+                order.ReceiverType         = command.ReceiverType;
+                order.ReceiverName         = command.ReceiverName;
+                order.ReceiverMobileNumber = command.ReceiverMobileNumber;
+                order.DeliveryNote         = command.DeliveryNote;
 
                 if (command.CourierStationId != null)
                 {

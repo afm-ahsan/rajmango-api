@@ -66,9 +66,9 @@ namespace RajMango.Application.Features.Queries
 
             // Load today's active availabilities keyed by MangoTypeId
             var availabilities = await _dataContext.Get<MangoAvailability>()
-                .Where(a => a.Status == MangoAvailabilityStatus.Available
-                         && a.StartDate.Date <= today
-                         && a.EndDate.Date >= today)
+                .Where(a => a.Status == MangoAvailabilityStatus.Available)
+                         //&& a.StartDate.Date <= today
+                         //&& a.EndDate.Date >= today)
                 .Select(a => new
                 {
                     a.MangoTypeId, a.PricePerKg,

@@ -57,11 +57,13 @@ namespace RajMango.Domain.Entities
         [StringLength(500)]
         public string FallbackAddress { get; set; }
 
+        public ReceiverType ReceiverType { get; set; } = ReceiverType.Self;
+
         [StringLength(100)]
         public string ReceiverName { get; set; }
 
         [StringLength(20)]
-        public string ReceiverPhone { get; set; }
+        public string ReceiverMobileNumber { get; set; }
 
         [StringLength(500)]
         public string DeliveryNote { get; set; }

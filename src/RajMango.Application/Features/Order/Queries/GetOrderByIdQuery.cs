@@ -52,11 +52,12 @@ namespace RajMango.Application.Features.Queries
                 IsDelivered      = order.IsDelivered,
                 DeliveryDate     = order.DeliveryDate,
                 TrackingNumber   = order.TrackingNumber,
-                CourierStationId = order.CourierStationId,
-                FallbackAddress  = order.FallbackAddress,
-                ReceiverName     = order.ReceiverName,
-                ReceiverPhone    = order.ReceiverPhone,
-                DeliveryNote     = order.DeliveryNote,
+                CourierStationId     = order.CourierStationId,
+                FallbackAddress      = order.FallbackAddress,
+                ReceiverType         = order.ReceiverType,
+                ReceiverName         = order.ReceiverName,
+                ReceiverMobileNumber = order.ReceiverMobileNumber,
+                DeliveryNote         = order.DeliveryNote,
                 UserId           = order.UserId,
                 OrderDetails = order.OrderDetails.Select(d => new OrderDetailDto
                 {

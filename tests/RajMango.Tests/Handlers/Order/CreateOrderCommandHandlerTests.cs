@@ -125,7 +125,7 @@ namespace RajMango.Tests.Handlers.Order
             {
                 UserId = userId,
                 ReceiverName = "Receiver",
-                ReceiverPhone = "01700000000",
+                ReceiverMobileNumber = "01700000000",
                 FallbackAddress = "Rajshahi",
                 OrderDetails = new[]
                 {

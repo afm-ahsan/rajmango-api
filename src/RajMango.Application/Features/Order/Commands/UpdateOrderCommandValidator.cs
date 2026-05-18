@@ -12,6 +12,23 @@ namespace RajMango.Application.Features.Commands
                 .GreaterThan(0)
                 .WithMessage("A valid order Id is required.");
 
+            RuleFor(x => x.ReceiverType)
+                .IsInEnum()
+                .WithMessage("Receiver type must be Self or Others.");
+
+            When(x => x.ReceiverType == ReceiverType.Others, () =>
+            {
+                RuleFor(x => x.ReceiverName)
+                    .NotEmpty()
+                    .WithMessage("Receiver name is required when delivering to someone else.")
+                    .MaximumLength(100);
+
+                RuleFor(x => x.ReceiverMobileNumber)
+                    .NotEmpty()
+                    .WithMessage("Receiver mobile number is required when delivering to someone else.")
+                    .MaximumLength(20);
+            });
+
             RuleFor(x => x.OrderDetails)
                 .NotEmpty()
                 .WithMessage("At least one order line is required.");

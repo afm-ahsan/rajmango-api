@@ -94,9 +94,9 @@ namespace RajMango.Application.Features.Queries
 
             var availableMangoes = await _dataContext.Get<MangoAvailability>()
                 .Include(a => a.MangoType)
-                .Where(a => a.Status == MangoAvailabilityStatus.Available
-                         && a.StartDate.Date <= today
-                         && a.EndDate.Date >= today)
+                .Where(a => a.Status == MangoAvailabilityStatus.Available)
+                         //&& a.StartDate.Date <= today
+                         //&& a.EndDate.Date >= today)
                 .OrderBy(a => a.MangoType.Name)
                 .Select(a => new DashboardMangoAvailabilityDto
                 {

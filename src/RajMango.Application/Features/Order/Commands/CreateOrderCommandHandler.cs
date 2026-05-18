@@ -83,15 +83,16 @@ namespace RajMango.Application.Features.Commands
 
                     newOrder = new Order
                     {
-                        UserId        = _currentUserService.UserId,
-                        OrderNumber   = orderNumber,
-                        TotalQuantity = orderSummary.TotalQuantity,
-                        TotalAmount   = orderSummary.TotalAmount,
-                        PaidAmount    = 0,
-                        DueAmount     = orderSummary.TotalAmount,
-                        ReceiverName  = command.ReceiverName,
-                        ReceiverPhone = command.ReceiverPhone,
-                        DeliveryNote  = command.DeliveryNote,
+                        UserId               = _currentUserService.UserId,
+                        OrderNumber          = orderNumber,
+                        TotalQuantity        = orderSummary.TotalQuantity,
+                        TotalAmount          = orderSummary.TotalAmount,
+                        PaidAmount           = 0,
+                        DueAmount            = orderSummary.TotalAmount,
+                        ReceiverType         = command.ReceiverType,
+                        ReceiverName         = command.ReceiverName,
+                        ReceiverMobileNumber = command.ReceiverMobileNumber,
+                        DeliveryNote         = command.DeliveryNote,
                     };
 
                     if (command.CourierStationId != null)

@@ -47,11 +47,12 @@ namespace RajMango.Application.Features.Queries
                     IsDelivered      = o.IsDelivered,
                     DeliveryDate     = o.DeliveryDate,
                     TrackingNumber   = o.TrackingNumber,
-                    CourierStationId = o.CourierStationId,
-                    FallbackAddress  = o.FallbackAddress,
-                    ReceiverName     = o.ReceiverName,
-                    ReceiverPhone    = o.ReceiverPhone,
-                    DeliveryNote     = o.DeliveryNote,
+                    CourierStationId     = o.CourierStationId,
+                    FallbackAddress      = o.FallbackAddress,
+                    ReceiverType         = o.ReceiverType,
+                    ReceiverName         = o.ReceiverName,
+                    ReceiverMobileNumber = o.ReceiverMobileNumber,
+                    DeliveryNote         = o.DeliveryNote,
                     UserId           = o.UserId,
                     OrderDetails = o.OrderDetails.Select(d => new OrderDetailDto
                     {

@@ -4,6 +4,7 @@ namespace RajMango.Application.DTOs.Order
 {
     public class OrderDto
     {
+        public ReceiverType ReceiverType { get; set; }
         public int Id { get; set; }
 
         public int UserId { get; set; }
@@ -38,7 +39,7 @@ namespace RajMango.Application.DTOs.Order
 
         public string ReceiverName { get; set; }
 
-        public string ReceiverPhone { get; set; }
+        public string ReceiverMobileNumber { get; set; }
 
         public string DeliveryNote { get; set; }
 

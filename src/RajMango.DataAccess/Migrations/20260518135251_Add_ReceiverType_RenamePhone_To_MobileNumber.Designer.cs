@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RajMango.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using RajMango.DataAccess.Contexts;
 namespace RajMango.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260518135251_Add_ReceiverType_RenamePhone_To_MobileNumber")]
+    partial class Add_ReceiverType_RenamePhone_To_MobileNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

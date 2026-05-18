@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using RajMango.Application.DTOs.Order;
 using RajMango.Shared;
+using RajMango.Shared.Enums;
 
 namespace RajMango.Application.Features.Commands
 {
@@ -12,9 +13,11 @@ namespace RajMango.Application.Features.Commands
 
         public string FallbackAddress { get; set; }
 
+        public ReceiverType ReceiverType { get; set; }
+
         public string ReceiverName { get; set; }
 
-        public string ReceiverPhone { get; set; }
+        public string ReceiverMobileNumber { get; set; }
 
         public string DeliveryNote { get; set; }
 
