@@ -144,6 +144,19 @@ builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
+
+// Startup diagnostics — visible in server logs immediately after launch.
+var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
+startupLogger.LogInformation("Environment: {Env}", app.Environment.EnvironmentName);
+var tsConfig = app.Configuration.GetSection("CloudflareTurnstile");
+startupLogger.LogInformation(
+    "Turnstile: Enabled={Enabled}, SiteKey={HasSiteKey}",
+    tsConfig["Enabled"],
+    !string.IsNullOrEmpty(tsConfig["SiteKey"]) ? "set" : "MISSING");
+if (tsConfig["Enabled"] == "true" && string.IsNullOrEmpty(tsConfig["SiteKey"]))
+    startupLogger.LogWarning("Turnstile is Enabled but SiteKey is empty — widget will not render on frontend.");
+if (tsConfig["Enabled"] == "true" && string.IsNullOrEmpty(tsConfig["SecretKey"]))
+    startupLogger.LogWarning("Turnstile is Enabled but SecretKey is empty — server-side verification will fail. Set CLOUDFLARETURNSTILE__SECRETKEY env var.");
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(exceptionHandlerApp =>
