@@ -24,10 +24,12 @@ namespace RajMango.Shared
 
         public static class Orders
         {
-            public const string View   = "order.view";
-            public const string Create = "order.create";
-            public const string Update = "order.update";
-            public const string Delete = "order.delete";
+            public const string View        = "order.view";
+            public const string Create      = "order.create";
+            public const string Update      = "order.update";
+            public const string Delete      = "order.delete";
+            public const string AdminView   = "order.admin.view";
+            public const string AdminManage = "order.admin.manage";
         }
 
         public static class Payments

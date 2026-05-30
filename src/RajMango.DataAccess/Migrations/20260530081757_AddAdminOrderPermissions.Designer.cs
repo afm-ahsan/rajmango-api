@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RajMango.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using RajMango.DataAccess.Contexts;
 namespace RajMango.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260530081757_AddAdminOrderPermissions")]
+    partial class AddAdminOrderPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 41, 713, DateTimeKind.Unspecified).AddTicks(1002),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 53, 779, DateTimeKind.Unspecified).AddTicks(3892),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "sysadmin@rajmango.com",
@@ -127,7 +130,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBDBvt8Du8cu6XoDtjqfxrwLtmv9FULxosdldv3JdXc3g6zyQErcfCCl/JESgBXwiA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENLCeI8AFGUcz2atQaLeNJlkgwyq+9/o8id7AnmryGjQL2wYJ2OI8CBsbBtAb7Wlgw==",
                             PhoneNumber = "+8801717441690",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -137,7 +140,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 41, 855, DateTimeKind.Unspecified).AddTicks(1116),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 53, 913, DateTimeKind.Unspecified).AddTicks(5389),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "admin@rajmango.com",
@@ -147,7 +150,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAENJJzM2D9E/4e1j44t+qPWbkBR5NzPJeyh4yhA1XnyrR4RFyZAx0tdwsKTEiYjlcyw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK4csdc7iJeOGyST1isRnIGyLACvK1s/T4cxRtJY1BIhrSPpYwsPb0tP06l17LAUOg==",
                             PhoneNumber = "+8801323993377",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -157,7 +160,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(539),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(888),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "sr@rajmango.com",
@@ -167,7 +170,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Register",
-                            PasswordHash = "AQAAAAIAAYagAAAAEESCIHFOb8GHFnT6c6Gv8eJVbx27S7eiXYL1N4znKE6omT8vOgw4Cy5i8Vcn0/xOfA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBR4nhua4lle1c9DXO2bNaj5WgfcratwKlntbASA3YGT3sA0wZe3u6nKWhqRfF8AfA==",
                             PhoneNumber = "+8801323993388",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -411,7 +414,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 1,
                             Area = "Dhanmondi",
                             CourierStationId = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(153),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(469),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -420,7 +423,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 2,
                             Area = "Mirpur",
                             CourierStationId = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(161),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(476),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -429,7 +432,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 3,
                             Area = "Banani",
                             CourierStationId = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(169),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(481),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -438,7 +441,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 4,
                             Area = "Gulshan 2",
                             CourierStationId = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(175),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(486),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -447,7 +450,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 5,
                             Area = "Kawran Bazar",
                             CourierStationId = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(180),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(491),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -456,7 +459,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 6,
                             Area = "Mohakhali",
                             CourierStationId = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(186),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(495),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -465,7 +468,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 7,
                             Area = "Gulistan",
                             CourierStationId = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(192),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(500),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -474,7 +477,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 8,
                             Area = "New Market",
                             CourierStationId = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(197),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(505),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -483,7 +486,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 9,
                             Area = "Malibagh",
                             CourierStationId = 9,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(203),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(510),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -492,7 +495,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 10,
                             Area = "Uttara",
                             CourierStationId = 10,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(209),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(515),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -501,7 +504,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 11,
                             Area = "Gazipur",
                             CourierStationId = 11,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(215),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(520),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         },
@@ -510,7 +513,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 12,
                             Area = "Gulshan 1",
                             CourierStationId = 12,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(221),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(525),
                             CreatedBy = 1,
                             UpdatedBy = 0
                         });
@@ -579,7 +582,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9614),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9809),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -592,7 +595,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9759),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9820),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -605,7 +608,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9771),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9829),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -618,7 +621,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9782),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9839),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -631,7 +634,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9794),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9849),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -644,7 +647,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9806),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9858),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -657,7 +660,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9817),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9868),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -670,7 +673,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9828),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(9877),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -746,7 +749,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 1,
                             CourierLocationType = 1,
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -761,7 +764,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 2,
                             CourierLocationType = 1,
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -776,7 +779,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 3,
                             CourierLocationType = 1,
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -791,7 +794,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 4,
                             CourierLocationType = 1,
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -806,7 +809,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 5,
                             CourierLocationType = 1,
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -821,7 +824,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 6,
                             CourierLocationType = 1,
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -836,7 +839,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 7,
                             CourierLocationType = 1,
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -851,7 +854,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 8,
                             CourierLocationType = 1,
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -866,7 +869,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 9,
                             CourierLocationType = 2,
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -881,7 +884,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 10,
                             CourierLocationType = 2,
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -896,7 +899,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 11,
                             CourierLocationType = 2,
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -911,7 +914,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 12,
                             CourierLocationType = 2,
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -926,7 +929,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 13,
                             CourierLocationType = 2,
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -941,7 +944,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 14,
                             CourierLocationType = 2,
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -956,7 +959,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 15,
                             CourierLocationType = 2,
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -971,7 +974,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 16,
                             CourierLocationType = 2,
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(257),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(555),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1075,7 +1078,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Dhanmondi",
                             City = "Dhaka",
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9928),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(247),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1091,7 +1094,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Mirpur",
                             City = "Dhaka",
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9942),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(258),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1107,7 +1110,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Banani",
                             City = "Dhaka",
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9953),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(268),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1123,7 +1126,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulshan 2",
                             City = "Dhaka",
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9964),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(277),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1139,7 +1142,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Kawran Bazar",
                             City = "Dhaka",
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9974),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(287),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1155,7 +1158,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Mohakhali",
                             City = "Dhaka",
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9987),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(296),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1171,7 +1174,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulistan",
                             City = "Dhaka",
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(9998),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(305),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1187,7 +1190,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "New Market",
                             City = "Dhaka",
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(10),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(315),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1203,7 +1206,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Malibagh",
                             City = "Dhaka",
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(22),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(324),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1219,7 +1222,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Uttara",
                             City = "Dhaka",
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(34),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(333),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1235,7 +1238,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gazipur",
                             City = "Gazipur",
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(47),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(342),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1251,7 +1254,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulshan 1",
                             City = "Dhaka",
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 12, DateTimeKind.Unspecified).AddTicks(58),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 67, DateTimeKind.Unspecified).AddTicks(351),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1807,7 +1810,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AverageWeight = "325-350g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9453),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9617),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A sweet and early-season mango, Gopalbhog is known for its rich aroma, fiberless flesh, and vibrant yellow skin. Popular in Rajshahi and Chapainawabganj.",
@@ -1824,7 +1827,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AverageWeight = "400-425g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9463),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9626),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Also known as Khirshapat, this premium mango is highly sought after for its buttery smooth texture and excellent sweetness. It’s the pride of Chapainawabganj.",
@@ -1841,7 +1844,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AverageWeight = "375-400g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9471),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9633),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Langra is a traditional mid-season mango with a distinct tangy-sweet taste. Its green skin remains even when ripe. Highly popular across Bangladesh.",
@@ -1858,7 +1861,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 4,
                             AverageWeight = "250-300g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9479),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9640),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A hybrid mango known for its long shelf life and rich aroma. Amrupali is intensely sweet and has a reddish hue when ripe. Great for gifting and exports.",
@@ -1875,7 +1878,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 5,
                             AverageWeight = "250-275g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9487),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9648),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A local variety with good sweetness and juiciness, Brindabon mangoes are medium-sized and ideal for table consumption. Rarely found outside local markets.",
@@ -1892,7 +1895,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 6,
                             AverageWeight = "850-950g",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Local).AddTicks(9496),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Local).AddTicks(9655),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Fazli mangoes are large, fleshy, and less fibrous, making them perfect for pulp and chutney. They are harvested late in the season and have excellent storage qualities.",
@@ -2304,7 +2307,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.view",
@@ -2317,7 +2320,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.create",
@@ -2330,7 +2333,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.update",
@@ -2343,7 +2346,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.delete",
@@ -2356,7 +2359,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.view",
@@ -2369,7 +2372,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.create",
@@ -2382,7 +2385,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.update",
@@ -2395,7 +2398,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.delete",
@@ -2408,7 +2411,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.view",
@@ -2421,7 +2424,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.create",
@@ -2434,7 +2437,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.update",
@@ -2447,7 +2450,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.delete",
@@ -2460,7 +2463,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.view",
@@ -2473,7 +2476,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 14,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.create",
@@ -2486,7 +2489,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 15,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.update",
@@ -2499,7 +2502,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 16,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.delete",
@@ -2512,7 +2515,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 17,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.view",
@@ -2525,7 +2528,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 18,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.create",
@@ -2538,7 +2541,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 19,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.update",
@@ -2551,7 +2554,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 20,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.delete",
@@ -2564,7 +2567,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 21,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.view",
@@ -2577,7 +2580,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 22,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.create",
@@ -2590,7 +2593,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 23,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.update",
@@ -2603,7 +2606,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 24,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.delete",
@@ -2616,7 +2619,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 25,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.view",
@@ -2629,7 +2632,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 26,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.create",
@@ -2642,7 +2645,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 27,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.update",
@@ -2655,7 +2658,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 28,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.delete",
@@ -2668,7 +2671,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 29,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.view",
@@ -2681,7 +2684,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 30,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.create",
@@ -2694,7 +2697,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 31,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.update",
@@ -2707,7 +2710,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 32,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.delete",
@@ -2720,7 +2723,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 33,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.type.view",
@@ -2733,7 +2736,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 34,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.type.manage",
@@ -2746,7 +2749,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 35,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.availability.view",
@@ -2759,7 +2762,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 36,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.availability.manage",
@@ -2772,7 +2775,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 37,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "report.view",
@@ -2785,7 +2788,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 38,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "dashboard.admin.view",
@@ -2798,7 +2801,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 39,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "dashboard.customer.view",
@@ -2811,7 +2814,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 40,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.submit",
@@ -2824,7 +2827,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 41,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.admin.view",
@@ -2837,7 +2840,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 42,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.admin.manage",
@@ -2850,7 +2853,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 43,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "faq.manage",
@@ -2863,7 +2866,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 44,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "policy.view",
@@ -2876,7 +2879,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 45,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "policy.manage",
@@ -2889,7 +2892,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 46,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "feedback.admin.view",
@@ -2902,7 +2905,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 47,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.view",
@@ -2915,7 +2918,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 48,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.grant",
@@ -2928,7 +2931,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 49,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.revoke",
@@ -2941,7 +2944,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 50,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-provider.view",
@@ -2954,7 +2957,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 51,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-provider.create",
@@ -2967,7 +2970,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 52,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-provider.update",
@@ -2980,7 +2983,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 53,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-provider.delete",
@@ -2993,7 +2996,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 54,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-station.view",
@@ -3006,7 +3009,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 55,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-station.create",
@@ -3019,7 +3022,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 56,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-station.update",
@@ -3032,7 +3035,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 57,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-station.delete",
@@ -3045,7 +3048,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 58,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-area-map.view",
@@ -3058,7 +3061,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 59,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-area-map.create",
@@ -3071,7 +3074,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 60,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-area-map.update",
@@ -3084,7 +3087,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 61,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-area-map.delete",
@@ -3097,7 +3100,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 62,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-rate-config.view",
@@ -3110,7 +3113,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 63,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-rate-config.create",
@@ -3123,7 +3126,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 64,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-rate-config.update",
@@ -3136,7 +3139,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 65,
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2317),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(2022),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier-rate-config.delete",
@@ -3403,7 +3406,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             Code = "system_admin",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 41, 581, DateTimeKind.Unspecified).AddTicks(617),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 53, 663, DateTimeKind.Unspecified).AddTicks(891),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Full system access including user and role management.",
@@ -3418,7 +3421,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             Code = "admin",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 41, 581, DateTimeKind.Unspecified).AddTicks(1043),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 53, 663, DateTimeKind.Unspecified).AddTicks(1172),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard administrative access excluding system-level configurations.",
@@ -3433,7 +3436,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             Code = "self_register",
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 41, 581, DateTimeKind.Unspecified).AddTicks(1132),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 53, 663, DateTimeKind.Unspecified).AddTicks(1232),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard user like a customer access only order related features",
@@ -4289,8 +4292,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2222),
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2217),
+                            AssignedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1746),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1739),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -4301,8 +4304,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2248),
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2243),
+                            AssignedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1765),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1762),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -4313,8 +4316,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2262),
-                            CreatedAt = new DateTime(2026, 5, 30, 15, 38, 42, 11, DateTimeKind.Unspecified).AddTicks(2258),
+                            AssignedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1777),
+                            CreatedAt = new DateTime(2026, 5, 30, 14, 17, 54, 66, DateTimeKind.Unspecified).AddTicks(1773),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,

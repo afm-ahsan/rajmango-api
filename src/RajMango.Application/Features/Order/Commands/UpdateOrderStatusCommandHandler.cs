@@ -52,6 +52,10 @@ namespace RajMango.Application.Features.Commands
                     return await Result<int>.FailureAsync(
                         $"Cannot transition order from {order.OrderStatus} to {command.NewStatus}.");
 
+                if (command.NewStatus == OrderStatus.Delivered && order.PaymentStatus != PaymentStatus.Paid)
+                    return await Result<int>.FailureAsync(
+                        "Order cannot be delivered: payment has not been completed.");
+
                 order.OrderStatus = command.NewStatus;
 
                 if (!string.IsNullOrWhiteSpace(command.TrackingNumber))

@@ -1,0 +1,139 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using RajMango.Application.DTOs.Order;
+using RajMango.Application.Interfaces;
+using RajMango.Application.Interfaces.Repositories;
+using RajMango.Domain.Entities;
+using RajMango.Shared;
+using RajMango.Shared.Enums;
+
+namespace RajMango.Application.Features.Queries
+{
+    public record GetAdminOrderListQuery : IRequest<PaginatedResult<AdminOrderListDto>>
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public string SortBy { get; set; }
+        public string SortOrder { get; set; }
+
+        public string OrderNumber { get; set; }
+        public string CustomerName { get; set; }
+        public string PhoneNumber { get; set; }
+        public OrderStatus? OrderStatus { get; set; }
+        public PaymentStatus? PaymentStatus { get; set; }
+        public DeliveryStatus? DeliveryStatus { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public int? CourierProviderId { get; set; }
+        public int? CourierStationId { get; set; }
+        public string MangoType { get; set; }
+    }
+
+    public class GetAdminOrderListQueryHandler : IRequestHandler<GetAdminOrderListQuery, PaginatedResult<AdminOrderListDto>>
+    {
+        private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
+
+        public GetAdminOrderListQueryHandler(IDataContext dataContext, ICurrentUserService currentUserService)
+        {
+            _dataContext = dataContext;
+            _currentUserService = currentUserService;
+        }
+
+        public async Task<PaginatedResult<AdminOrderListDto>> Handle(GetAdminOrderListQuery query, CancellationToken cancellationToken)
+        {
+            if (!_currentUserService.IsAdmin && !_currentUserService.IsSuperAdmin)
+                return new PaginatedResult<AdminOrderListDto>(false, new List<AdminOrderListDto>(),
+                    new List<string> { "Access denied." });
+
+            var orderQuery = _dataContext.Get<Order>()
+                .Include(o => o.AppUser)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.MangoType)
+                .Include(o => o.CourierStation)
+                    .ThenInclude(cs => cs.CourierProvider)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.OrderNumber))
+                orderQuery = orderQuery.Where(o => o.OrderNumber.Contains(query.OrderNumber));
+
+            if (!string.IsNullOrWhiteSpace(query.CustomerName))
+                orderQuery = orderQuery.Where(o =>
+                    (o.AppUser.FirstName + " " + o.AppUser.LastName).Contains(query.CustomerName));
+
+            if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
+                orderQuery = orderQuery.Where(o => o.AppUser.PhoneNumber.Contains(query.PhoneNumber));
+
+            if (query.OrderStatus.HasValue)
+                orderQuery = orderQuery.Where(o => o.OrderStatus == query.OrderStatus.Value);
+
+            if (query.PaymentStatus.HasValue)
+                orderQuery = orderQuery.Where(o => o.PaymentStatus == query.PaymentStatus.Value);
+
+            if (query.DeliveryStatus.HasValue)
+                orderQuery = orderQuery.Where(o => o.DeliveryStatus == query.DeliveryStatus.Value);
+
+            if (query.StartDate.HasValue)
+                orderQuery = orderQuery.Where(o => o.OrderDate >= query.StartDate.Value);
+
+            if (query.EndDate.HasValue)
+                orderQuery = orderQuery.Where(o => o.OrderDate <= query.EndDate.Value.Date.AddDays(1).AddTicks(-1));
+
+            if (query.CourierProviderId.HasValue)
+                orderQuery = orderQuery.Where(o => o.CourierProviderId == query.CourierProviderId.Value);
+
+            if (query.CourierStationId.HasValue)
+                orderQuery = orderQuery.Where(o => o.CourierStationId == query.CourierStationId.Value);
+
+            if (!string.IsNullOrWhiteSpace(query.MangoType))
+                orderQuery = orderQuery.Where(o => o.OrderDetails.Any(od => od.MangoType.Name.Contains(query.MangoType)));
+
+            bool ascending = !string.Equals(query.SortOrder, "desc", StringComparison.OrdinalIgnoreCase);
+            orderQuery = query.SortBy?.ToLower() switch
+            {
+                "ordernumber"    => ascending ? orderQuery.OrderBy(o => o.OrderNumber)      : orderQuery.OrderByDescending(o => o.OrderNumber),
+                "orderdate"      => ascending ? orderQuery.OrderBy(o => o.OrderDate)        : orderQuery.OrderByDescending(o => o.OrderDate),
+                "totalamount"    => ascending ? orderQuery.OrderBy(o => o.TotalAmount)      : orderQuery.OrderByDescending(o => o.TotalAmount),
+                "orderstatus"    => ascending ? orderQuery.OrderBy(o => o.OrderStatus)      : orderQuery.OrderByDescending(o => o.OrderStatus),
+                "paymentstatus"  => ascending ? orderQuery.OrderBy(o => o.PaymentStatus)    : orderQuery.OrderByDescending(o => o.PaymentStatus),
+                "deliverystatus" => ascending ? orderQuery.OrderBy(o => o.DeliveryStatus)   : orderQuery.OrderByDescending(o => o.DeliveryStatus),
+                _                => orderQuery.OrderByDescending(o => o.OrderDate),
+            };
+
+            int pageNumber = query.PageNumber <= 0 ? 1 : query.PageNumber;
+            int pageSize   = query.PageSize   <= 0 ? 10 : query.PageSize;
+
+            int totalCount = await orderQuery.CountAsync(cancellationToken);
+
+            var orders = await orderQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            var data = orders.Select(o => new AdminOrderListDto
+            {
+                OrderId             = o.Id,
+                OrderNumber         = o.OrderNumber,
+                OrderDate           = o.OrderDate,
+                CustomerName        = o.AppUser != null ? $"{o.AppUser.FirstName} {o.AppUser.LastName}" : null,
+                CustomerPhone       = o.AppUser?.PhoneNumber,
+                TotalQuantity       = o.TotalQuantity,
+                ProductTotal        = o.ProductTotalAmount,
+                CourierCharge       = o.IsCourierChargeOverridden && o.CourierChargeOverrideAmount.HasValue
+                                          ? o.CourierChargeOverrideAmount.Value
+                                          : o.CourierCharge,
+                TotalAmount         = o.TotalAmount,
+                PaidAmount          = o.PaidAmount,
+                DueAmount           = o.DueAmount,
+                OrderStatus         = o.OrderStatus,
+                PaymentStatus       = o.PaymentStatus,
+                DeliveryStatus      = o.DeliveryStatus,
+                CourierStationName  = o.CourierStation?.Name,
+                CourierProviderName = o.CourierStation?.CourierProvider?.Name,
+                MangoTypeName       = o.OrderDetails.FirstOrDefault()?.MangoType?.Name,
+            }).ToList();
+
+            return PaginatedResult<AdminOrderListDto>.Create(data, totalCount, pageNumber, pageSize);
+        }
+    }
+}

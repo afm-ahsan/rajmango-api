@@ -87,7 +87,12 @@
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); paths=d.get\\('paths',{}\\); [print\\(m.upper\\(\\), k\\) for k,v in paths.items\\(\\) for m in v.keys\\(\\) if 'courier-rate-config' in k or 'override' in k]\")",
       "Bash(npx ts-node *)",
       "Bash(dir /s /b \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\features\\\\orders\\\\*.ts\")",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\\\\Order\" -Recurse)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.WebApi\" -Recurse -File | Where-Object {$_.Name -match \"Base|Common|Result\"} | Select-Object FullName)",
+      "Bash(xargs grep -l \"admin-orders\\\\|admin-complaint\\\\|HasOrderAccess\\\\|HasCustomersAccess\")",
+      "Bash(xargs grep -l \"orders\\\\|mango-types\\\\|customers\")",
+      "Bash(Select-String \"Pending|AddAdminOrder\")"
     ]
   }
 }
