@@ -21,8 +21,8 @@ namespace RajMango.Application.Features.Commands
             IDataContext dataContext,
             ICurrentUserService currentUserService)
         {
-            _errorHandler = errorHandler;
-            _dataContext = dataContext;
+            _errorHandler       = errorHandler;
+            _dataContext        = dataContext;
             _currentUserService = currentUserService;
         }
 
@@ -63,8 +63,6 @@ namespace RajMango.Application.Features.Commands
                     .Include(a => a.MangoType)
                     .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
                              && a.Status == MangoAvailabilityStatus.Available)
-                             //&& a.StartDate.Date <= today
-                             //&& a.EndDate.Date >= today)
                     .ToListAsync(cancellationToken);
 
                 var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
@@ -80,8 +78,54 @@ namespace RajMango.Application.Features.Commands
                         $"The following mango types are not currently available: {string.Join(", ", names)}.");
                 }
 
-                var priceMap     = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
-                var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
+                var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+
+                // Resolve courier rate from station (if provided)
+                CourierRateConfiguration courierRate = null;
+                CourierLocationType? resolvedLocationType = null;
+                int? resolvedCourierProviderId = null;
+
+                if (command.CourierStationId.HasValue)
+                {
+                    var station = await _dataContext.Get<CourierStation>()
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Id == command.CourierStationId.Value, cancellationToken);
+
+                    if (station != null)
+                    {
+                        resolvedCourierProviderId = station.CourierProviderId;
+                        resolvedLocationType = string.Equals(station.City, "Dhaka", StringComparison.OrdinalIgnoreCase)
+                            ? CourierLocationType.InsideDhaka
+                            : CourierLocationType.OutsideDhaka;
+
+                        courierRate = await _dataContext.Get<CourierRateConfiguration>()
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(
+                                r => r.CourierProviderId   == station.CourierProviderId
+                                  && r.CourierLocationType == resolvedLocationType
+                                  && r.IsActive,
+                                cancellationToken);
+                    }
+                }
+
+                // Pre-calculate weight so courier charge can be computed
+                var totalWeightKg = command.OrderDetails.Sum(d => d.Quantity * DomainUtils.GetCrateWeight(d.CrateType));
+
+                decimal courierCharge = 0m;
+                decimal ratePerKg = 0m;
+                if (courierRate != null)
+                {
+                    ratePerKg     = courierRate.RatePerKg;
+                    courierCharge = OrderCalculator.CalculateCourierCharge(totalWeightKg, ratePerKg, courierRate.MinimumCharge);
+                }
+
+                // If admin has already set an override, keep the override; recalculate product total only.
+                // The override amount is not touched on a regular update.
+                decimal finalCourierCharge = order.IsCourierChargeOverridden && order.CourierChargeOverrideAmount.HasValue
+                    ? order.CourierChargeOverrideAmount.Value
+                    : courierCharge;
+
+                var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap, finalCourierCharge);
 
                 // Replace all existing order details
                 var existingDetails = await _dataContext.Get<OrderDetail>()
@@ -91,6 +135,11 @@ namespace RajMango.Application.Features.Commands
                     _dataContext.Get<OrderDetail>().Remove(d);
 
                 order.TotalQuantity        = orderSummary.TotalQuantity;
+                order.ProductTotalAmount   = orderSummary.ProductTotalAmount;
+                order.CourierLocationType  = resolvedLocationType;
+                order.CourierProviderId    = resolvedCourierProviderId;
+                order.CourierRatePerKg     = ratePerKg;
+                order.CourierCharge        = courierCharge;
                 order.TotalAmount          = orderSummary.TotalAmount;
                 order.DueAmount            = orderSummary.TotalAmount - order.PaidAmount;
                 order.ReceiverType         = command.ReceiverType;
@@ -105,8 +154,10 @@ namespace RajMango.Application.Features.Commands
                 }
                 else
                 {
-                    order.CourierStationId = null;
-                    order.FallbackAddress  = command.FallbackAddress;
+                    order.CourierStationId    = null;
+                    order.CourierProviderId   = null;
+                    order.CourierLocationType = null;
+                    order.FallbackAddress     = command.FallbackAddress;
                 }
 
                 foreach (var detail in command.OrderDetails)

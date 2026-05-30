@@ -77,6 +77,15 @@ namespace RajMango.WebApi.Controllers
         //    }
         //}
 
+        [HttpPost("calculate-preview")]
+        public async Task<ActionResult<Result<OrderPreviewDto>>> CalculatePreview([FromBody] CalculateOrderPreviewQuery query)
+        {
+            if (query?.OrderDetails == null || !query.OrderDetails.Any())
+                return BadRequest("Order details are required.");
+
+            return await _mediator.Send(query);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Result<int>>> Create(CreateOrderCommand command)
         {
@@ -114,6 +123,16 @@ namespace RajMango.WebApi.Controllers
         public async Task<ActionResult<Result<int>>> UpdateStatus(int id, [FromBody] UpdateOrderStatusCommand command)
         {
             if (id != command.Id)
+                return BadRequest();
+
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("{id}/override-courier-charge")]
+        [RequirePermission(Permissions.Orders.Update)]
+        public async Task<ActionResult<Result<int>>> OverrideCourierCharge(int id, [FromBody] OverrideCourierChargeCommand command)
+        {
+            if (id != command.OrderId)
                 return BadRequest();
 
             return await _mediator.Send(command);

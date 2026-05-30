@@ -1,4 +1,4 @@
-﻿using RajMango.Domain.Common;
+using RajMango.Domain.Common;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
@@ -24,6 +24,11 @@ namespace RajMango.Domain.Entities
         [ForeignKey(nameof(CourierStationId))]
         public CourierStation CourierStation { get; set; }
 
+        public int? CourierProviderId { get; set; }
+
+        [ForeignKey(nameof(CourierProviderId))]
+        public CourierProvider CourierProvider { get; set; }
+
         [Required]
         [StringLength(50)]
         public string OrderNumber { get; set; }
@@ -33,11 +38,34 @@ namespace RajMango.Domain.Entities
 
         public int TotalQuantity { get; set; }
 
+        /// <summary>Sum of all OrderDetail.TotalPrice values (mango product cost only).</summary>
+        public decimal ProductTotalAmount { get; set; }
+
         public decimal TotalAmount { get; set; }
 
         public decimal PaidAmount { get; set; }
 
         public decimal DueAmount { get; set; }
+
+        // --- Courier charge snapshot ---
+
+        public CourierLocationType? CourierLocationType { get; set; }
+
+        /// <summary>Rate snapshot at the time of order creation/update.</summary>
+        public decimal CourierRatePerKg { get; set; }
+
+        /// <summary>Calculated courier charge: max(TotalWeightKg * RatePerKg, MinimumCharge).</summary>
+        public decimal CourierCharge { get; set; }
+
+        /// <summary>Admin-set override amount; null means no override.</summary>
+        public decimal? CourierChargeOverrideAmount { get; set; }
+
+        public bool IsCourierChargeOverridden { get; set; }
+
+        [StringLength(500)]
+        public string CourierChargeNote { get; set; }
+
+        // --- Status & delivery ---
 
         [Required]
         public DateTime OrderDate { get; set; } = Clock.Now();
@@ -53,7 +81,7 @@ namespace RajMango.Domain.Entities
         public bool IsDelivered { get; set; }
 
         public bool IsValidOrder { get; set; } = true;
-        
+
         [StringLength(500)]
         public string FallbackAddress { get; set; }
 
@@ -69,9 +97,9 @@ namespace RajMango.Domain.Entities
         public string DeliveryNote { get; set; }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new HashSet<OrderDetail>();
-        
+
         public virtual ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
-        
+
         public virtual ICollection<Feedback> Feedbacks { get; set; } = new HashSet<Feedback>();
     }
 }

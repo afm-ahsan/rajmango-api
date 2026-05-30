@@ -30,12 +30,12 @@ namespace RajMango.Application.Features.Commands
             IOrderCreationLock orderCreationLock,
             IOrderNumberService orderNumberService)
         {
-            _errorHandler = errorHandler;
-            _dataContext = dataContext;
+            _errorHandler       = errorHandler;
+            _dataContext        = dataContext;
             _currentUserService = currentUserService;
-            _notification = notification;
-            _realtime = realtime;
-            _orderCreationLock = orderCreationLock;
+            _notification       = notification;
+            _realtime           = realtime;
+            _orderCreationLock  = orderCreationLock;
             _orderNumberService = orderNumberService;
         }
 
@@ -54,9 +54,6 @@ namespace RajMango.Application.Features.Commands
                     .Include(a => a.MangoType)
                     .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
                              && a.Status == MangoAvailabilityStatus.Available)
-                             //TODO
-                             //&& a.StartDate.Date <= today
-                             //&& a.EndDate.Date >= today)
                     .ToListAsync(cancellationToken);
 
                 var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
@@ -74,18 +71,63 @@ namespace RajMango.Application.Features.Commands
 
                 var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
 
+                // Resolve courier rate from station (if provided)
+                CourierRateConfiguration courierRate = null;
+                CourierLocationType? resolvedLocationType = null;
+                int? resolvedCourierProviderId = null;
+
+                if (command.CourierStationId.HasValue)
+                {
+                    var station = await _dataContext.Get<CourierStation>()
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Id == command.CourierStationId.Value, cancellationToken);
+
+                    if (station != null)
+                    {
+                        resolvedCourierProviderId = station.CourierProviderId;
+                        resolvedLocationType = string.Equals(station.City, "Dhaka", StringComparison.OrdinalIgnoreCase)
+                            ? CourierLocationType.InsideDhaka
+                            : CourierLocationType.OutsideDhaka;
+
+                        courierRate = await _dataContext.Get<CourierRateConfiguration>()
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(
+                                r => r.CourierProviderId   == station.CourierProviderId
+                                  && r.CourierLocationType == resolvedLocationType
+                                  && r.IsActive,
+                                cancellationToken);
+                    }
+                }
+
                 // Critical section: order number generation and persistence are serialized
                 Order newOrder;
                 using (await _orderCreationLock.AcquireAsync())
                 {
-                    var orderNumber  = await _orderNumberService.GenerateAsync(cancellationToken);
-                    var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap);
+                    var orderNumber = await _orderNumberService.GenerateAsync(cancellationToken);
+
+                    // Pre-calculate weight so courier charge can be computed
+                    var totalWeightKg = command.OrderDetails.Sum(d => d.Quantity * DomainUtils.GetCrateWeight(d.CrateType));
+
+                    decimal courierCharge = 0m;
+                    decimal ratePerKg = 0m;
+                    if (courierRate != null)
+                    {
+                        ratePerKg     = courierRate.RatePerKg;
+                        courierCharge = OrderCalculator.CalculateCourierCharge(totalWeightKg, ratePerKg, courierRate.MinimumCharge);
+                    }
+
+                    var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap, courierCharge);
 
                     newOrder = new Order
                     {
                         UserId               = _currentUserService.UserId,
                         OrderNumber          = orderNumber,
                         TotalQuantity        = orderSummary.TotalQuantity,
+                        ProductTotalAmount   = orderSummary.ProductTotalAmount,
+                        CourierLocationType  = resolvedLocationType,
+                        CourierProviderId    = resolvedCourierProviderId,
+                        CourierRatePerKg     = ratePerKg,
+                        CourierCharge        = courierCharge,
                         TotalAmount          = orderSummary.TotalAmount,
                         PaidAmount           = 0,
                         DueAmount            = orderSummary.TotalAmount,
@@ -138,6 +180,5 @@ namespace RajMango.Application.Features.Commands
             }
             return await Result<int>.FailureAsync("Order creation failed.");
         }
-
     }
 }

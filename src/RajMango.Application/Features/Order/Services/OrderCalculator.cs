@@ -6,6 +6,8 @@ namespace RajMango.Application.Features.Services
     public class OrderSummary
     {
         public int TotalQuantity { get; set; }
+        public decimal ProductTotalAmount { get; set; }
+        public decimal CourierCharge { get; set; }
         public decimal TotalAmount { get; set; }
     }
 
@@ -18,10 +20,11 @@ namespace RajMango.Application.Features.Services
         /// </summary>
         public static OrderSummary CalculateTotals(
             IEnumerable<OrderDetailInputDto> details,
-            IReadOnlyDictionary<int, decimal> pricePerKgByMangoTypeId)
+            IReadOnlyDictionary<int, decimal> pricePerKgByMangoTypeId,
+            decimal courierCharge = 0m)
         {
             var totalKg = 0;
-            decimal totalAmount = 0;
+            decimal productTotal = 0;
 
             foreach (var item in details)
             {
@@ -30,15 +33,29 @@ namespace RajMango.Application.Features.Services
                 var lineKg      = item.Quantity * crateWeight;
                 var lineAmount  = lineKg * pricePerKg - item.Discount;
 
-                totalKg     += lineKg;
-                totalAmount += lineAmount;
+                totalKg      += lineKg;
+                productTotal += lineAmount;
             }
 
             return new OrderSummary
             {
-                TotalQuantity = totalKg,
-                TotalAmount   = totalAmount,
+                TotalQuantity      = totalKg,
+                ProductTotalAmount = productTotal,
+                CourierCharge      = courierCharge,
+                TotalAmount        = productTotal + courierCharge,
             };
+        }
+
+        /// <summary>
+        /// Calculates courier charge from weight and rate config.
+        /// Returns max(totalWeightKg * ratePerKg, minimumCharge).
+        /// </summary>
+        public static decimal CalculateCourierCharge(int totalWeightKg, decimal ratePerKg, decimal? minimumCharge)
+        {
+            var calculated = totalWeightKg * ratePerKg;
+            return minimumCharge.HasValue && minimumCharge.Value > calculated
+                ? minimumCharge.Value
+                : calculated;
         }
     }
 }

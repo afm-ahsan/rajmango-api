@@ -4,6 +4,7 @@ using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
 using SharedPermissions = RajMango.Shared.Permissions;
+using CourierLT = RajMango.Shared.Enums.CourierLocationType;
 
 namespace RajMango.DataAccess.Extensions
 {
@@ -279,6 +280,56 @@ namespace RajMango.DataAccess.Extensions
                 new CourierAreaMap { Id = 11, CourierStationId = 11, Area = "Gazipur", CreatedAt = Clock.Now(), CreatedBy = 1 },
                 new CourierAreaMap { Id = 12, CourierStationId = 12, Area = "Gulshan 1", CreatedAt = Clock.Now(), CreatedBy = 1 }
             );
+        }
+
+        public static void LoadCourierRateConfigSeedData(this ModelBuilder modelBuilder)
+        {
+            // Each provider gets one InsideDhaka rate and one OutsideDhaka rate.
+            // Rates reflect typical Bangladesh parcel delivery pricing for mango shipments.
+            // Admins can update or deactivate these via the API after launch.
+            //
+            // Seed IDs:  1–8  = InsideDhaka  (providerId 1–8)
+            //            9–16 = OutsideDhaka  (providerId 1–8)
+
+            var now = Clock.Now();
+
+            var configs = new List<CourierRateConfiguration>();
+
+            // InsideDhaka: 15 BDT/kg, minimum 100 BDT
+            for (int i = 1; i <= 8; i++)
+            {
+                configs.Add(new CourierRateConfiguration
+                {
+                    Id                  = i,
+                    CourierProviderId   = i,
+                    CourierLocationType = CourierLT.InsideDhaka,
+                    RatePerKg           = 15.00m,
+                    MinimumCharge       = 100.00m,
+                    IsActive            = true,
+                    Sequence            = 1,
+                    CreatedAt           = now,
+                    CreatedBy           = 1,
+                });
+            }
+
+            // OutsideDhaka: 25 BDT/kg, minimum 150 BDT
+            for (int i = 1; i <= 8; i++)
+            {
+                configs.Add(new CourierRateConfiguration
+                {
+                    Id                  = 8 + i,
+                    CourierProviderId   = i,
+                    CourierLocationType = CourierLT.OutsideDhaka,
+                    RatePerKg           = 25.00m,
+                    MinimumCharge       = 150.00m,
+                    IsActive            = true,
+                    Sequence            = 2,
+                    CreatedAt           = now,
+                    CreatedBy           = 1,
+                });
+            }
+
+            modelBuilder.Entity<CourierRateConfiguration>().HasData(configs);
         }
 
         public static void LoadPermissionSeedData(this ModelBuilder modelBuilder)

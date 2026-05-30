@@ -32,5 +32,7 @@ namespace RajMango.Domain.Entities
         public bool IsActive { get; set; }
 
         public ICollection<CourierStation> CourierStations { get; set; } = new HashSet<CourierStation>();
+
+        public ICollection<CourierRateConfiguration> CourierRateConfigurations { get; set; } = new HashSet<CourierRateConfiguration>();
     }
 }

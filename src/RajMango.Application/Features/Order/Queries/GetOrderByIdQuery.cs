@@ -25,8 +25,11 @@ namespace RajMango.Application.Features.Queries
         {
             var orderQuery = _dataContext.Get<Order>()
                                           .Include(o => o.OrderDetails)
+                                              .ThenInclude(od => od.MangoType)
                                           .Include(o => o.CourierStation)
                                               .ThenInclude(cs => cs.CourierAreaMaps)
+                                          .Include(o => o.CourierStation)
+                                              .ThenInclude(cs => cs.CourierProvider)
                                           .Where(o => o.Id == query.Id);
 
             if (!_currentUserService.IsAdmin)
@@ -43,16 +46,27 @@ namespace RajMango.Application.Features.Queries
                 OrderNumber      = order.OrderNumber,
                 OrderDate        = order.OrderDate,
                 TotalQuantity    = order.TotalQuantity,
-                TotalAmount      = order.TotalAmount,
+                ProductTotalAmount          = order.ProductTotalAmount,
+                TotalAmount                 = order.TotalAmount,
                 OrderStatus      = order.OrderStatus,
                 PaymentStatus    = order.PaymentStatus,
                 PaidAmount       = order.PaidAmount,
                 DueAmount        = order.DueAmount,
+                CourierProviderId           = order.CourierProviderId,
+                CourierLocationType         = order.CourierLocationType,
+                CourierRatePerKg            = order.CourierRatePerKg,
+                CourierCharge               = order.CourierCharge,
+                CourierChargeOverrideAmount = order.CourierChargeOverrideAmount,
+                IsCourierChargeOverridden   = order.IsCourierChargeOverridden,
+                CourierChargeNote           = order.CourierChargeNote,
                 IsValidOrder     = order.IsValidOrder,
                 IsDelivered      = order.IsDelivered,
                 DeliveryDate     = order.DeliveryDate,
                 TrackingNumber   = order.TrackingNumber,
                 CourierStationId     = order.CourierStationId,
+                CourierStationName   = order.CourierStation != null
+                    ? $"{order.CourierStation.CourierProvider?.Name} - {order.CourierStation.Name} ({order.CourierStation.City})"
+                    : null,
                 FallbackAddress      = order.FallbackAddress,
                 ReceiverType         = order.ReceiverType,
                 ReceiverName         = order.ReceiverName,
@@ -64,6 +78,7 @@ namespace RajMango.Application.Features.Queries
                     Id          = d.Id,
                     OrderId     = d.OrderId,
                     MangoTypeId = d.MangoTypeId,
+                    MangoName   = d.MangoType?.Name,
                     CrateType   = d.CrateType,
                     Quantity    = d.Quantity,
                     UnitPrice   = d.UnitPrice,

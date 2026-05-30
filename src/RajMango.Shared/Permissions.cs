@@ -135,6 +135,14 @@ namespace RajMango.Shared
             public const string Manage = "policy.manage";
         }
 
+        public static class CourierRateConfigurations
+        {
+            public const string View   = "courier-rate-config.view";
+            public const string Create = "courier-rate-config.create";
+            public const string Update = "courier-rate-config.update";
+            public const string Delete = "courier-rate-config.delete";
+        }
+
         public static class Feedback
         {
             public const string AdminView = "feedback.admin.view";
@@ -170,6 +178,7 @@ namespace RajMango.Shared
             CourierProviders.View, CourierProviders.Create, CourierProviders.Update, CourierProviders.Delete,
             CourierStations.View, CourierStations.Create, CourierStations.Update, CourierStations.Delete,
             CourierAreaMaps.View, CourierAreaMaps.Create, CourierAreaMaps.Update, CourierAreaMaps.Delete,
+            CourierRateConfigurations.View, CourierRateConfigurations.Create, CourierRateConfigurations.Update, CourierRateConfigurations.Delete,
         };
 
         /// <summary>Permissions granted to the Admin role.</summary>

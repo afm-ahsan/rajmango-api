@@ -50,6 +50,7 @@ namespace RajMango.DataAccess.Contexts
         public virtual DbSet<CourierProvider> CourierProviders => Set<CourierProvider>();
         public virtual DbSet<CourierStation> CourierStations => Set<CourierStation>();
         public virtual DbSet<CourierAreaMap> CourierAreaMaps => Set<CourierAreaMap>();
+        public virtual DbSet<CourierRateConfiguration> CourierRateConfigurations => Set<CourierRateConfiguration>();
 
         // 📄 Policies
         public virtual DbSet<Policy> Policies => Set<Policy>();
@@ -90,6 +91,7 @@ namespace RajMango.DataAccess.Contexts
             modelBuilder.LoadCourierProviderSeedData();
             modelBuilder.LoadCourierStationSeedData();
             modelBuilder.LoadCourierAreaMapSeedData();
+            modelBuilder.LoadCourierRateConfigSeedData();
 
             // 4. Apply soft-delete query filters globally
             modelBuilder.ApplySoftDeleteQueryFilter();

@@ -79,7 +79,15 @@
       "Bash(Remove-Item *)",
       "Bash(Select-String -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\app.module.ts\" -Pattern \"APP_INITIALIZER|AppConfigService|loadConfig\")",
       "Bash(findstr *)",
-      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\" -Recurse -Directory)"
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\" -Recurse -Directory)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Domain\" -Recurse -File)",
+      "Bash(Select-String \"Seed_Courier\")",
+      "Bash(npx nswag *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); schemas=d.get\\('components',{}\\).get\\('schemas',{}\\); od=schemas.get\\('OrderDto',{}\\); print\\(json.dumps\\(od.get\\('properties',{}\\).keys\\(\\), indent=2, default=list\\)\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); paths=d.get\\('paths',{}\\); [print\\(m.upper\\(\\), k\\) for k,v in paths.items\\(\\) for m in v.keys\\(\\) if 'courier-rate-config' in k or 'override' in k]\")",
+      "Bash(npx ts-node *)",
+      "Bash(dir /s /b \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\app\\\\features\\\\orders\\\\*.ts\")",
+      "Bash(powershell *)"
     ]
   }
 }
