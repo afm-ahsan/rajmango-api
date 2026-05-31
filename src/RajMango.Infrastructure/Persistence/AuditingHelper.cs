@@ -17,6 +17,16 @@ namespace RajMango.Infrastructure.Persistence
             var userId = userService.UserId != 0 ? userService.UserId : SystemUserId;
             var now = Clock.Now();
 
+            foreach (var entry in changeTracker.Entries<ICreationAuditable>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = now;
+                    if (entry.Entity.CreatedBy == 0)
+                        entry.Entity.CreatedBy = userId;
+                }
+            }
+
             foreach (var entry in changeTracker.Entries<IFullAuditable>())
             {
                 switch (entry.State)

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RajMango.Domain.Entities
 {
     [Table("FaqItems")]
-    public class FaqItem : AuditedEntity, IHasId<int>
+    public class FaqItem : FullAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

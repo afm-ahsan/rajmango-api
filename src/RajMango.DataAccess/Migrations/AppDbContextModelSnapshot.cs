@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RajMango.DataAccess.Contexts;
 
@@ -12,11 +11,9 @@ using RajMango.DataAccess.Contexts;
 namespace RajMango.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260524060236_Seed_CourierRateConfigurations")]
-    partial class Seed_CourierRateConfigurations
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,78 +26,98 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(11);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(7);
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("ImagePath")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(13);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsLocked")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(12);
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -120,7 +137,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 32, 736, DateTimeKind.Unspecified).AddTicks(5379),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 4, DateTimeKind.Unspecified).AddTicks(453),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "sysadmin@rajmango.com",
@@ -130,7 +147,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEeDwaoib2Ty9GEXEh9d6JKClnwSW1KhBLlGLQwfRNm5LYEPwxA+65SOU3NotX+JWQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPBMkA2oUS9nfWqVC0/0UU5uDsli6bwrVykv2DRntbqDcNQBmssE0ByAZ9Bhvd+lCA==",
                             PhoneNumber = "+8801717441690",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -140,7 +157,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 32, 928, DateTimeKind.Unspecified).AddTicks(5482),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 274, DateTimeKind.Unspecified).AddTicks(4373),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "admin@rajmango.com",
@@ -150,7 +167,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA1/wH8Nr9Py0dhmaIyCLzkZqgMs7BtlRTOsyD2PdB+oqFH5Vmaz82vNsDX9bg/YnQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENj6Z24Wh5FA2vqODDkAFqMA0dyhfdRU21lxWFjep3cadE3ATRqf2giXtHYCPdRTeQ==",
                             PhoneNumber = "+8801323993377",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -160,7 +177,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(2712),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 559, DateTimeKind.Unspecified).AddTicks(8946),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Email = "sr@rajmango.com",
@@ -170,7 +187,7 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsLocked = false,
                             LastName = "Register",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEu3HY6QfxBdZxk9OHCJVjszjDdUrwMmO25+h2FNMpRNpli+eJ/wSAMLl2uDY3aCHA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDzIcI28+TX3WRMRT8vyZm0SwGgusk+2fIee5zfssfaXtAAizDuWUoBnkzZTki5EEg==",
                             PhoneNumber = "+8801323993388",
                             PhoneNumberConfirmed = true,
                             UpdatedBy = 0,
@@ -182,45 +199,49 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ActionType")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<int>("EntityId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("NewData")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("PerformedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("PerformedBy")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("PreviousData")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("TableName")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -231,53 +252,67 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("IconPath")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("Slug")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -293,48 +328,61 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AdminNote")
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("Category")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime?>("ResolvedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(9);
 
                     b.Property<int?>("ResolvedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
@@ -349,23 +397,36 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ComplaintId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(5);
 
                     b.HasKey("Id");
 
@@ -378,29 +439,48 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Area")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("CourierStationId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
+
+                    b.Property<int>("DeletedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -414,8 +494,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 1,
                             Area = "Dhanmondi",
                             CourierStationId = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4981),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7844),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -423,8 +505,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 2,
                             Area = "Mirpur",
                             CourierStationId = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4992),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7853),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -432,8 +516,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 3,
                             Area = "Banani",
                             CourierStationId = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4996),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7860),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -441,8 +527,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 4,
                             Area = "Gulshan 2",
                             CourierStationId = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5002),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7868),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -450,8 +538,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 5,
                             Area = "Kawran Bazar",
                             CourierStationId = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5007),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7876),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -459,8 +549,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 6,
                             Area = "Mohakhali",
                             CourierStationId = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5012),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7883),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -468,8 +560,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 7,
                             Area = "Gulistan",
                             CourierStationId = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5016),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7891),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -477,8 +571,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 8,
                             Area = "New Market",
                             CourierStationId = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5021),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7899),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -486,8 +582,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 9,
                             Area = "Malibagh",
                             CourierStationId = 9,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5025),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7908),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -495,8 +593,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 10,
                             Area = "Uttara",
                             CourierStationId = 10,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5030),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7916),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -504,8 +604,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 11,
                             Area = "Gazipur",
                             CourierStationId = 11,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5035),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7924),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         },
                         new
@@ -513,8 +615,10 @@ namespace RajMango.DataAccess.Migrations
                             Id = 12,
                             Area = "Gulshan 1",
                             CourierStationId = 12,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5039),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7931),
                             CreatedBy = 1,
+                            DeletedBy = 0,
+                            IsDeleted = false,
                             UpdatedBy = 0
                         });
                 });
@@ -523,53 +627,67 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Sequence")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("SupportPhone")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -582,7 +700,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4299),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7214),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -595,7 +713,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4310),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7225),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -608,7 +726,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4320),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7235),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -621,7 +739,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4548),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7245),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -634,7 +752,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4558),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7254),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -647,7 +765,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4567),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7263),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -660,7 +778,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4576),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7273),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -673,7 +791,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4586),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7283),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -689,50 +807,64 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CourierLocationType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("CourierProviderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<decimal?>("MinimumCharge")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(5);
 
                     b.Property<decimal>("RatePerKg")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Sequence")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -749,7 +881,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 1,
                             CourierLocationType = 1,
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -764,7 +896,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 2,
                             CourierLocationType = 1,
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -779,7 +911,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 3,
                             CourierLocationType = 1,
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -794,7 +926,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 4,
                             CourierLocationType = 1,
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -809,7 +941,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 5,
                             CourierLocationType = 1,
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -824,7 +956,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 6,
                             CourierLocationType = 1,
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -839,7 +971,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 7,
                             CourierLocationType = 1,
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -854,7 +986,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 8,
                             CourierLocationType = 1,
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -869,7 +1001,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 9,
                             CourierLocationType = 2,
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -884,7 +1016,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 10,
                             CourierLocationType = 2,
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -899,7 +1031,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 11,
                             CourierLocationType = 2,
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -914,7 +1046,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 12,
                             CourierLocationType = 2,
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -929,7 +1061,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 13,
                             CourierLocationType = 2,
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -944,7 +1076,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 14,
                             CourierLocationType = 2,
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -959,7 +1091,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 15,
                             CourierLocationType = 2,
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -974,7 +1106,7 @@ namespace RajMango.DataAccess.Migrations
                             Id = 16,
                             CourierLocationType = 2,
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(8092),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -990,79 +1122,99 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AddressLine")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("Area")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("CourierProviderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("GoogleMapUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("nvarchar(2048)")
+                        .HasColumnOrder(12);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(13);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("float");
+                        .HasColumnType("float")
+                        .HasColumnOrder(10);
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("float");
+                        .HasColumnType("float")
+                        .HasColumnOrder(11);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("SupportPhone1")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("SupportPhone2")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1078,7 +1230,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Dhanmondi",
                             City = "Dhaka",
                             CourierProviderId = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4745),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7393),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1094,7 +1246,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Mirpur",
                             City = "Dhaka",
                             CourierProviderId = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4757),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7405),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1110,7 +1262,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Banani",
                             City = "Dhaka",
                             CourierProviderId = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4765),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7415),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1126,7 +1278,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulshan 2",
                             City = "Dhaka",
                             CourierProviderId = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4775),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7425),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1142,7 +1294,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Kawran Bazar",
                             City = "Dhaka",
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4785),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7435),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1158,7 +1310,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Mohakhali",
                             City = "Dhaka",
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4796),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7443),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1174,7 +1326,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulistan",
                             City = "Dhaka",
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4806),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7454),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1190,7 +1342,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "New Market",
                             City = "Dhaka",
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4815),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7464),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1206,7 +1358,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Malibagh",
                             City = "Dhaka",
                             CourierProviderId = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4825),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7472),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1222,7 +1374,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Uttara",
                             City = "Dhaka",
                             CourierProviderId = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4835),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7480),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1238,7 +1390,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gazipur",
                             City = "Gazipur",
                             CourierProviderId = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4846),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7489),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1254,7 +1406,7 @@ namespace RajMango.DataAccess.Migrations
                             Area = "Gulshan 1",
                             City = "Dhaka",
                             CourierProviderId = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Unspecified).AddTicks(4856),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(7502),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsActive = true,
@@ -1269,70 +1421,88 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AddressLine1")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("AddressLine2")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(9);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<int>("CustomerType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(10);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(3);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(11);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("PhoneNumber1")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("PhoneNumber2")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -1345,63 +1515,80 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("ExpenseTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("PaidTo")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("PaymentReference")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1417,17 +1604,28 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
+
                     b.Property<int>("ExpenseId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
@@ -1440,52 +1638,66 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ColorCode")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(3);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsSystem")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Sequence")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1496,40 +1708,62 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Answer")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Category")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
+
+                    b.Property<int>("DeletedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1540,34 +1774,43 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
@@ -1582,22 +1825,35 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
+
                     b.Property<int>("FeedbackId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("ImagePath")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(5);
 
                     b.HasKey("Id");
 
@@ -1610,66 +1866,84 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthToken")
                         .IsRequired()
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("nvarchar(2048)")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("DeviceInfo")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(11);
 
                     b.Property<DateTime>("ExpiresIn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime>("IssuedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(8);
 
                     b.Property<int?>("RevokedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -1684,53 +1958,68 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<int>("MangoTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(8);
 
                     b.Property<decimal>("PricePerKg")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
 
                     b.Property<int>("SeasonYear")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1743,60 +2032,76 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AverageWeight")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                        .HasColumnType("nvarchar(1024)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("ImagePath")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(4);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<int>("MangoGrade")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("Region")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("Sequence")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("SweetnessLevel")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -1810,7 +2115,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             AverageWeight = "325-350g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4096),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6875),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A sweet and early-season mango, Gopalbhog is known for its rich aroma, fiberless flesh, and vibrant yellow skin. Popular in Rajshahi and Chapainawabganj.",
@@ -1827,7 +2132,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 2,
                             AverageWeight = "400-425g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4115),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6885),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Also known as Khirshapat, this premium mango is highly sought after for its buttery smooth texture and excellent sweetness. It’s the pride of Chapainawabganj.",
@@ -1844,7 +2149,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 3,
                             AverageWeight = "375-400g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4122),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6893),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Langra is a traditional mid-season mango with a distinct tangy-sweet taste. Its green skin remains even when ripe. Highly popular across Bangladesh.",
@@ -1861,7 +2166,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 4,
                             AverageWeight = "250-300g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4129),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6901),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A hybrid mango known for its long shelf life and rich aroma. Amrupali is intensely sweet and has a reddish hue when ripe. Great for gifting and exports.",
@@ -1878,7 +2183,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 5,
                             AverageWeight = "250-275g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4136),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6908),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "A local variety with good sweetness and juiciness, Brindabon mangoes are medium-sized and ideal for table consumption. Rarely found outside local markets.",
@@ -1895,7 +2200,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 6,
                             AverageWeight = "850-950g",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 131, DateTimeKind.Local).AddTicks(4142),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Local).AddTicks(6916),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Fazli mangoes are large, fleshy, and less fibrous, making them perfect for pulp and chutney. They are harvested late in the season and have excellent storage qualities.",
@@ -1914,129 +2219,165 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("CourierCharge")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(14);
 
                     b.Property<string>("CourierChargeNote")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(17);
 
                     b.Property<decimal?>("CourierChargeOverrideAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(15);
 
                     b.Property<int?>("CourierLocationType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(12);
 
                     b.Property<int?>("CourierProviderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<decimal>("CourierRatePerKg")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(13);
 
                     b.Property<int?>("CourierStationId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<DateTime?>("DeliveryDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(19);
 
                     b.Property<string>("DeliveryNote")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(29);
 
                     b.Property<int>("DeliveryStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(22);
 
                     b.Property<decimal>("DueAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(11);
 
                     b.Property<string>("FallbackAddress")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnOrder(25);
 
                     b.Property<bool>("IsCourierChargeOverridden")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(16);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(23);
 
                     b.Property<bool>("IsValidOrder")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(24);
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(18);
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("OrderStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(20);
 
                     b.Property<decimal>("PaidAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(10);
 
                     b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(21);
 
                     b.Property<decimal>("ProductTotalAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("ReceiverMobileNumber")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnOrder(28);
 
                     b.Property<string>("ReceiverName")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(27);
 
                     b.Property<int>("ReceiverType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(26);
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("TotalQuantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("TrackingNumber")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -2056,46 +2397,66 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CrateType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(10);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeliveryDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(9);
 
                     b.Property<decimal>("Discount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(12);
 
                     b.Property<bool>("IsGift")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(11);
 
                     b.Property<int>("MangoTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Note")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<decimal>("TotalPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(7);
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(5);
 
                     b.HasKey("Id");
 
@@ -2123,92 +2484,117 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BkashCallbackStatus")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(15);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<decimal>("DiscountAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(5);
 
                     b.Property<decimal>("DueAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("GatewayPaymentId")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(12);
 
                     b.Property<string>("GatewayTransactionId")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(13);
 
                     b.Property<decimal>("GrossAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(4);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("MerchantInvoiceNumber")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(14);
 
                     b.Property<decimal>("NetAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<decimal>("PaidAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime?>("PaidAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(18);
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(11);
 
                     b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(10);
 
                     b.Property<string>("RawCreateResponse")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(16);
 
                     b.Property<string>("RawExecuteResponse")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(17);
 
                     b.Property<string>("TransactionId")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<decimal>("VatAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
 
                     b.HasKey("Id");
 
@@ -2221,28 +2607,42 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContentType")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<string>("FileName")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(6);
 
                     b.HasKey("Id");
 
@@ -2255,46 +2655,58 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnOrder(4);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<string>("Module")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -2307,7 +2719,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.view",
@@ -2320,7 +2732,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.create",
@@ -2333,7 +2745,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.update",
@@ -2346,7 +2758,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.delete",
@@ -2359,7 +2771,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.view",
@@ -2372,7 +2784,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.create",
@@ -2385,7 +2797,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.update",
@@ -2398,7 +2810,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "role.delete",
@@ -2411,7 +2823,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.view",
@@ -2424,7 +2836,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.create",
@@ -2437,7 +2849,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.update",
@@ -2450,7 +2862,7 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "order.delete",
@@ -2463,7 +2875,33 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 13,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.admin.view",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order.admin",
+                            Name = "order.admin.view",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "order.admin.manage",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "order.admin",
+                            Name = "order.admin.manage",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.view",
@@ -2475,8 +2913,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 14,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 16,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.create",
@@ -2488,8 +2926,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 15,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 17,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.update",
@@ -2501,8 +2939,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 16,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 18,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "payment.delete",
@@ -2514,8 +2952,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 17,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 19,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.view",
@@ -2527,8 +2965,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 18,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 20,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.create",
@@ -2540,8 +2978,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 19,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 21,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.update",
@@ -2553,8 +2991,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 20,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 22,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.delete",
@@ -2566,8 +3004,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 21,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 23,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.view",
@@ -2579,8 +3017,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 22,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 24,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.create",
@@ -2592,8 +3030,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 23,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 25,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.update",
@@ -2605,8 +3043,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 24,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 26,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "expense.type.delete",
@@ -2618,8 +3056,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 25,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 27,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.view",
@@ -2631,8 +3069,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 26,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 28,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.create",
@@ -2644,8 +3082,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 27,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 29,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.update",
@@ -2657,8 +3095,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 28,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 30,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "courier.delete",
@@ -2670,8 +3108,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 29,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 31,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.view",
@@ -2683,8 +3121,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 30,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 32,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.create",
@@ -2696,8 +3134,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 31,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 33,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.update",
@@ -2709,8 +3147,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 32,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 34,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "customer.delete",
@@ -2722,8 +3160,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 33,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 35,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.type.view",
@@ -2735,8 +3173,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 34,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 36,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.type.manage",
@@ -2748,8 +3186,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 35,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 37,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.availability.view",
@@ -2761,8 +3199,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 36,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 38,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "mango.availability.manage",
@@ -2774,8 +3212,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 37,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 39,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "report.view",
@@ -2787,8 +3225,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 38,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 40,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "dashboard.admin.view",
@@ -2800,8 +3238,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 39,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 41,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "dashboard.customer.view",
@@ -2813,8 +3251,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 40,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 42,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.submit",
@@ -2826,8 +3264,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 41,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 43,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.admin.view",
@@ -2839,8 +3277,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 42,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 44,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "complaint.admin.manage",
@@ -2852,8 +3290,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 43,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 45,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "faq.manage",
@@ -2865,8 +3303,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 44,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 46,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "policy.view",
@@ -2878,8 +3316,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 45,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 47,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "policy.manage",
@@ -2891,8 +3329,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 46,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 48,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "feedback.admin.view",
@@ -2904,8 +3342,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 47,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 49,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.view",
@@ -2917,8 +3355,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 48,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 50,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.grant",
@@ -2930,8 +3368,8 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 49,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            Id = 51,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "user.permission.revoke",
@@ -2943,210 +3381,210 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = 50,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
-                            CreatedBy = 1,
-                            DeletedBy = 0,
-                            Description = "courier-provider.view",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Module = "courier-provider",
-                            Name = "courier-provider.view",
-                            UpdatedBy = 0
-                        },
-                        new
-                        {
-                            Id = 51,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
-                            CreatedBy = 1,
-                            DeletedBy = 0,
-                            Description = "courier-provider.create",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Module = "courier-provider",
-                            Name = "courier-provider.create",
-                            UpdatedBy = 0
-                        },
-                        new
-                        {
                             Id = 52,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-provider.update",
+                            Description = "courier.provider.view",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-provider",
-                            Name = "courier-provider.update",
+                            Module = "courier.provider",
+                            Name = "courier.provider.view",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 53,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-provider.delete",
+                            Description = "courier.provider.create",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-provider",
-                            Name = "courier-provider.delete",
+                            Module = "courier.provider",
+                            Name = "courier.provider.create",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 54,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-station.view",
+                            Description = "courier.provider.update",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-station",
-                            Name = "courier-station.view",
+                            Module = "courier.provider",
+                            Name = "courier.provider.update",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 55,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-station.create",
+                            Description = "courier.provider.delete",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-station",
-                            Name = "courier-station.create",
+                            Module = "courier.provider",
+                            Name = "courier.provider.delete",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 56,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-station.update",
+                            Description = "courier.station.view",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-station",
-                            Name = "courier-station.update",
+                            Module = "courier.station",
+                            Name = "courier.station.view",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 57,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-station.delete",
+                            Description = "courier.station.create",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-station",
-                            Name = "courier-station.delete",
+                            Module = "courier.station",
+                            Name = "courier.station.create",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 58,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-area-map.view",
+                            Description = "courier.station.update",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-area-map",
-                            Name = "courier-area-map.view",
+                            Module = "courier.station",
+                            Name = "courier.station.update",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 59,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-area-map.create",
+                            Description = "courier.station.delete",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-area-map",
-                            Name = "courier-area-map.create",
+                            Module = "courier.station",
+                            Name = "courier.station.delete",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 60,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-area-map.update",
+                            Description = "courier.area.map.view",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-area-map",
-                            Name = "courier-area-map.update",
+                            Module = "courier.area.map",
+                            Name = "courier.area.map.view",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 61,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-area-map.delete",
+                            Description = "courier.area.map.create",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-area-map",
-                            Name = "courier-area-map.delete",
+                            Module = "courier.area.map",
+                            Name = "courier.area.map.create",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 62,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-rate-config.view",
+                            Description = "courier.area.map.update",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-rate-config",
-                            Name = "courier-rate-config.view",
+                            Module = "courier.area.map",
+                            Name = "courier.area.map.update",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 63,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-rate-config.create",
+                            Description = "courier.area.map.delete",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-rate-config",
-                            Name = "courier-rate-config.create",
+                            Module = "courier.area.map",
+                            Name = "courier.area.map.delete",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 64,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-rate-config.update",
+                            Description = "courier.rate.config.view",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-rate-config",
-                            Name = "courier-rate-config.update",
+                            Module = "courier.rate.config",
+                            Name = "courier.rate.config.view",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 65,
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
                             CreatedBy = 1,
                             DeletedBy = 0,
-                            Description = "courier-rate-config.delete",
+                            Description = "courier.rate.config.create",
                             IsActive = true,
                             IsDeleted = false,
-                            Module = "courier-rate-config",
-                            Name = "courier-rate-config.delete",
+                            Module = "courier.rate.config",
+                            Name = "courier.rate.config.create",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.rate.config.update",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier.rate.config",
+                            Name = "courier.rate.config.update",
+                            UpdatedBy = 0
+                        },
+                        new
+                        {
+                            Id = 67,
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(158),
+                            CreatedBy = 1,
+                            DeletedBy = 0,
+                            Description = "courier.rate.config.delete",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Module = "courier.rate.config",
+                            Name = "courier.rate.config.delete",
                             UpdatedBy = 0
                         });
                 });
@@ -3155,36 +3593,57 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
+
+                    b.Property<int>("DeletedBy")
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(5);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<int>("PolicyType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -3195,74 +3654,94 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("ImagePath")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(5);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(13);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsSeasonal")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(12);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("OriginRegion")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(10);
 
                     b.Property<decimal>("PricePerUnit")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("ProductCode")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("UnitType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(11);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<decimal>("WeightPerUnitKg")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(8);
 
                     b.HasKey("Id");
 
@@ -3275,66 +3754,84 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("GatewayResponseMessage")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(10);
 
                     b.Property<string>("GatewayTransactionId")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(11);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsGatewayRefunded")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<decimal>("RefundAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("RefundDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("RefundReason")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("RefundReference")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("RefundedBy")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -3347,52 +3844,66 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<string>("Description")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnOrder(4);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsSystemRole")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("PermissionJson")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.HasKey("Id");
 
@@ -3406,7 +3917,7 @@ namespace RajMango.DataAccess.Migrations
                         {
                             Id = 1,
                             Code = "system_admin",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 32, 541, DateTimeKind.Unspecified).AddTicks(4296),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 38, 707, DateTimeKind.Unspecified).AddTicks(5733),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Full system access including user and role management.",
@@ -3414,14 +3925,14 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsSystemRole = true,
                             Name = "System Admin",
-                            PermissionJson = "[\"user.view\",\"user.create\",\"user.update\",\"user.delete\",\"role.view\",\"role.create\",\"role.update\",\"role.delete\",\"order.view\",\"order.create\",\"order.update\",\"order.delete\",\"payment.view\",\"payment.create\",\"payment.update\",\"payment.delete\",\"expense.view\",\"expense.create\",\"expense.update\",\"expense.delete\",\"expense.type.view\",\"expense.type.create\",\"expense.type.update\",\"expense.type.delete\",\"courier.view\",\"courier.create\",\"courier.update\",\"courier.delete\",\"customer.view\",\"customer.create\",\"customer.update\",\"customer.delete\",\"mango.type.view\",\"mango.type.manage\",\"mango.availability.view\",\"mango.availability.manage\",\"report.view\",\"dashboard.admin.view\",\"dashboard.customer.view\",\"complaint.submit\",\"complaint.admin.view\",\"complaint.admin.manage\",\"faq.manage\",\"policy.view\",\"policy.manage\",\"feedback.admin.view\",\"user.permission.view\",\"user.permission.grant\",\"user.permission.revoke\",\"courier-provider.view\",\"courier-provider.create\",\"courier-provider.update\",\"courier-provider.delete\",\"courier-station.view\",\"courier-station.create\",\"courier-station.update\",\"courier-station.delete\",\"courier-area-map.view\",\"courier-area-map.create\",\"courier-area-map.update\",\"courier-area-map.delete\",\"courier-rate-config.view\",\"courier-rate-config.create\",\"courier-rate-config.update\",\"courier-rate-config.delete\"]",
+                            PermissionJson = "[\"user.view\",\"user.create\",\"user.update\",\"user.delete\",\"role.view\",\"role.create\",\"role.update\",\"role.delete\",\"order.view\",\"order.create\",\"order.update\",\"order.delete\",\"order.admin.view\",\"order.admin.manage\",\"payment.view\",\"payment.create\",\"payment.update\",\"payment.delete\",\"expense.view\",\"expense.create\",\"expense.update\",\"expense.delete\",\"expense.type.view\",\"expense.type.create\",\"expense.type.update\",\"expense.type.delete\",\"courier.view\",\"courier.create\",\"courier.update\",\"courier.delete\",\"customer.view\",\"customer.create\",\"customer.update\",\"customer.delete\",\"mango.type.view\",\"mango.type.manage\",\"mango.availability.view\",\"mango.availability.manage\",\"report.view\",\"dashboard.admin.view\",\"dashboard.customer.view\",\"complaint.submit\",\"complaint.admin.view\",\"complaint.admin.manage\",\"faq.manage\",\"policy.view\",\"policy.manage\",\"feedback.admin.view\",\"user.permission.view\",\"user.permission.grant\",\"user.permission.revoke\",\"courier.provider.view\",\"courier.provider.create\",\"courier.provider.update\",\"courier.provider.delete\",\"courier.station.view\",\"courier.station.create\",\"courier.station.update\",\"courier.station.delete\",\"courier.area.map.view\",\"courier.area.map.create\",\"courier.area.map.update\",\"courier.area.map.delete\",\"courier.rate.config.view\",\"courier.rate.config.create\",\"courier.rate.config.update\",\"courier.rate.config.delete\"]",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 2,
                             Code = "admin",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 32, 541, DateTimeKind.Unspecified).AddTicks(5636),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 38, 707, DateTimeKind.Unspecified).AddTicks(6374),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard administrative access excluding system-level configurations.",
@@ -3429,14 +3940,14 @@ namespace RajMango.DataAccess.Migrations
                             IsDeleted = false,
                             IsSystemRole = true,
                             Name = "Admin",
-                            PermissionJson = "[\"user.view\",\"user.create\",\"user.update\",\"user.delete\",\"role.view\",\"role.create\",\"role.update\",\"role.delete\",\"order.view\",\"order.create\",\"order.update\",\"order.delete\",\"payment.view\",\"payment.create\",\"payment.update\",\"payment.delete\",\"expense.view\",\"expense.create\",\"expense.update\",\"expense.delete\",\"expense.type.view\",\"expense.type.create\",\"expense.type.update\",\"expense.type.delete\",\"courier.view\",\"courier.create\",\"courier.update\",\"courier.delete\",\"customer.view\",\"customer.create\",\"customer.update\",\"customer.delete\",\"mango.type.view\",\"mango.type.manage\",\"mango.availability.view\",\"mango.availability.manage\",\"report.view\",\"dashboard.admin.view\",\"dashboard.customer.view\",\"complaint.submit\",\"complaint.admin.view\",\"complaint.admin.manage\",\"faq.manage\",\"policy.view\",\"policy.manage\",\"feedback.admin.view\",\"user.permission.view\",\"user.permission.grant\",\"user.permission.revoke\",\"courier-provider.view\",\"courier-provider.create\",\"courier-provider.update\",\"courier-provider.delete\",\"courier-station.view\",\"courier-station.create\",\"courier-station.update\",\"courier-station.delete\",\"courier-area-map.view\",\"courier-area-map.create\",\"courier-area-map.update\",\"courier-area-map.delete\",\"courier-rate-config.view\",\"courier-rate-config.create\",\"courier-rate-config.update\",\"courier-rate-config.delete\"]",
+                            PermissionJson = "[\"user.view\",\"user.create\",\"user.update\",\"user.delete\",\"role.view\",\"role.create\",\"role.update\",\"role.delete\",\"order.view\",\"order.create\",\"order.update\",\"order.delete\",\"order.admin.view\",\"order.admin.manage\",\"payment.view\",\"payment.create\",\"payment.update\",\"payment.delete\",\"expense.view\",\"expense.create\",\"expense.update\",\"expense.delete\",\"expense.type.view\",\"expense.type.create\",\"expense.type.update\",\"expense.type.delete\",\"courier.view\",\"courier.create\",\"courier.update\",\"courier.delete\",\"customer.view\",\"customer.create\",\"customer.update\",\"customer.delete\",\"mango.type.view\",\"mango.type.manage\",\"mango.availability.view\",\"mango.availability.manage\",\"report.view\",\"dashboard.admin.view\",\"dashboard.customer.view\",\"complaint.submit\",\"complaint.admin.view\",\"complaint.admin.manage\",\"faq.manage\",\"policy.view\",\"policy.manage\",\"feedback.admin.view\",\"user.permission.view\",\"user.permission.grant\",\"user.permission.revoke\",\"courier.provider.view\",\"courier.provider.create\",\"courier.provider.update\",\"courier.provider.delete\",\"courier.station.view\",\"courier.station.create\",\"courier.station.update\",\"courier.station.delete\",\"courier.area.map.view\",\"courier.area.map.create\",\"courier.area.map.update\",\"courier.area.map.delete\",\"courier.rate.config.view\",\"courier.rate.config.create\",\"courier.rate.config.update\",\"courier.rate.config.delete\"]",
                             UpdatedBy = 0
                         },
                         new
                         {
                             Id = 3,
                             Code = "self_register",
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 32, 541, DateTimeKind.Unspecified).AddTicks(6014),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 38, 707, DateTimeKind.Unspecified).AddTicks(6502),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             Description = "Standard user like a customer access only order related features",
@@ -3791,6 +4302,16 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
+                            RoleId = 1,
+                            PermissionId = 66
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 67
+                        },
+                        new
+                        {
                             RoleId = 2,
                             PermissionId = 1
                         },
@@ -4116,6 +4637,16 @@ namespace RajMango.DataAccess.Migrations
                         },
                         new
                         {
+                            RoleId = 2,
+                            PermissionId = 66
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 67
+                        },
+                        new
+                        {
                             RoleId = 3,
                             PermissionId = 9
                         },
@@ -4137,27 +4668,27 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 33
-                        },
-                        new
-                        {
-                            RoleId = 3,
                             PermissionId = 35
                         },
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 39
+                            PermissionId = 37
                         },
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 40
+                            PermissionId = 41
                         },
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 44
+                            PermissionId = 42
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 46
                         });
                 });
 
@@ -4165,56 +4696,71 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AddressLine")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("AddressType")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
 
                     b.Property<string>("Area")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("City")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("PostalCode")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -4245,39 +4791,50 @@ namespace RajMango.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("AssignedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(900);
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(901);
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(904);
 
                     b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(905);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(906);
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(902);
 
                     b.Property<int>("UpdatedBy")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(903);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -4292,8 +4849,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4618),
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4614),
+                            AssignedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(60),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(56),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -4304,8 +4861,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4639),
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4636),
+                            AssignedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(81),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(79),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,
@@ -4316,8 +4873,8 @@ namespace RajMango.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4650),
-                            CreatedAt = new DateTime(2026, 5, 24, 12, 2, 33, 130, DateTimeKind.Unspecified).AddTicks(4647),
+                            AssignedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(91),
+                            CreatedAt = new DateTime(2026, 5, 31, 23, 44, 39, 560, DateTimeKind.Unspecified).AddTicks(88),
                             CreatedBy = 1,
                             DeletedBy = 0,
                             IsDeleted = false,

@@ -14,7 +14,6 @@ namespace RajMango.Application.Features.Queries
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public string? TurnstileToken { get; set; }
 
         public GetAuthUserQuery(string email, string password)
         {
@@ -28,26 +27,19 @@ namespace RajMango.Application.Features.Queries
         private readonly IPasswordHasher<AppUser> _passwordHasher;
         private readonly IDataContext _dataContext;
         private readonly IJwtTokenService _jwtTokenService;
-        private readonly ITurnstileVerificationService _turnstile;
 
         public GetGetAuthUserQueryHandler(
             IPasswordHasher<AppUser> passwordHasher,
             IDataContext dataContext,
-            IJwtTokenService jwtTokenService,
-            ITurnstileVerificationService turnstile)
+            IJwtTokenService jwtTokenService)
         {
             _passwordHasher = passwordHasher;
             _dataContext = dataContext;
             _jwtTokenService = jwtTokenService;
-            _turnstile = turnstile;
         }
 
         public async Task<Result<GetAuthUserDto>> Handle(GetAuthUserQuery query, CancellationToken cancellationToken)
         {
-            var tokenValid = await _turnstile.VerifyAsync(query.TurnstileToken, cancellationToken);
-            if (!tokenValid)
-                return await Result<GetAuthUserDto>.FailureAsync("Security verification failed. Please try again.");
-
             var user = await _dataContext.Get<AppUser>().FirstOrDefaultAsync(u => u.Email == query.Email, cancellationToken);
 
             if (user == null)

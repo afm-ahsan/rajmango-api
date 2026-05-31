@@ -162,7 +162,7 @@ namespace RajMango.Shared
         {
             Users.View, Users.Create, Users.Update, Users.Delete,
             Roles.View, Roles.Create, Roles.Update, Roles.Delete,
-            Orders.View, Orders.Create, Orders.Update, Orders.Delete,
+            Orders.View, Orders.Create, Orders.Update, Orders.Delete, Orders.AdminView, Orders.AdminManage,
             Payments.View, Payments.Create, Payments.Update, Payments.Delete,
             Expenses.View, Expenses.Create, Expenses.Update, Expenses.Delete,
             ExpenseTypes.View, ExpenseTypes.Create, ExpenseTypes.Update, ExpenseTypes.Delete,

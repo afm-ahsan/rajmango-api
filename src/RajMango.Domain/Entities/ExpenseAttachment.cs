@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RajMango.Domain.Entities
 {
     [Table("ExpenseAttachments")]
-    public class ExpenseAttachment : IHasId<int>
+    public class ExpenseAttachment : CreationAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

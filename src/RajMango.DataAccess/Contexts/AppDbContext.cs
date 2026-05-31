@@ -84,6 +84,9 @@ namespace RajMango.DataAccess.Contexts
             // 2. Apply global decimal(18,2) precision
             modelBuilder.ApplyGlobalDecimalPrecision();
 
+            // 2b. Pin audit columns to the end of every audited table (order 900–906)
+            modelBuilder.ApplyAuditColumnOrdering();
+
             // 3. Seed system roles, users and permission data
             modelBuilder.LoadSystemLevelSeedData();
             modelBuilder.LoadPermissionSeedData();

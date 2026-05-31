@@ -29,22 +29,6 @@ namespace RajMango.Tests.Handlers.Auth
             return mock.Object;
         }
 
-        private static ITurnstileVerificationService PassingTurnstile()
-        {
-            var mock = new Mock<ITurnstileVerificationService>();
-            mock.Setup(x => x.VerifyAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true);
-            return mock.Object;
-        }
-
-        private static ITurnstileVerificationService FailingTurnstile()
-        {
-            var mock = new Mock<ITurnstileVerificationService>();
-            mock.Setup(x => x.VerifyAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(false);
-            return mock.Object;
-        }
-
         private static AppDbContext CreateUnauthenticatedDb()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -64,17 +48,15 @@ namespace RajMango.Tests.Handlers.Auth
                 new PasswordHasher<AppUser>(),
                 NoOpLock(),
                 NoOpErrorHandler(),
-                db,
-                PassingTurnstile());
+                db);
 
             var command = new RegisterUserCommand
             {
-                FirstName      = "Test",
-                LastName       = "User",
-                Email          = "test@example.com",
-                PhoneNumber    = "01700000001",
-                Password       = "Test@1234",
-                TurnstileToken = "valid-test-token",
+                FirstName   = "Test",
+                LastName    = "User",
+                Email       = "test@example.com",
+                PhoneNumber = "01700000001",
+                Password    = "Test@1234",
             };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -92,17 +74,15 @@ namespace RajMango.Tests.Handlers.Auth
                 new PasswordHasher<AppUser>(),
                 NoOpLock(),
                 NoOpErrorHandler(),
-                db,
-                PassingTurnstile());
+                db);
 
             var command = new RegisterUserCommand
             {
-                FirstName      = "Self",
-                LastName       = "Register",
-                Email          = "self@example.com",
-                PhoneNumber    = "01700000099",
-                Password       = "Test@1234",
-                TurnstileToken = "valid-test-token",
+                FirstName   = "Self",
+                LastName    = "Register",
+                Email       = "self@example.com",
+                PhoneNumber = "01700000099",
+                Password    = "Test@1234",
             };
 
             var result = await handler.Handle(command, CancellationToken.None);
@@ -120,17 +100,15 @@ namespace RajMango.Tests.Handlers.Auth
                 new PasswordHasher<AppUser>(),
                 NoOpLock(),
                 NoOpErrorHandler(),
-                db,
-                PassingTurnstile());
+                db);
 
             var command = new RegisterUserCommand
             {
-                FirstName      = "Test",
-                LastName       = "User",
-                Email          = "dup@example.com",
-                PhoneNumber    = "01700000001",
-                Password       = "Test@1234",
-                TurnstileToken = "valid-test-token",
+                FirstName   = "Test",
+                LastName    = "User",
+                Email       = "dup@example.com",
+                PhoneNumber = "01700000001",
+                Password    = "Test@1234",
             };
 
             await handler.Handle(command, CancellationToken.None);
@@ -140,34 +118,6 @@ namespace RajMango.Tests.Handlers.Auth
 
             result2.Succeeded.Should().BeFalse();
             result2.Messages.Should().Contain(m => m.Contains("email", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [Fact]
-        public async Task Register_InvalidTurnstileToken_ReturnsFailure()
-        {
-            using var db = TestDbContextFactory.Create();
-            var handler = new RegisterUserCommandHandler(
-                new PasswordHasher<AppUser>(),
-                NoOpLock(),
-                NoOpErrorHandler(),
-                db,
-                FailingTurnstile());
-
-            var command = new RegisterUserCommand
-            {
-                FirstName      = "Test",
-                LastName       = "User",
-                Email          = "turnstile@example.com",
-                PhoneNumber    = "01700000003",
-                Password       = "Test@1234",
-                TurnstileToken = "invalid-token",
-            };
-
-            var result = await handler.Handle(command, CancellationToken.None);
-
-            result.Succeeded.Should().BeFalse();
-            result.Messages.Should().Contain(m => m.Contains("Security verification"));
-            db.Get<AppUser>().Should().BeEmpty("no user must be created when Turnstile fails");
         }
     }
 }

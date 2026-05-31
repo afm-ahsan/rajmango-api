@@ -6,7 +6,6 @@
         public ApiInfo ApiInfo { get; set; }
         public BkashSettings Bkash { get; set; }
         public RedisSettings Redis { get; set; }
-        public CloudflareTurnstileSettings CloudflareTurnstile { get; set; }
     }
 
     public class BkashSettings
@@ -43,14 +42,6 @@
         public string Authority { get; set; }
         public string SecurityScheme { get; set; }
         public string Description { get; set; }
-    }
-
-    public class CloudflareTurnstileSettings
-    {
-        public bool Enabled { get; set; } = false;
-        public string SiteKey { get; set; }
-        public string SecretKey { get; set; }
-        public string VerifyUrl { get; set; } = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
     }
 
     public class ApiInfo

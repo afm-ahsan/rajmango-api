@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RajMango.Domain.Entities
 {
     [Table("ComplaintImages")]
-    public class ComplaintImage : IHasId<int>
+    public class ComplaintImage : CreationAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

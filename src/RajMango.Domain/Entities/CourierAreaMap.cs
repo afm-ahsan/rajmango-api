@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RajMango.Domain.Entities
 {
     [Table("CourierAreaMaps")]
-    public class CourierAreaMap : AuditedEntity, IHasId<int>
+    public class CourierAreaMap : FullAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

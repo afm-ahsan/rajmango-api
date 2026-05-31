@@ -32,10 +32,7 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IBkashService, BkashService>()
                 .AddTransient<ICacheService, RedisCacheService>()
                 .AddTransient<IFileStorageService, LocalFileStorageService>()
-                .AddTransient<ITurnstileVerificationService, TurnstileVerificationService>()
                 .AddScoped<IPermissionService, PermissionService>();
-
-            services.AddHttpClient("Turnstile");
 
             services.AddHttpClient("Bkash", (sp, client) =>
             {

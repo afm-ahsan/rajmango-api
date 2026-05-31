@@ -25,7 +25,5 @@ namespace RajMango.Application.Features.Commands
 
         [Required]
         public string Password { get; set; }
-
-        public string? TurnstileToken { get; set; }
     }
 }

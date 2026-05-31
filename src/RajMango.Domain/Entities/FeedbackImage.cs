@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace RajMango.Domain.Entities
 {
     [Table("FeedbackImages")]
-    public class FeedbackImage : IHasId<int>
+    public class FeedbackImage : CreationAuditedEntity, IHasId<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

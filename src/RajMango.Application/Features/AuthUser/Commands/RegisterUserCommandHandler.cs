@@ -17,27 +17,20 @@ namespace RajMango.Application.Features.Commands
         private readonly IRegistrationLock _registrationLock;
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
-        private readonly ITurnstileVerificationService _turnstile;
 
         public RegisterUserCommandHandler(IPasswordHasher<AppUser> passwordHasher,
                                          IRegistrationLock registrationLock,
                                          IErrorHandler errorHandler,
-                                         IDataContext dataContext,
-                                         ITurnstileVerificationService turnstile)
+                                         IDataContext dataContext)
         {
             _passwordHasher = passwordHasher;
             _registrationLock = registrationLock;
             _errorHandler = errorHandler;
             _dataContext = dataContext;
-            _turnstile = turnstile;
         }
 
         public async Task<Result<int>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
         {
-            var tokenValid = await _turnstile.VerifyAsync(command.TurnstileToken, cancellationToken);
-            if (!tokenValid)
-                return await Result<int>.FailureAsync("Security verification failed. Please try again.");
-
             using (await _registrationLock.AcquireAsync())
             {
                 try
