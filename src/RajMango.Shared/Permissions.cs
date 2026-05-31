@@ -66,26 +66,26 @@ namespace RajMango.Shared
 
         public static class CourierProviders
         {
-            public const string View   = "courier-provider.view";
-            public const string Create = "courier-provider.create";
-            public const string Update = "courier-provider.update";
-            public const string Delete = "courier-provider.delete";
+            public const string View   = "courier.provider.view";
+            public const string Create = "courier.provider.create";
+            public const string Update = "courier.provider.update";
+            public const string Delete = "courier.provider.delete";
         }
 
         public static class CourierStations
         {
-            public const string View   = "courier-station.view";
-            public const string Create = "courier-station.create";
-            public const string Update = "courier-station.update";
-            public const string Delete = "courier-station.delete";
+            public const string View   = "courier.station.view";
+            public const string Create = "courier.station.create";
+            public const string Update = "courier.station.update";
+            public const string Delete = "courier.station.delete";
         }
 
         public static class CourierAreaMaps
         {
-            public const string View   = "courier-area-map.view";
-            public const string Create = "courier-area-map.create";
-            public const string Update = "courier-area-map.update";
-            public const string Delete = "courier-area-map.delete";
+            public const string View   = "courier.area.map.view";
+            public const string Create = "courier.area.map.create";
+            public const string Update = "courier.area.map.update";
+            public const string Delete = "courier.area.map.delete";
         }
 
         public static class Customers
@@ -139,10 +139,10 @@ namespace RajMango.Shared
 
         public static class CourierRateConfigurations
         {
-            public const string View   = "courier-rate-config.view";
-            public const string Create = "courier-rate-config.create";
-            public const string Update = "courier-rate-config.update";
-            public const string Delete = "courier-rate-config.delete";
+            public const string View   = "courier.rate.config.view";
+            public const string Create = "courier.rate.config.create";
+            public const string Update = "courier.rate.config.update";
+            public const string Delete = "courier.rate.config.delete";
         }
 
         public static class Feedback

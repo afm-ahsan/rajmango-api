@@ -32,6 +32,7 @@ namespace RajMango.Application.Features.Queries
         public decimal DueAmount { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
+        public DeliveryStatus DeliveryStatus { get; set; }
     }
 
     public class DashboardMangoAvailabilityDto
@@ -74,6 +75,7 @@ namespace RajMango.Application.Features.Queries
                     o.DueAmount,
                     o.OrderStatus,
                     o.PaymentStatus,
+                    o.DeliveryStatus,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -115,8 +117,9 @@ namespace RajMango.Application.Features.Queries
                     TotalAmount   = o.TotalAmount,
                     PaidAmount    = o.PaidAmount,
                     DueAmount     = o.DueAmount,
-                    OrderStatus   = o.OrderStatus,
-                    PaymentStatus = o.PaymentStatus,
+                    OrderStatus    = o.OrderStatus,
+                    PaymentStatus  = o.PaymentStatus,
+                    DeliveryStatus = o.DeliveryStatus,
                 }).ToList(),
                 AvailableMangoes = availableMangoes,
             };

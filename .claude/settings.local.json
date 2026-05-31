@@ -92,7 +92,13 @@
       "PowerShell(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.WebApi\" -Recurse -File | Where-Object {$_.Name -match \"Base|Common|Result\"} | Select-Object FullName)",
       "Bash(xargs grep -l \"admin-orders\\\\|admin-complaint\\\\|HasOrderAccess\\\\|HasCustomersAccess\")",
       "Bash(xargs grep -l \"orders\\\\|mango-types\\\\|customers\")",
-      "Bash(Select-String \"Pending|AddAdminOrder\")"
+      "Bash(Select-String \"Pending|AddAdminOrder\")",
+      "PowerShell(redis-cli *)",
+      "PowerShell(sqlcmd -S \".\\\\SQLEXPRESS\" -d \"RajMangoDB\" -Q $query -W 2>&1)",
+      "PowerShell(sqlcmd -S \"localhost\\\\SQLEXPRESS\" -d \"RajMango\" -E -Q $query -W 2>&1)",
+      "PowerShell($query = \"SELECT Id, Name, Module FROM Permissions WHERE Id BETWEEN 50 AND 65 ORDER BY Id;\")",
+      "PowerShell($query = \"SELECT Id, SUBSTRING\\(PermissionJson, CHARINDEX\\('courier', PermissionJson\\), 100\\) AS CourierSection FROM Roles WHERE Id IN \\(1,2\\);\")",
+      "PowerShell($query = \"SELECT Id, CASE WHEN PermissionJson LIKE '%courier-provider%' OR PermissionJson LIKE '%courier-station%' OR PermissionJson LIKE '%courier-area-map%' OR PermissionJson LIKE '%courier-rate-config%' THEN 'STILL HAS OLD KEYS' ELSE 'OK - all dot notation' END AS Status FROM Roles WHERE Id IN \\(1,2\\);\")"
     ]
   }
 }

@@ -83,6 +83,7 @@ namespace RajMango.Application.Features.Queries
                 CourierChargeNote           = o.CourierChargeNote,
                 IsValidOrder     = o.IsValidOrder,
                 IsDelivered      = o.IsDelivered,
+                DeliveryStatus   = o.DeliveryStatus,
                 DeliveryDate     = o.DeliveryDate,
                 TrackingNumber   = o.TrackingNumber,
                 CourierStationId     = o.CourierStationId,
@@ -126,7 +127,7 @@ namespace RajMango.Application.Features.Queries
                 "totalAmount"   => ascending ? query.OrderBy(o => o.TotalAmount)   : query.OrderByDescending(o => o.TotalAmount),
                 "orderStatus"   => ascending ? query.OrderBy(o => o.OrderStatus)   : query.OrderByDescending(o => o.OrderStatus),
                 "paymentStatus" => ascending ? query.OrderBy(o => o.PaymentStatus) : query.OrderByDescending(o => o.PaymentStatus),
-                "isDelivered"   => ascending ? query.OrderBy(o => o.IsDelivered)   : query.OrderByDescending(o => o.IsDelivered),
+                "deliveryStatus" => ascending ? query.OrderBy(o => o.DeliveryStatus) : query.OrderByDescending(o => o.DeliveryStatus),
                 _               => query.OrderByDescending(o => o.OrderDate),
             };
 
