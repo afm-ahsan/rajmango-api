@@ -27,6 +27,11 @@ namespace RajMango.Application.Features.Queries
         public int? CourierProviderId { get; set; }
         public int? CourierStationId { get; set; }
         public string MangoType { get; set; }
+
+        // --- Delivery preparation filters ---
+        public bool? CourierEligibleOnly { get; set; }
+        public string DeliveryArea { get; set; }
+        public string ReceiverMobile { get; set; }
     }
 
     public class GetAdminOrderListQueryHandler : IRequestHandler<GetAdminOrderListQuery, PaginatedResult<AdminOrderListDto>>
@@ -88,6 +93,21 @@ namespace RajMango.Application.Features.Queries
             if (!string.IsNullOrWhiteSpace(query.MangoType))
                 orderQuery = orderQuery.Where(o => o.OrderDetails.Any(od => od.MangoType.Name.Contains(query.MangoType)));
 
+            if (!string.IsNullOrWhiteSpace(query.DeliveryArea))
+                orderQuery = orderQuery.Where(o => o.CourierStation != null && o.CourierStation.Area.Contains(query.DeliveryArea));
+
+            if (!string.IsNullOrWhiteSpace(query.ReceiverMobile))
+                orderQuery = orderQuery.Where(o =>
+                    o.AppUser.PhoneNumber.Contains(query.ReceiverMobile) ||
+                    (o.ReceiverMobileNumber != null && o.ReceiverMobileNumber.Contains(query.ReceiverMobile)));
+
+            if (query.CourierEligibleOnly == true)
+                orderQuery = orderQuery.Where(o =>
+                    o.OrderStatus == OrderStatus.Confirmed &&
+                    o.PaymentStatus == PaymentStatus.Paid &&
+                    (o.DeliveryStatus == DeliveryStatus.None || o.DeliveryStatus == DeliveryStatus.Pending) &&
+                    o.CourierStationId.HasValue);
+
             bool ascending = !string.Equals(query.SortOrder, "desc", StringComparison.OrdinalIgnoreCase);
             orderQuery = query.SortBy?.ToLower() switch
             {
@@ -110,27 +130,50 @@ namespace RajMango.Application.Features.Queries
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
 
-            var data = orders.Select(o => new AdminOrderListDto
+            var data = orders.Select(o =>
             {
-                OrderId             = o.Id,
-                OrderNumber         = o.OrderNumber,
-                OrderDate           = o.OrderDate,
-                CustomerName        = o.AppUser != null ? $"{o.AppUser.FirstName} {o.AppUser.LastName}" : null,
-                CustomerPhone       = o.AppUser?.PhoneNumber,
-                TotalQuantity       = o.TotalQuantity,
-                ProductTotal        = o.ProductTotalAmount,
-                CourierCharge       = o.IsCourierChargeOverridden && o.CourierChargeOverrideAmount.HasValue
-                                          ? o.CourierChargeOverrideAmount.Value
-                                          : o.CourierCharge,
-                TotalAmount         = o.TotalAmount,
-                PaidAmount          = o.PaidAmount,
-                DueAmount           = o.DueAmount,
-                OrderStatus         = o.OrderStatus,
-                PaymentStatus       = o.PaymentStatus,
-                DeliveryStatus      = o.DeliveryStatus,
-                CourierStationName  = o.CourierStation?.Name,
-                CourierProviderName = o.CourierStation?.CourierProvider?.Name,
-                MangoTypeName       = o.OrderDetails.FirstOrDefault()?.MangoType?.Name,
+                var customerName = o.AppUser != null ? $"{o.AppUser.FirstName} {o.AppUser.LastName}".Trim() : null;
+                var customerPhone = o.AppUser?.PhoneNumber;
+                bool isSelf = o.ReceiverType == ReceiverType.Self;
+                bool eligible = o.OrderStatus == OrderStatus.Confirmed
+                    && o.PaymentStatus == PaymentStatus.Paid
+                    && (o.DeliveryStatus == DeliveryStatus.None || o.DeliveryStatus == DeliveryStatus.Pending)
+                    && o.CourierStationId.HasValue;
+
+                return new AdminOrderListDto
+                {
+                    OrderId              = o.Id,
+                    OrderNumber          = o.OrderNumber,
+                    OrderDate            = o.OrderDate,
+
+                    CustomerName         = customerName,
+                    CustomerPhone        = customerPhone,
+
+                    ReceiverType         = o.ReceiverType,
+                    ReceiverName         = isSelf ? customerName : o.ReceiverName,
+                    ReceiverMobile       = isSelf ? customerPhone : o.ReceiverMobileNumber,
+
+                    CourierProviderName  = o.CourierStation?.CourierProvider?.Name,
+                    CourierStationName   = o.CourierStation?.Name,
+                    CourierStationAddress = o.CourierStation?.AddressLine,
+                    DeliveryArea         = o.CourierStation?.Area,
+
+                    TotalQuantity        = o.TotalQuantity,
+                    ProductTotal         = o.ProductTotalAmount,
+                    CourierCharge        = o.IsCourierChargeOverridden && o.CourierChargeOverrideAmount.HasValue
+                                              ? o.CourierChargeOverrideAmount.Value
+                                              : o.CourierCharge,
+                    TotalAmount          = o.TotalAmount,
+                    PaidAmount           = o.PaidAmount,
+                    DueAmount            = o.DueAmount,
+
+                    OrderStatus          = o.OrderStatus,
+                    PaymentStatus        = o.PaymentStatus,
+                    DeliveryStatus       = o.DeliveryStatus,
+
+                    IsCourierEligible    = eligible,
+                    MangoTypeName        = o.OrderDetails.FirstOrDefault()?.MangoType?.Name,
+                };
             }).ToList();
 
             return PaginatedResult<AdminOrderListDto>.Create(data, totalCount, pageNumber, pageSize);

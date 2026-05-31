@@ -42,7 +42,12 @@ namespace RajMango.Application.DTOs.Order
         public string CourierProviderName { get; set; }
         public int? CourierStationId { get; set; }
         public string CourierStationName { get; set; }
+        public string CourierStationAddress { get; set; }
+        public string DeliveryArea { get; set; }
         public CourierLocationType? CourierLocationType { get; set; }
+
+        // --- Eligibility ---
+        public bool IsCourierEligible { get; set; }
 
         // --- Courier charge breakdown ---
         public decimal CourierRatePerKg { get; set; }

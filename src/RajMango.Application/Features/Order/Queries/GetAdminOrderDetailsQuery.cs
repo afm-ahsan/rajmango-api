@@ -45,6 +45,11 @@ namespace RajMango.Application.Features.Queries
                     .FirstOrDefaultAsync(cancellationToken)
                 : null;
 
+            bool isCourierEligible = order.OrderStatus == Shared.Enums.OrderStatus.Confirmed
+                && order.PaymentStatus == Shared.Enums.PaymentStatus.Paid
+                && (order.DeliveryStatus == Shared.Enums.DeliveryStatus.None || order.DeliveryStatus == Shared.Enums.DeliveryStatus.Pending)
+                && order.CourierStationId.HasValue;
+
             var dto = new AdminOrderDetailsDto
             {
                 OrderId                   = order.Id,
@@ -81,7 +86,11 @@ namespace RajMango.Application.Features.Queries
                 CourierStationName        = order.CourierStation != null
                     ? $"{order.CourierStation.CourierProvider?.Name} - {order.CourierStation.Name} ({order.CourierStation.City})"
                     : null,
+                CourierStationAddress     = order.CourierStation?.AddressLine,
+                DeliveryArea              = order.CourierStation?.Area,
                 CourierLocationType       = order.CourierLocationType,
+
+                IsCourierEligible         = isCourierEligible,
 
                 CourierRatePerKg          = order.CourierRatePerKg,
                 CourierChargeCalculated   = order.CourierCharge,
