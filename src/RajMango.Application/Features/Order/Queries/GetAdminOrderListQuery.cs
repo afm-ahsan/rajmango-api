@@ -170,6 +170,7 @@ namespace RajMango.Application.Features.Queries
                     OrderStatus          = o.OrderStatus,
                     PaymentStatus        = o.PaymentStatus,
                     DeliveryStatus       = o.DeliveryStatus,
+                    DeliveryDate         = o.DeliveryDate,
 
                     IsCourierEligible    = eligible,
                     MangoTypeName        = o.OrderDetails.FirstOrDefault()?.MangoType?.Name,

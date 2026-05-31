@@ -35,6 +35,7 @@ namespace RajMango.Application.DTOs.Order
         public OrderStatus OrderStatus { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
+        public DateTime? DeliveryDate { get; set; }
 
         // --- Flags ---
         public bool IsCourierEligible { get; set; }

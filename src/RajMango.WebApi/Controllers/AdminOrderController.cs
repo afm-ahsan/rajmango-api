@@ -1,3 +1,4 @@
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -81,6 +82,31 @@ namespace RajMango.WebApi.Controllers
         public async Task<ActionResult<Result<int>>> Cancel(int id)
         {
             return await _mediator.Send(new UpdateOrderStatusCommand { Id = id, NewStatus = OrderStatus.Cancelled });
+        }
+
+        /// <summary>
+        /// Directly set order, payment, and delivery status together.
+        /// Use for manual corrections and delivery preparation.
+        /// Rules: Delivered requires Paid; cancelled orders cannot be set Delivered;
+        /// delivered orders cannot be directly cancelled.
+        /// </summary>
+        [HttpPost("{id}/update-status")]
+        [RequirePermission(Permissions.Orders.AdminManage)]
+        public async Task<ActionResult<Result<int>>> UpdateStatus(
+            int id,
+            [FromBody] UpdateAdminOrderStatusCommand command)
+        {
+            command = command with { Id = id };
+
+            var validator = new UpdateAdminOrderStatusCommandValidator();
+            var validation = validator.Validate(command);
+            if (!validation.IsValid)
+            {
+                var errors = validation.Errors.Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
+            return await _mediator.Send(command);
         }
     }
 
