@@ -19,6 +19,7 @@ namespace RajMango.Application.Features.Queries
         public decimal TotalDue { get; set; }
         public List<CustomerRecentOrderDto> RecentOrders { get; set; } = new();
         public List<DashboardMangoAvailabilityDto> AvailableMangoes { get; set; } = new();
+        public List<DashboardUpcomingMangoDto> UpcomingMangoes { get; set; } = new();
     }
 
     public class CustomerRecentOrderDto
@@ -43,6 +44,15 @@ namespace RajMango.Application.Features.Queries
         public string MangoTypeName { get; set; }
         public decimal PricePerKg { get; set; }
         public DateTime EndDate { get; set; }
+    }
+
+    public class DashboardUpcomingMangoDto
+    {
+        public int Id { get; set; }
+        public int MangoTypeId { get; set; }
+        public string MangoTypeName { get; set; }
+        public decimal PricePerKg { get; set; }
+        public DateTime StartDate { get; set; }
     }
 
     public record GetCustomerDashboardQuery : IRequest<Result<CustomerDashboardDto>>;
@@ -98,6 +108,21 @@ namespace RajMango.Application.Features.Queries
                 })
                 .ToListAsync(cancellationToken);
 
+            var upcomingMangoes = await _dataContext.Get<MangoAvailability>()
+                .Include(a => a.MangoType)
+                .Where(a => a.Status == MangoAvailabilityStatus.Upcoming)
+                .OrderBy(a => a.StartDate)
+                .ThenBy(a => a.MangoType.Name)
+                .Select(a => new DashboardUpcomingMangoDto
+                {
+                    Id            = a.Id,
+                    MangoTypeId   = a.MangoTypeId,
+                    MangoTypeName = a.MangoType.Name,
+                    PricePerKg    = a.PricePerKg,
+                    StartDate     = a.StartDate,
+                })
+                .ToListAsync(cancellationToken);
+
             var dto = new CustomerDashboardDto
             {
                 TotalOrders     = orders.Count,
@@ -125,6 +150,7 @@ namespace RajMango.Application.Features.Queries
                     DeliveryDate   = o.DeliveryDate,
                 }).ToList(),
                 AvailableMangoes = availableMangoes,
+                UpcomingMangoes  = upcomingMangoes,
             };
 
             return await Result<CustomerDashboardDto>.SuccessAsync(dto);

@@ -29,6 +29,7 @@ namespace RajMango.Application.Features.Queries
         public int AvailableMangoTypes { get; set; }
 
         public List<DashboardMangoAvailabilityDto> AvailableMangoes { get; set; } = new();
+        public List<DashboardUpcomingMangoDto> UpcomingMangoes { get; set; } = new();
         public List<AdminRecentOrderDto> RecentOrders { get; set; } = new();
     }
 
@@ -112,6 +113,21 @@ namespace RajMango.Application.Features.Queries
                 })
                 .ToListAsync(cancellationToken);
 
+            var upcomingMangoes = await _dataContext.Get<MangoAvailability>()
+                .Include(a => a.MangoType)
+                .Where(a => a.Status == MangoAvailabilityStatus.Upcoming)
+                .OrderBy(a => a.StartDate)
+                .ThenBy(a => a.MangoType.Name)
+                .Select(a => new DashboardUpcomingMangoDto
+                {
+                    Id            = a.Id,
+                    MangoTypeId   = a.MangoTypeId,
+                    MangoTypeName = a.MangoType.Name,
+                    PricePerKg    = a.PricePerKg,
+                    StartDate     = a.StartDate,
+                })
+                .ToListAsync(cancellationToken);
+
             var totalCustomers = await _dataContext.Get<Customer>().CountAsync(cancellationToken);
 
             // Revenue excludes cancelled orders
@@ -133,6 +149,7 @@ namespace RajMango.Application.Features.Queries
                 TotalCustomers    = totalCustomers,
                 AvailableMangoTypes = availableMangoes.Count,
                 AvailableMangoes  = availableMangoes,
+                UpcomingMangoes   = upcomingMangoes,
                 RecentOrders      = recentOrders,
             };
 
