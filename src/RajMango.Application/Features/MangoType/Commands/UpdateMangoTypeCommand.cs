@@ -15,8 +15,8 @@ namespace RajMango.Application.Features.Commands
         public MangoGrade MangoGrade { get; set; }
         public SweetnessLevel SweetnessLevel { get; set; }
         public int Sequence { get; set; } = 0;
-        public int CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int? CreatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

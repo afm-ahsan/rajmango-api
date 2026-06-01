@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -11,36 +10,43 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
-        private readonly IMapper _mapper;
 
-        public UpdateMangoTypeCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IMapper mapper)
+        public UpdateMangoTypeCommandHandler(IErrorHandler errorHandler, IDataContext dataContext)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
-            _mapper = mapper;
         }
 
         public async Task<Result<int>> Handle(UpdateMangoTypeCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _dataContext.Get<MangoType>().FindAsync(command.Id);
-                if (user != null)
-                {
-                    var mappedEntity = _mapper.Map<MangoType>(command);
-                    
-                    _dataContext.Get<MangoType>().Update(mappedEntity);
+                var entity = await _dataContext.Get<MangoType>()
+                    .FindAsync(new object[] { command.Id }, cancellationToken);
 
-                    await _dataContext.SaveChangesAsync(cancellationToken);
+                if (entity == null)
+                    return await Result<int>.FailureAsync($"Mango type not found with Id {command.Id}.");
 
-                    return await Result<int>.SuccessAsync(user.Id, "Mango type is Updated.");
-                }
+                entity.Name           = command.Name;
+                entity.Description    = command.Description;
+                entity.ImagePath      = command.ImagePath;
+                entity.Region         = command.Region;
+                entity.AverageWeight  = command.AverageWeight;
+                entity.MangoGrade     = command.MangoGrade;
+                entity.SweetnessLevel = command.SweetnessLevel;
+                entity.Sequence       = command.Sequence;
+                entity.UpdatedBy      = command.UpdatedBy ?? 0;
+                entity.UpdatedAt      = DateTime.UtcNow;
+
+                await _dataContext.SaveChangesAsync(cancellationToken);
+
+                return await Result<int>.SuccessAsync(entity.Id, "Mango type updated.");
             }
             catch (Exception ex)
             {
                 _errorHandler.Handle(ex);
             }
-            return await Result<int>.FailureAsync($"Mango type is not found with the Id - {command.Id}");
+            return await Result<int>.FailureAsync($"Mango type update failed for Id {command.Id}.");
         }
     }
 }

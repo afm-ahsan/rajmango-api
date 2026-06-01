@@ -8,7 +8,7 @@ namespace RajMango.Application.Features.Courier.RateConfig.Commands
     {
         public int Id { get; set; }
         public int CourierProviderId { get; set; }
-        public CourierLocationType CourierLocationType { get; set; }
+        public CourierLocationType LocationType { get; set; }
         public decimal RatePerKg { get; set; }
         public decimal? MinimumCharge { get; set; }
         public bool IsActive { get; set; }

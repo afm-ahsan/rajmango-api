@@ -1,5 +1,3 @@
-using RajMango.Shared.Enums;
-
 namespace RajMango.Application.DTOs.Courier.RateConfig
 {
     public class CourierRateConfigurationDto
@@ -7,7 +5,7 @@ namespace RajMango.Application.DTOs.Courier.RateConfig
         public int Id { get; set; }
         public int CourierProviderId { get; set; }
         public string CourierProviderName { get; set; }
-        public CourierLocationType CourierLocationType { get; set; }
+        public int LocationType { get; set; }
         public decimal RatePerKg { get; set; }
         public decimal? MinimumCharge { get; set; }
         public bool IsActive { get; set; }

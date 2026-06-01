@@ -33,17 +33,17 @@ namespace RajMango.Application.Features.Courier.RateConfig.Commands
                     var conflict = await _dataContext.Get<CourierRateConfiguration>()
                         .AnyAsync(r => r.Id                  != command.Id
                                     && r.CourierProviderId    == command.CourierProviderId
-                                    && r.CourierLocationType  == command.CourierLocationType
+                                    && r.CourierLocationType  == command.LocationType
                                     && r.IsActive,
                                   cancellationToken);
 
                     if (conflict)
                         return await Result<int>.FailureAsync(
-                            $"Another active rate for {command.CourierLocationType} already exists for this provider.");
+                            $"Another active rate for {command.LocationType} already exists for this provider.");
                 }
 
                 entity.CourierProviderId   = command.CourierProviderId;
-                entity.CourierLocationType = command.CourierLocationType;
+                entity.CourierLocationType = command.LocationType;
                 entity.RatePerKg           = command.RatePerKg;
                 entity.MinimumCharge       = command.MinimumCharge;
                 entity.IsActive            = command.IsActive;

@@ -14,6 +14,8 @@ namespace RajMango.Application.Features.Courier.RateConfig.Queries
         public int PageSize { get; set; }
         public string SortBy { get; set; }
         public string SortOrder { get; set; }
+        public string? Filter { get; set; }
+        public int? LocationType { get; set; }
         public int? CourierProviderId { get; set; }
         public bool? IsActive { get; set; }
     }
@@ -35,6 +37,12 @@ namespace RajMango.Application.Features.Courier.RateConfig.Queries
                 .Include(r => r.CourierProvider)
                 .AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(query.Filter))
+                q = q.Where(r => r.CourierProvider.Name.Contains(query.Filter));
+
+            if (query.LocationType.HasValue)
+                q = q.Where(r => (int)r.CourierLocationType == query.LocationType.Value);
+
             if (query.CourierProviderId.HasValue)
                 q = q.Where(r => r.CourierProviderId == query.CourierProviderId.Value);
 
@@ -43,11 +51,19 @@ namespace RajMango.Application.Features.Courier.RateConfig.Queries
 
             q = (query.SortBy?.ToLower(), query.SortOrder?.ToLower() == "asc") switch
             {
-                ("rateperkg",  true)  => q.OrderBy(r => r.RatePerKg),
-                ("rateperkg",  false) => q.OrderByDescending(r => r.RatePerKg),
-                ("sequence",   true)  => q.OrderBy(r => r.Sequence),
-                ("sequence",   false) => q.OrderByDescending(r => r.Sequence),
-                _                    => q.OrderBy(r => r.Sequence).ThenBy(r => r.Id),
+                ("courierprovidername", true)  => q.OrderBy(r => r.CourierProvider.Name),
+                ("courierprovidername", false) => q.OrderByDescending(r => r.CourierProvider.Name),
+                ("locationtype",        true)  => q.OrderBy(r => r.CourierLocationType),
+                ("locationtype",        false) => q.OrderByDescending(r => r.CourierLocationType),
+                ("rateperkg",           true)  => q.OrderBy(r => r.RatePerKg),
+                ("rateperkg",           false) => q.OrderByDescending(r => r.RatePerKg),
+                ("minimumcharge",       true)  => q.OrderBy(r => r.MinimumCharge),
+                ("minimumcharge",       false) => q.OrderByDescending(r => r.MinimumCharge),
+                ("isactive",            true)  => q.OrderBy(r => r.IsActive),
+                ("isactive",            false) => q.OrderByDescending(r => r.IsActive),
+                ("sequence",            true)  => q.OrderBy(r => r.Sequence),
+                ("sequence",            false) => q.OrderByDescending(r => r.Sequence),
+                _                             => q.OrderBy(r => r.Sequence).ThenBy(r => r.Id),
             };
 
             var paged = await q.ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
@@ -57,7 +73,7 @@ namespace RajMango.Application.Features.Courier.RateConfig.Queries
                 Id                  = r.Id,
                 CourierProviderId   = r.CourierProviderId,
                 CourierProviderName = r.CourierProvider?.Name,
-                CourierLocationType = r.CourierLocationType,
+                LocationType        = (int)r.CourierLocationType,
                 RatePerKg           = r.RatePerKg,
                 MinimumCharge       = r.MinimumCharge,
                 IsActive            = r.IsActive,

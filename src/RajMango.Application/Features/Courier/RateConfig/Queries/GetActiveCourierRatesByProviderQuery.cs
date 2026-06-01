@@ -32,7 +32,7 @@ namespace RajMango.Application.Features.Courier.RateConfig.Queries
                     Id                  = r.Id,
                     CourierProviderId   = r.CourierProviderId,
                     CourierProviderName = r.CourierProvider.Name,
-                    CourierLocationType = r.CourierLocationType,
+                    LocationType        = (int)r.CourierLocationType,
                     RatePerKg           = r.RatePerKg,
                     MinimumCharge       = r.MinimumCharge,
                     IsActive            = r.IsActive,

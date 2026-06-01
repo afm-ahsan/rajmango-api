@@ -37,9 +37,11 @@ namespace RajMango.WebApi.Controllers
 
         [HttpGet("count")]
         [RequirePermission(Permissions.CourierRateConfigurations.View)]
-        public async Task<ActionResult<Result<int>>> GetCount()
+        public async Task<ActionResult<Result<int>>> GetCount(
+            [FromQuery] string? filter = null,
+            [FromQuery] int? locationType = null)
         {
-            return await _mediator.Send(new GetCourierRateConfigCountQuery());
+            return await _mediator.Send(new GetCourierRateConfigCountQuery { Filter = filter, LocationType = locationType });
         }
 
         [HttpGet("paged")]
