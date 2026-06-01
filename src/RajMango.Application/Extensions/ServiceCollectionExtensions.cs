@@ -3,6 +3,8 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
+using RajMango.Application.Features.Services;
+using RajMango.Application.Interfaces;
 using System.Reflection;
 
 namespace RajMango.Application.Extensions
@@ -42,6 +44,7 @@ namespace RajMango.Application.Extensions
             services.AddSingleton<IOrderCreationLock, OrderCreationLock>();
             services.AddTransient<IPaymentLock, PaymentLock>();
             services.AddTransient<IUserAddressLock, UserAddressLock>();
+            services.AddScoped<IOrderTrackingHistoryService, OrderTrackingHistoryService>();
         }
     }
 }

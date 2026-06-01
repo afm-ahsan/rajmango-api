@@ -20,6 +20,7 @@ namespace RajMango.Application.Features.Commands
         private readonly IRealtimeService _realtime;
         private readonly IOrderCreationLock _orderCreationLock;
         private readonly IOrderNumberService _orderNumberService;
+        private readonly IOrderTrackingHistoryService _tracking;
 
         public CreateOrderCommandHandler(
             IErrorHandler errorHandler,
@@ -28,7 +29,8 @@ namespace RajMango.Application.Features.Commands
             INotificationService notification,
             IRealtimeService realtime,
             IOrderCreationLock orderCreationLock,
-            IOrderNumberService orderNumberService)
+            IOrderNumberService orderNumberService,
+            IOrderTrackingHistoryService tracking)
         {
             _errorHandler       = errorHandler;
             _dataContext        = dataContext;
@@ -37,6 +39,7 @@ namespace RajMango.Application.Features.Commands
             _realtime           = realtime;
             _orderCreationLock  = orderCreationLock;
             _orderNumberService = orderNumberService;
+            _tracking           = tracking;
         }
 
         public async Task<Result<int>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
@@ -166,6 +169,13 @@ namespace RajMango.Application.Features.Commands
 
                     await _dataContext.SaveChangesAsync(cancellationToken);
                 }
+
+                try
+                {
+                    await _tracking.InsertIfNewAsync(newOrder.Id, "OrderPlaced", "Order Placed",
+                        "Your order has been placed and is awaiting confirmation.", cancellationToken);
+                }
+                catch { /* tracking failure must not block order creation */ }
 
                 await _notification.SendOrderConfirmedAsync(newOrder.UserId, newOrder.OrderNumber, cancellationToken);
                 await _realtime.SendToAdminsAsync(RealtimeEvents.OrderCreated,

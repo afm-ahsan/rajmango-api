@@ -14,6 +14,7 @@ namespace RajMango.Tests.Handlers.Order
         private readonly Mock<IErrorHandler> _errorHandler = new();
         private readonly Mock<INotificationService> _notification = new();
         private readonly Mock<IRealtimeService> _realtime = new();
+        private readonly Mock<IOrderTrackingHistoryService> _tracking = new();
 
         public UpdateOrderStatusCommandHandlerTests()
         {
@@ -36,6 +37,15 @@ namespace RajMango.Tests.Handlers.Order
                     It.IsAny<object>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
+
+            _tracking
+                .Setup(x => x.InsertIfNewAsync(
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
 
         [Fact]
@@ -56,7 +66,8 @@ namespace RajMango.Tests.Handlers.Order
                 _errorHandler.Object,
                 db,
                 _notification.Object,
-                _realtime.Object);
+                _realtime.Object,
+                _tracking.Object);
 
             var result = await handler.Handle(new UpdateOrderStatusCommand
             {

@@ -138,6 +138,21 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(command);
         }
 
+        [AllowAnonymous]
+        [HttpPost("track")]
+        public async Task<ActionResult<Result<OrderTrackingDto>>> Track([FromBody] TrackOrderQuery query)
+        {
+            var validator = new TrackOrderQueryValidator();
+            var result = validator.Validate(query);
+            if (!result.IsValid)
+            {
+                var errors = result.Errors.Select(x => x.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
+            return await _mediator.Send(query);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<Result<int>>> Delete(int id)
         {

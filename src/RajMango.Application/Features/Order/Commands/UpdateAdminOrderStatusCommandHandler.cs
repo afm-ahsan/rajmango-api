@@ -6,6 +6,7 @@ using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
+using System.Collections.Generic;
 
 namespace RajMango.Application.Features.Commands
 {
@@ -15,17 +16,20 @@ namespace RajMango.Application.Features.Commands
         private readonly ICurrentUserService _currentUserService;
         private readonly IRealtimeService _realtime;
         private readonly IErrorHandler _errorHandler;
+        private readonly IOrderTrackingHistoryService _tracking;
 
         public UpdateAdminOrderStatusCommandHandler(
             IDataContext dataContext,
             ICurrentUserService currentUserService,
             IRealtimeService realtime,
-            IErrorHandler errorHandler)
+            IErrorHandler errorHandler,
+            IOrderTrackingHistoryService tracking)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
             _realtime = realtime;
             _errorHandler = errorHandler;
+            _tracking = tracking;
         }
 
         public async Task<Result<int>> Handle(UpdateAdminOrderStatusCommand command, CancellationToken cancellationToken)
@@ -55,6 +59,10 @@ namespace RajMango.Application.Features.Commands
                 if (command.DeliveryStatus == DeliveryStatus.Delivered && command.PaymentStatus != PaymentStatus.Paid)
                     return await Result<int>.FailureAsync(
                         "Order cannot be marked as Delivered: payment status must be Paid.");
+
+                var prevOrderStatus    = order.OrderStatus;
+                var prevPaymentStatus  = order.PaymentStatus;
+                var prevDeliveryStatus = order.DeliveryStatus;
 
                 order.OrderStatus = command.OrderStatus;
                 order.PaymentStatus = command.PaymentStatus;
@@ -91,6 +99,18 @@ namespace RajMango.Application.Features.Commands
                 _dataContext.Get<Order>().Update(order);
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
+                try
+                {
+                    var entries = BuildTrackingEntries(
+                        order.Id, prevOrderStatus, command.OrderStatus,
+                        prevPaymentStatus, command.PaymentStatus,
+                        prevDeliveryStatus, command.DeliveryStatus);
+
+                    foreach (var (trackingStatus, title, description) in entries)
+                        await _tracking.InsertIfNewAsync(order.Id, trackingStatus, title, description, cancellationToken);
+                }
+                catch { /* tracking failure must not block status update */ }
+
                 var payload = new
                 {
                     OrderId = order.Id,
@@ -108,6 +128,54 @@ namespace RajMango.Application.Features.Commands
                 _errorHandler.Handle(ex);
             }
             return await Result<int>.FailureAsync($"Failed to update order statuses for Id {command.Id}.");
+        }
+
+        private static IEnumerable<(string status, string title, string description)> BuildTrackingEntries(
+            int orderId,
+            OrderStatus prevOrder,   OrderStatus newOrder,
+            PaymentStatus prevPay,   PaymentStatus newPay,
+            DeliveryStatus prevDel,  DeliveryStatus newDel)
+        {
+            if (prevOrder != newOrder)
+            {
+                var entry = newOrder switch
+                {
+                    OrderStatus.Confirmed  => ("OrderConfirmed",  "Order Confirmed",      "Your order has been confirmed."),
+                    OrderStatus.Processing => ("OrderProcessing", "Preparing Your Order", "Your order is being packed and prepared."),
+                    OrderStatus.Shipped    => ("OrderShipped",    "Order Shipped",        "Your order has been handed over to the courier."),
+                    OrderStatus.Delivered  => ("OrderDelivered",  "Order Delivered",      "Your order has been delivered successfully."),
+                    OrderStatus.Cancelled  => ("OrderCancelled",  "Order Cancelled",      "Your order has been cancelled."),
+                    OrderStatus.Returned   => ("OrderReturned",   "Order Returned",       "Your order has been returned."),
+                    _                     => (null, null, null),
+                };
+                if (entry.Item1 != null) yield return entry;
+            }
+
+            if (prevPay != newPay)
+            {
+                var entry = newPay switch
+                {
+                    PaymentStatus.Paid    => ("PaymentPaid",    "Payment Confirmed",         "Full payment has been received."),
+                    PaymentStatus.Partial => ("PaymentPartial", "Partial Payment Received",  "A partial payment has been recorded."),
+                    _                    => (null, null, null),
+                };
+                if (entry.Item1 != null) yield return entry;
+            }
+
+            if (prevDel != newDel)
+            {
+                var entry = newDel switch
+                {
+                    DeliveryStatus.Dispatched => ("DeliveryDispatched", "Order Dispatched", "Your order has been dispatched to the courier."),
+                    DeliveryStatus.InTransit  => ("DeliveryInTransit",  "In Transit",       "Your order is on its way to you."),
+                    DeliveryStatus.Delivered  => ("DeliveryDelivered",  "Delivered",        "Your order has been delivered."),
+                    DeliveryStatus.Failed     => ("DeliveryFailed",     "Delivery Failed",  "Delivery was attempted but failed."),
+                    DeliveryStatus.Returned   => ("DeliveryReturned",   "Return Initiated", "Your order is being returned."),
+                    DeliveryStatus.Cancelled  => ("DeliveryCancelled",  "Delivery Cancelled", "Delivery has been cancelled."),
+                    _                         => (null, null, null),
+                };
+                if (entry.Item1 != null) yield return entry;
+            }
         }
     }
 }

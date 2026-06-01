@@ -18,6 +18,7 @@ namespace RajMango.Tests.Handlers.Order
         private readonly Mock<IRealtimeService> _realtime = new();
         private readonly IOrderCreationLock _orderCreationLock = new OrderCreationLock();
         private readonly Mock<IOrderNumberService> _orderNumberService = new();
+        private readonly Mock<IOrderTrackingHistoryService> _tracking = new();
 
         public CreateOrderCommandHandlerTests()
         {
@@ -36,6 +37,15 @@ namespace RajMango.Tests.Handlers.Order
             _orderNumberService
                 .Setup(x => x.GenerateAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync("202605180001");
+
+            _tracking
+                .Setup(x => x.InsertIfNewAsync(
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
 
         [Fact]
@@ -52,7 +62,8 @@ namespace RajMango.Tests.Handlers.Order
                 _notification.Object,
                 _realtime.Object,
                 _orderCreationLock,
-                _orderNumberService.Object);
+                _orderNumberService.Object,
+                _tracking.Object);
 
             var command = BuildValidCommand(userId: 999);
 
@@ -83,7 +94,8 @@ namespace RajMango.Tests.Handlers.Order
                 _notification.Object,
                 _realtime.Object,
                 _orderCreationLock,
-                _orderNumberService.Object);
+                _orderNumberService.Object,
+                _tracking.Object);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 
@@ -110,7 +122,8 @@ namespace RajMango.Tests.Handlers.Order
                 _notification.Object,
                 _realtime.Object,
                 _orderCreationLock,
-                _orderNumberService.Object);
+                _orderNumberService.Object,
+                _tracking.Object);
 
             var result = await handler.Handle(BuildValidCommand(), CancellationToken.None);
 
