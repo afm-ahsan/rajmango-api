@@ -63,6 +63,7 @@ namespace RajMango.Application.Features.Commands
                 var prevOrderStatus    = order.OrderStatus;
                 var prevPaymentStatus  = order.PaymentStatus;
                 var prevDeliveryStatus = order.DeliveryStatus;
+                var prevDeliveryDate   = order.DeliveryDate;
 
                 order.OrderStatus = command.OrderStatus;
                 order.PaymentStatus = command.PaymentStatus;
@@ -95,10 +96,35 @@ namespace RajMango.Application.Features.Commands
                     }
                 }
 
+                // Primary operation: commit order update first.
                 // All entities loaded via Include are change-tracked; SaveChanges detects all modifications.
                 _dataContext.Get<Order>().Update(order);
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
+                // Secondary (best-effort): notifications. Failure must not roll back the order update.
+                try
+                {
+                    var newDeliveryDate = command.DeliveryStatus is DeliveryStatus.Dispatched
+                        or DeliveryStatus.InTransit or DeliveryStatus.Delivered
+                        ? (command.DeliveryDate ?? Clock.Now())
+                        : (DateTime?)null;
+
+                    var notifications = BuildNotifications(
+                        order.UserId, order.Id, order.OrderNumber,
+                        prevOrderStatus, command.OrderStatus,
+                        prevPaymentStatus, command.PaymentStatus,
+                        prevDeliveryStatus, command.DeliveryStatus,
+                        prevDeliveryDate, newDeliveryDate);
+
+                    foreach (var notification in notifications)
+                        _dataContext.Get<Notification>().Add(notification);
+
+                    if (notifications.Count > 0)
+                        await _dataContext.SaveChangesAsync(cancellationToken);
+                }
+                catch (Exception ex) { _errorHandler.Handle(ex); }
+
+                // Secondary (best-effort): tracking history.
                 try
                 {
                     var entries = BuildTrackingEntries(
@@ -128,6 +154,100 @@ namespace RajMango.Application.Features.Commands
                 _errorHandler.Handle(ex);
             }
             return await Result<int>.FailureAsync($"Failed to update order statuses for Id {command.Id}.");
+        }
+
+        private static IReadOnlyList<Notification> BuildNotifications(
+            int userId, int orderId, string orderNumber,
+            OrderStatus prevOrder,   OrderStatus newOrder,
+            PaymentStatus prevPay,   PaymentStatus newPay,
+            DeliveryStatus prevDel,  DeliveryStatus newDel,
+            DateTime? prevDate,      DateTime? newDate)
+        {
+            var list = new List<Notification>();
+
+            if (prevOrder != newOrder)
+            {
+                var label = newOrder switch
+                {
+                    OrderStatus.Confirmed  => "Confirmed",
+                    OrderStatus.Processing => "Processing",
+                    OrderStatus.Shipped    => "Shipped",
+                    OrderStatus.Delivered  => "Delivered",
+                    OrderStatus.Cancelled  => "Cancelled",
+                    OrderStatus.Returned   => "Returned",
+                    OrderStatus.Failed     => "Failed",
+                    _                     => newOrder.ToString(),
+                };
+                list.Add(new Notification
+                {
+                    UserId           = userId,
+                    OrderId          = orderId,
+                    OrderNumber      = orderNumber,
+                    NotificationType = NotificationType.OrderStatus,
+                    Title            = $"Order #{orderNumber} updated",
+                    Message          = $"Your order status has been updated to {label}.",
+                });
+            }
+
+            if (prevPay != newPay)
+            {
+                var label = newPay switch
+                {
+                    PaymentStatus.Paid      => "Paid",
+                    PaymentStatus.Partial   => "Partially Paid",
+                    PaymentStatus.Refunded  => "Refunded",
+                    PaymentStatus.Failed    => "Failed",
+                    PaymentStatus.Cancelled => "Cancelled",
+                    _                      => newPay.ToString(),
+                };
+                list.Add(new Notification
+                {
+                    UserId           = userId,
+                    OrderId          = orderId,
+                    OrderNumber      = orderNumber,
+                    NotificationType = NotificationType.PaymentStatus,
+                    Title            = $"Order #{orderNumber} payment updated",
+                    Message          = $"Your payment status has been updated to {label}.",
+                });
+            }
+
+            if (prevDel != newDel)
+            {
+                var label = newDel switch
+                {
+                    DeliveryStatus.Dispatched => "Dispatched",
+                    DeliveryStatus.InTransit  => "In Transit",
+                    DeliveryStatus.Delivered  => "Delivered",
+                    DeliveryStatus.Failed     => "Failed",
+                    DeliveryStatus.Returned   => "Returned",
+                    DeliveryStatus.Cancelled  => "Cancelled",
+                    _                        => newDel.ToString(),
+                };
+                list.Add(new Notification
+                {
+                    UserId           = userId,
+                    OrderId          = orderId,
+                    OrderNumber      = orderNumber,
+                    NotificationType = NotificationType.DeliveryStatus,
+                    Title            = $"Order #{orderNumber} delivery updated",
+                    Message          = $"Your delivery status has been updated to {label}.",
+                });
+            }
+
+            if (newDate.HasValue && newDate != prevDate)
+            {
+                list.Add(new Notification
+                {
+                    UserId           = userId,
+                    OrderId          = orderId,
+                    OrderNumber      = orderNumber,
+                    NotificationType = NotificationType.DeliveryDate,
+                    Title            = $"Order #{orderNumber} delivery date updated",
+                    Message          = $"Your expected delivery date has been updated to {newDate.Value:dd MMM yyyy}.",
+                });
+            }
+
+            return list;
         }
 
         private static IEnumerable<(string status, string title, string description)> BuildTrackingEntries(

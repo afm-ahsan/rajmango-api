@@ -68,6 +68,9 @@ namespace RajMango.DataAccess.Contexts
         // 📍 Order Tracking
         public virtual DbSet<OrderTrackingHistory> OrderTrackingHistories => Set<OrderTrackingHistory>();
 
+        // 🔔 Notifications
+        public virtual DbSet<Notification> Notifications => Set<Notification>();
+
         // 🔢 Sequences
         public virtual DbSet<OrderNumberCounter> OrderNumberCounters => Set<OrderNumberCounter>();
 
