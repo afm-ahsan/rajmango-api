@@ -33,6 +33,7 @@ namespace RajMango.Application.Features.Queries
         public OrderStatus OrderStatus { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
+        public DateTime? DeliveryDate { get; set; }
     }
 
     public class DashboardMangoAvailabilityDto
@@ -76,6 +77,7 @@ namespace RajMango.Application.Features.Queries
                     o.OrderStatus,
                     o.PaymentStatus,
                     o.DeliveryStatus,
+                    o.DeliveryDate,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -120,6 +122,7 @@ namespace RajMango.Application.Features.Queries
                     OrderStatus    = o.OrderStatus,
                     PaymentStatus  = o.PaymentStatus,
                     DeliveryStatus = o.DeliveryStatus,
+                    DeliveryDate   = o.DeliveryDate,
                 }).ToList(),
                 AvailableMangoes = availableMangoes,
             };
