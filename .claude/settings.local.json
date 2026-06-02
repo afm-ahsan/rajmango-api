@@ -124,7 +124,9 @@
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:4215/\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($r.StatusCode\\) — First 150 chars: $\\($r.Content.Substring\\(0,[Math]::Min\\(150,$r.Content.Length\\)\\)\\)\" } catch { \"Error: $_\" })",
       "PowerShell(Start-Sleep -Seconds 10; $r = Invoke-WebRequest -Uri \"http://localhost:4215/\" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue; \"Status: $\\($r.StatusCode\\)\")",
       "PowerShell(Set-Location *)",
-      "Bash(dir D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src *)"
+      "Bash(dir D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src *)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill *)"
     ]
   }
 }
