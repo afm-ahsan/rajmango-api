@@ -126,7 +126,10 @@
       "PowerShell(Set-Location *)",
       "Bash(dir D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src *)",
       "Bash(netstat -ano)",
-      "Bash(taskkill *)"
+      "Bash(taskkill *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\" -Recurse -Filter \"*.cs\")",
+      "Bash(Select-String \"Query\")",
+      "Bash(Select-Object -First 40)"
     ]
   }
 }
