@@ -34,7 +34,7 @@ namespace RajMango.Application.Features.Commands
         public string SupportPhone2 { get; set; }
 
         [StringLength(255)]
-        [EmailAddress]
+        [RegularExpression(@"^$|^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "The Email field is not a valid e-mail address.")]
         public string Email { get; set; }
 
         public double? Latitude { get; set; }

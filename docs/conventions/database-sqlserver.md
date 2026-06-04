@@ -168,6 +168,38 @@ Rules:
 
 ---
 
+## Known Migration Behaviors
+
+### Seed timestamp drift (Clock.Now)
+
+Some seed data uses `Clock.Now()` to set `CreatedAt` values. Because `Clock.Now()` is evaluated at
+migration-scaffolding time rather than at a fixed point, EF Core will report **"pending model changes"**
+after almost any `migrations add` run — even when no schema changes have been made.
+
+This is a **pre-existing seed-data behavior** in the project and is **not a schema problem**.
+
+Rules:
+
+- Do not create an additional migration just to stabilise seed timestamps unless it is an intentional
+  decision to freeze them.
+- Verify that a "pending model changes" warning is caused only by `UpdateData` rows before concluding
+  that a schema change is needed.
+- A migration that contains only `UpdateData` operations and no DDL (`CreateTable`, `AlterColumn`,
+  `CreateIndex`, etc.) is a seed-only migration and provides no value — do not commit it.
+
+### SmsLogs migration history
+
+Only one SMS-related migration exists in the project:
+
+| Migration | What it does |
+|-----------|-------------|
+| `AddSmsLogs` | Creates `SmsLogs` table with `Message nvarchar(280)` and three indexes. No `AlterColumn` follows. |
+
+Any `has-pending-model-changes` warning after `AddSmsLogs` is applied is a seed timestamp diff only.
+The `SmsLogs` schema has no pending differences.
+
+---
+
 ## Seed Data
 
 Stable seed data:

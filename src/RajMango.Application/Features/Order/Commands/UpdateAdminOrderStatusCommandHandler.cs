@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Common;
+using RajMango.Application.DTOs.Sms;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -17,19 +18,22 @@ namespace RajMango.Application.Features.Commands
         private readonly IRealtimeService _realtime;
         private readonly IErrorHandler _errorHandler;
         private readonly IOrderTrackingHistoryService _tracking;
+        private readonly ISmsService _smsService;
 
         public UpdateAdminOrderStatusCommandHandler(
             IDataContext dataContext,
             ICurrentUserService currentUserService,
             IRealtimeService realtime,
             IErrorHandler errorHandler,
-            IOrderTrackingHistoryService tracking)
+            IOrderTrackingHistoryService tracking,
+            ISmsService smsService)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
             _realtime = realtime;
             _errorHandler = errorHandler;
             _tracking = tracking;
+            _smsService = smsService;
         }
 
         public async Task<Result<int>> Handle(UpdateAdminOrderStatusCommand command, CancellationToken cancellationToken)
@@ -41,6 +45,7 @@ namespace RajMango.Application.Features.Commands
 
                 var order = await _dataContext.Get<Order>()
                     .Include(o => o.OrderDetails)
+                        .ThenInclude(od => od.MangoType)
                     .FirstOrDefaultAsync(o => o.Id == command.Id, cancellationToken);
 
                 if (order == null)
@@ -101,14 +106,15 @@ namespace RajMango.Application.Features.Commands
                 _dataContext.Get<Order>().Update(order);
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
-                // Secondary (best-effort): notifications. Failure must not roll back the order update.
+                // Compute delivery date once; shared by notifications and SMS blocks below.
+                var newDeliveryDate = command.DeliveryStatus is DeliveryStatus.Dispatched
+                    or DeliveryStatus.InTransit or DeliveryStatus.Delivered
+                    ? (command.DeliveryDate ?? Clock.Now())
+                    : (DateTime?)null;
+
+                // Secondary (best-effort): in-app notifications. Failure must not roll back the order update.
                 try
                 {
-                    var newDeliveryDate = command.DeliveryStatus is DeliveryStatus.Dispatched
-                        or DeliveryStatus.InTransit or DeliveryStatus.Delivered
-                        ? (command.DeliveryDate ?? Clock.Now())
-                        : (DateTime?)null;
-
                     var notifications = BuildNotifications(
                         order.UserId, order.Id, order.OrderNumber,
                         prevOrderStatus, command.OrderStatus,
@@ -121,6 +127,42 @@ namespace RajMango.Application.Features.Commands
 
                     if (notifications.Count > 0)
                         await _dataContext.SaveChangesAsync(cancellationToken);
+                }
+                catch (Exception ex) { _errorHandler.Handle(ex); }
+
+                // Secondary (best-effort): SMS — one message per update, template chosen by SmsService.
+                try
+                {
+                    var userPhone = await _dataContext.Get<AppUser>()
+                        .Where(u => u.Id == order.UserId)
+                        .Select(u => u.PhoneNumber)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    var smsItems = order.OrderDetails
+                        .Select(d => new SmsOrderItem
+                        {
+                            MangoTypeName = d.MangoType?.Name ?? "Mango",
+                            WeightKg      = CrateWeightKg(d.CrateType) * d.Quantity,
+                        })
+                        .Where(x => x.WeightKg > 0)
+                        .ToList();
+
+                    await _smsService.SendOrderUpdateAsync(
+                        order.UserId, userPhone,
+                        new SmsOrderContext
+                        {
+                            OrderNumber          = order.OrderNumber,
+                            OrderStatus          = command.OrderStatus,
+                            PaymentStatus        = command.PaymentStatus,
+                            DeliveryStatus       = command.DeliveryStatus,
+                            DeliveryDate         = newDeliveryDate,
+                            Items                = smsItems,
+                            OrderStatusChanged   = prevOrderStatus   != command.OrderStatus,
+                            PaymentStatusChanged = prevPaymentStatus  != command.PaymentStatus,
+                            DeliveryStatusChanged= prevDeliveryStatus != command.DeliveryStatus,
+                            DeliveryDateChanged  = newDeliveryDate.HasValue && newDeliveryDate != prevDeliveryDate,
+                        },
+                        cancellationToken);
                 }
                 catch (Exception ex) { _errorHandler.Handle(ex); }
 
@@ -249,6 +291,13 @@ namespace RajMango.Application.Features.Commands
 
             return list;
         }
+
+        private static int CrateWeightKg(CrateType crate) => crate switch
+        {
+            CrateType.Crate10Kg => 10,
+            CrateType.Crate20Kg => 20,
+            _                   => 0,
+        };
 
         private static IEnumerable<(string status, string title, string description)> BuildTrackingEntries(
             int orderId,

@@ -71,6 +71,9 @@ namespace RajMango.DataAccess.Contexts
         // 🔔 Notifications
         public virtual DbSet<Notification> Notifications => Set<Notification>();
 
+        // 📱 SMS Logs
+        public virtual DbSet<SmsLog> SmsLogs => Set<SmsLog>();
+
         // 🔢 Sequences
         public virtual DbSet<OrderNumberCounter> OrderNumberCounters => Set<OrderNumberCounter>();
 

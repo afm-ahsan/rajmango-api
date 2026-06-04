@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Moq;
+using RajMango.Application.DTOs.Sms;
 using RajMango.Application.Features.Commands;
 using RajMango.Application.Interfaces;
 using RajMango.Domain.Entities;
@@ -15,6 +16,7 @@ namespace RajMango.Tests.Handlers.Order
         private readonly Mock<INotificationService> _notification = new();
         private readonly Mock<IRealtimeService> _realtime = new();
         private readonly Mock<IOrderTrackingHistoryService> _tracking = new();
+        private readonly Mock<ISmsService> _sms = new();
 
         public UpdateOrderStatusCommandHandlerTests()
         {
@@ -46,6 +48,13 @@ namespace RajMango.Tests.Handlers.Order
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
+
+            _sms.Setup(x => x.SendOrderUpdateAsync(
+                    It.IsAny<int>(),
+                    It.IsAny<string>(),
+                    It.IsAny<SmsOrderContext>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
         }
 
         [Fact]
@@ -67,7 +76,8 @@ namespace RajMango.Tests.Handlers.Order
                 db,
                 _notification.Object,
                 _realtime.Object,
-                _tracking.Object);
+                _tracking.Object,
+                _sms.Object);
 
             var result = await handler.Handle(new UpdateOrderStatusCommand
             {

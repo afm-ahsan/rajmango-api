@@ -30,6 +30,7 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IJwtTokenService, JwtTokenService>()
                 .AddTransient<INotificationService, NotificationService>()
                 .AddTransient<IBkashService, BkashService>()
+                .AddTransient<ISmsService, SmsService>()
                 .AddTransient<ICacheService, RedisCacheService>()
                 .AddTransient<IFileStorageService, LocalFileStorageService>()
                 .AddScoped<IPermissionService, PermissionService>();
@@ -41,6 +42,15 @@ namespace RajMango.Infrastructure.Extensions
                     client.BaseAddress = new Uri(settings.BaseUrl.TrimEnd('/') + "/");
                 client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            });
+
+            // Ghonta SMS: GET {BaseUrl}?toNo=...&msg=...
+            // No BaseAddress — the service builds the full URL per call.
+            // No Accept header — the provider is queried with GET, no request body.
+            services.AddHttpClient("Sms", (sp, client) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<AppSettings>>().Value.Sms;
+                client.Timeout = TimeSpan.FromSeconds(settings?.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 5);
             });
 
             // Redis or in-memory distributed cache (fallback for dev/test when Redis not configured)

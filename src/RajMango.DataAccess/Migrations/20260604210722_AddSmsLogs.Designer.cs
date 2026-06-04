@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RajMango.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using RajMango.DataAccess.Contexts;
 namespace RajMango.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260604210722_AddSmsLogs")]
+    partial class AddSmsLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,7 +133,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("AppUsers", (string)null);
+                    b.ToTable("AppUsers");
 
                     b.HasData(
                         new
@@ -245,7 +248,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditLogs", (string)null);
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Category", b =>
@@ -321,7 +324,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Complaint", b =>
@@ -390,7 +393,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Complaints", (string)null);
+                    b.ToTable("Complaints");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.ComplaintImage", b =>
@@ -432,7 +435,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("ComplaintId");
 
-                    b.ToTable("ComplaintImages", (string)null);
+                    b.ToTable("ComplaintImages");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.CourierAreaMap", b =>
@@ -486,7 +489,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("CourierStationId");
 
-                    b.ToTable("CourierAreaMaps", (string)null);
+                    b.ToTable("CourierAreaMaps");
 
                     b.HasData(
                         new
@@ -694,7 +697,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("CourierProviders", (string)null);
+                    b.ToTable("CourierProviders");
 
                     b.HasData(
                         new
@@ -873,7 +876,7 @@ namespace RajMango.DataAccess.Migrations
                         .HasDatabaseName("UX_CourierRateConfigurations_Provider_LocationType_Active")
                         .HasFilter("[IsActive] = 1");
 
-                    b.ToTable("CourierRateConfigurations", (string)null);
+                    b.ToTable("CourierRateConfigurations");
 
                     b.HasData(
                         new
@@ -1220,7 +1223,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("CourierProviderId");
 
-                    b.ToTable("CourierStations", (string)null);
+                    b.ToTable("CourierStations");
 
                     b.HasData(
                         new
@@ -1508,7 +1511,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Expense", b =>
@@ -1597,7 +1600,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Expenses", (string)null);
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.ExpenseAttachment", b =>
@@ -1631,7 +1634,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("ExpenseId");
 
-                    b.ToTable("ExpenseAttachments", (string)null);
+                    b.ToTable("ExpenseAttachments");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.ExpenseType", b =>
@@ -1701,7 +1704,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExpenseTypes", (string)null);
+                    b.ToTable("ExpenseTypes");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.FaqItem", b =>
@@ -1767,7 +1770,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FaqItems", (string)null);
+                    b.ToTable("FaqItems");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Feedback", b =>
@@ -1818,7 +1821,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks", (string)null);
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.FeedbackImage", b =>
@@ -1859,7 +1862,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("FeedbackId");
 
-                    b.ToTable("FeedbackImages", (string)null);
+                    b.ToTable("FeedbackImages");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.JwtAuth", b =>
@@ -1951,7 +1954,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("JwtAuth", (string)null);
+                    b.ToTable("JwtAuth");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.MangoAvailability", b =>
@@ -2025,7 +2028,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("MangoTypeId");
 
-                    b.ToTable("MangoAvailabilities", (string)null);
+                    b.ToTable("MangoAvailabilities");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.MangoType", b =>
@@ -2108,7 +2111,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MangoTypes", (string)null);
+                    b.ToTable("MangoTypes");
 
                     b.HasData(
                         new
@@ -2277,7 +2280,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("UserId", "IsRead")
                         .HasDatabaseName("IX_Notifications_UserId_IsRead");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Order", b =>
@@ -2455,7 +2458,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.OrderDetail", b =>
@@ -2529,7 +2532,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.OrderNumberCounter", b =>
@@ -2542,7 +2545,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasKey("Date");
 
-                    b.ToTable("OrderNumberCounters", (string)null);
+                    b.ToTable("OrderNumberCounters");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.OrderTrackingHistory", b =>
@@ -2588,7 +2591,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("OrderId")
                         .HasDatabaseName("IX_OrderTrackingHistories_OrderId");
 
-                    b.ToTable("OrderTrackingHistories", (string)null);
+                    b.ToTable("OrderTrackingHistories");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Payment", b =>
@@ -2711,7 +2714,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.PaymentAttachment", b =>
@@ -2759,7 +2762,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("PaymentAttachments", (string)null);
+                    b.ToTable("PaymentAttachments");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Permission", b =>
@@ -2824,7 +2827,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
@@ -3758,7 +3761,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Policies", (string)null);
+                    b.ToTable("Policies");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Product", b =>
@@ -3858,7 +3861,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Refund", b =>
@@ -3948,7 +3951,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("Refunds", (string)null);
+                    b.ToTable("Refunds");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.Role", b =>
@@ -4021,7 +4024,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -4083,7 +4086,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions");
 
                     b.HasData(
                         new
@@ -4877,7 +4880,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("UserId", "Status")
                         .HasDatabaseName("IX_SmsLogs_UserId_Status");
 
-                    b.ToTable("SmsLogs", (string)null);
+                    b.ToTable("SmsLogs");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.UserAddress", b =>
@@ -4954,7 +4957,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAddresses", (string)null);
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.UserPermission", b =>
@@ -4972,7 +4975,7 @@ namespace RajMango.DataAccess.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("UserPermissions", (string)null);
+                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("RajMango.Domain.Entities.UserRole", b =>
@@ -5031,7 +5034,7 @@ namespace RajMango.DataAccess.Migrations
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
 
                     b.HasData(
                         new

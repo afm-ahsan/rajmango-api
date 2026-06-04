@@ -6,6 +6,7 @@
         public ApiInfo ApiInfo { get; set; }
         public BkashSettings Bkash { get; set; }
         public RedisSettings Redis { get; set; }
+        public SmsSettings Sms { get; set; }
     }
 
     public class BkashSettings
@@ -49,5 +50,38 @@
         public string Title { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
+    }
+
+    public class SmsSettings
+    {
+        public bool IsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Ghonta SMS endpoint.
+        /// Format: GET {BaseUrl}?toNo={phone}&amp;msg={encodedMessage}
+        /// </summary>
+        public string BaseUrl { get; set; } = "https://api.ghonta.com/api/services/app/Event/sms";
+
+        /// <summary>Maximum characters per message. 280 covers two-segment SMS on Ghonta.</summary>
+        public int MaxMessageLength { get; set; } = 280;
+
+        /// <summary>HTTP call timeout in seconds. Keeps order updates responsive under provider latency.</summary>
+        public int TimeoutSeconds { get; set; } = 5;
+
+        /// <summary>Send SMS to the customer who placed the order.</summary>
+        public bool SendToCustomer { get; set; } = true;
+
+        /// <summary>Send a brief admin alert SMS for Confirmed, Cancelled, and Delivered orders.</summary>
+        public bool SendToAdmin { get; set; } = false;
+
+        /// <summary>Mobile number for admin alerts. Set via env var SMS__ADMINMOBILENUMBER.</summary>
+        public string AdminMobileNumber { get; set; }
+
+        /// <summary>
+        /// Dev/test only. When set, all customer SMS are redirected to this number instead of
+        /// the real customer phone. Admin SMS (SendToAdmin) are never redirected.
+        /// Leave empty in production.
+        /// </summary>
+        public string TestMobileNumber { get; set; }
     }
 }

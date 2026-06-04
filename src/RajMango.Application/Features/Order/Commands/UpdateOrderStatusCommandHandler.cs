@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Common;
+using RajMango.Application.DTOs.Sms;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -28,26 +30,32 @@ namespace RajMango.Application.Features.Commands
         private readonly INotificationService _notificationService;
         private readonly IRealtimeService _realtime;
         private readonly IOrderTrackingHistoryService _tracking;
+        private readonly ISmsService _smsService;
 
         public UpdateOrderStatusCommandHandler(
             IErrorHandler errorHandler,
             IDataContext dataContext,
             INotificationService notificationService,
             IRealtimeService realtime,
-            IOrderTrackingHistoryService tracking)
+            IOrderTrackingHistoryService tracking,
+            ISmsService smsService)
         {
             _errorHandler = errorHandler;
             _dataContext = dataContext;
             _notificationService = notificationService;
             _realtime = realtime;
             _tracking = tracking;
+            _smsService = smsService;
         }
 
         public async Task<Result<int>> Handle(UpdateOrderStatusCommand command, CancellationToken cancellationToken)
         {
             try
             {
-                var order = await _dataContext.Get<Order>().FindAsync(new object[] { command.Id }, cancellationToken);
+                var order = await _dataContext.Get<Order>()
+                    .Include(o => o.OrderDetails)
+                        .ThenInclude(od => od.MangoType)
+                    .FirstOrDefaultAsync(o => o.Id == command.Id, cancellationToken);
                 if (order == null)
                     return await Result<int>.FailureAsync($"Order not found with Id {command.Id}.");
 
@@ -79,6 +87,41 @@ namespace RajMango.Application.Features.Commands
 
                 await _notificationService.SendOrderStatusChangedAsync(
                     order.UserId, order.OrderNumber, command.NewStatus.ToString(), cancellationToken);
+
+                // Secondary (best-effort): SMS — OrderStatus always changes in this command.
+                try
+                {
+                    var userPhone = await _dataContext.Get<AppUser>()
+                        .Where(u => u.Id == order.UserId)
+                        .Select(u => u.PhoneNumber)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    var smsItems = order.OrderDetails
+                        .Select(d => new SmsOrderItem
+                        {
+                            MangoTypeName = d.MangoType?.Name ?? "Mango",
+                            WeightKg      = d.CrateType == CrateType.Crate10Kg ? d.Quantity * 10
+                                          : d.CrateType == CrateType.Crate20Kg ? d.Quantity * 20
+                                          : 0,
+                        })
+                        .Where(x => x.WeightKg > 0)
+                        .ToList();
+
+                    await _smsService.SendOrderUpdateAsync(
+                        order.UserId, userPhone,
+                        new SmsOrderContext
+                        {
+                            OrderNumber        = order.OrderNumber,
+                            OrderStatus        = command.NewStatus,
+                            PaymentStatus      = order.PaymentStatus,
+                            DeliveryStatus     = order.DeliveryStatus,
+                            DeliveryDate       = order.DeliveryDate,
+                            Items              = smsItems,
+                            OrderStatusChanged = true,
+                        },
+                        cancellationToken);
+                }
+                catch { /* SMS failure must never block status update */ }
 
                 var statusPayload = new { OrderId = order.Id, OrderNumber = order.OrderNumber, Status = command.NewStatus.ToString(), order.UserId };
                 await _realtime.SendToUserAsync(order.UserId, RealtimeEvents.OrderStatusUpdated, statusPayload, cancellationToken);
