@@ -43,6 +43,7 @@ namespace RajMango.Application.Features.Queries
         public int MangoTypeId { get; set; }
         public string MangoTypeName { get; set; }
         public decimal PricePerKg { get; set; }
+        public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }
 
@@ -53,6 +54,7 @@ namespace RajMango.Application.Features.Queries
         public string MangoTypeName { get; set; }
         public decimal PricePerKg { get; set; }
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 
     public record GetCustomerDashboardQuery : IRequest<Result<CustomerDashboardDto>>;
@@ -100,11 +102,12 @@ namespace RajMango.Application.Features.Queries
                 .OrderBy(a => a.MangoType.Name)
                 .Select(a => new DashboardMangoAvailabilityDto
                 {
-                    Id           = a.Id,
-                    MangoTypeId  = a.MangoTypeId,
+                    Id            = a.Id,
+                    MangoTypeId   = a.MangoTypeId,
                     MangoTypeName = a.MangoType.Name,
-                    PricePerKg   = a.PricePerKg,
-                    EndDate      = a.EndDate,
+                    PricePerKg    = a.PricePerKg,
+                    StartDate     = a.StartDate,
+                    EndDate       = a.EndDate,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -120,6 +123,7 @@ namespace RajMango.Application.Features.Queries
                     MangoTypeName = a.MangoType.Name,
                     PricePerKg    = a.PricePerKg,
                     StartDate     = a.StartDate,
+                    EndDate       = a.EndDate,
                 })
                 .ToListAsync(cancellationToken);
 

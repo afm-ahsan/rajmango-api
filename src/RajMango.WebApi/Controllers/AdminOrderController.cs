@@ -25,7 +25,7 @@ namespace RajMango.WebApi.Controllers
         /// <summary>Paged order list with rich filters for admin management.</summary>
         [HttpGet]
         [RequirePermission(Permissions.Orders.AdminView)]
-        public async Task<ActionResult<PaginatedResult<AdminOrderListDto>>> GetPaged([FromQuery] GetAdminOrderListQuery query)
+        public async Task<ActionResult<AdminOrderPaginatedResult>> GetPaged([FromQuery] GetAdminOrderListQuery query)
         {
             return await _mediator.Send(query);
         }

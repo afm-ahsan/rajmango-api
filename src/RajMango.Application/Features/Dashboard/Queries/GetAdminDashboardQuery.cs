@@ -109,6 +109,7 @@ namespace RajMango.Application.Features.Queries
                     MangoTypeId   = a.MangoTypeId,
                     MangoTypeName = a.MangoType.Name,
                     PricePerKg    = a.PricePerKg,
+                    StartDate     = a.StartDate,
                     EndDate       = a.EndDate,
                 })
                 .ToListAsync(cancellationToken);
@@ -125,6 +126,7 @@ namespace RajMango.Application.Features.Queries
                     MangoTypeName = a.MangoType.Name,
                     PricePerKg    = a.PricePerKg,
                     StartDate     = a.StartDate,
+                    EndDate       = a.EndDate,
                 })
                 .ToListAsync(cancellationToken);
 

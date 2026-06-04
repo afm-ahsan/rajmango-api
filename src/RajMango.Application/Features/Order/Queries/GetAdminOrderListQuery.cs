@@ -9,7 +9,7 @@ using RajMango.Shared.Enums;
 
 namespace RajMango.Application.Features.Queries
 {
-    public record GetAdminOrderListQuery : IRequest<PaginatedResult<AdminOrderListDto>>
+    public record GetAdminOrderListQuery : IRequest<AdminOrderPaginatedResult>
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
@@ -34,7 +34,7 @@ namespace RajMango.Application.Features.Queries
         public string ReceiverMobile { get; set; }
     }
 
-    public class GetAdminOrderListQueryHandler : IRequestHandler<GetAdminOrderListQuery, PaginatedResult<AdminOrderListDto>>
+    public class GetAdminOrderListQueryHandler : IRequestHandler<GetAdminOrderListQuery, AdminOrderPaginatedResult>
     {
         private readonly IDataContext _dataContext;
         private readonly ICurrentUserService _currentUserService;
@@ -45,11 +45,11 @@ namespace RajMango.Application.Features.Queries
             _currentUserService = currentUserService;
         }
 
-        public async Task<PaginatedResult<AdminOrderListDto>> Handle(GetAdminOrderListQuery query, CancellationToken cancellationToken)
+        public async Task<AdminOrderPaginatedResult> Handle(GetAdminOrderListQuery query, CancellationToken cancellationToken)
         {
             if (!_currentUserService.IsAdmin && !_currentUserService.IsSuperAdmin)
-                return new PaginatedResult<AdminOrderListDto>(false, new List<AdminOrderListDto>(),
-                    new List<string> { "Access denied." });
+                return AdminOrderPaginatedResult.Create(
+                    new List<AdminOrderListDto>(), 0, 1, 10, 0, 0, 0);
 
             var orderQuery = _dataContext.Get<Order>()
                 .Include(o => o.AppUser)
@@ -125,6 +125,28 @@ namespace RajMango.Application.Features.Queries
 
             int totalCount = await orderQuery.CountAsync(cancellationToken);
 
+            // ── Summary totals across ALL filtered records (not just the current page) ──
+            int summaryTotalQtyKg = 0;
+            int crate10KgCount    = 0;
+            int crate20KgCount    = 0;
+
+            if (totalCount > 0)
+            {
+                summaryTotalQtyKg = await orderQuery.SumAsync(o => o.TotalQuantity, cancellationToken);
+
+                var filteredOrderIds = await orderQuery.Select(o => o.Id).ToListAsync(cancellationToken);
+
+                var crateGroups = await _dataContext.Get<OrderDetail>()
+                    .Where(od => filteredOrderIds.Contains(od.OrderId) && od.CrateType != CrateType.None)
+                    .GroupBy(od => od.CrateType)
+                    .Select(g => new { CrateType = g.Key, Total = g.Sum(od => od.Quantity) })
+                    .ToListAsync(cancellationToken);
+
+                crate10KgCount = crateGroups.FirstOrDefault(c => c.CrateType == CrateType.Crate10Kg)?.Total ?? 0;
+                crate20KgCount = crateGroups.FirstOrDefault(c => c.CrateType == CrateType.Crate20Kg)?.Total ?? 0;
+            }
+            // ─────────────────────────────────────────────────────────────────────────────
+
             var orders = await orderQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -177,7 +199,9 @@ namespace RajMango.Application.Features.Queries
                 };
             }).ToList();
 
-            return PaginatedResult<AdminOrderListDto>.Create(data, totalCount, pageNumber, pageSize);
+            return AdminOrderPaginatedResult.Create(
+                data, totalCount, pageNumber, pageSize,
+                summaryTotalQtyKg, crate10KgCount, crate20KgCount);
         }
     }
 }
