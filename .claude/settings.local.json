@@ -129,7 +129,9 @@
       "Bash(taskkill *)",
       "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.Application\\\\Features\" -Recurse -Filter \"*.cs\")",
       "Bash(Select-String \"Query\")",
-      "Bash(Select-Object -First 40)"
+      "Bash(Select-Object -First 40)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\" -Directory)",
+      "Bash(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\environments\" -ErrorAction SilentlyContinue)"
     ]
   }
 }
