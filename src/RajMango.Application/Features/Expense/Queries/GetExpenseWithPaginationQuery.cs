@@ -12,14 +12,11 @@ namespace RajMango.Application.Features.Queries
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        public string Filter { get; set; }
+        public string SortBy { get; set; }
+        public string SortOrder { get; set; }
 
         public GetExpenseWithPaginationQuery() { }
-
-        public GetExpenseWithPaginationQuery(int pageNumber, int pageSize)
-        {
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-        }
     }
 
     public class GetExpenseInfoWithPaginationQueryHandler : IRequestHandler<GetExpenseWithPaginationQuery, PaginatedResult<GetExpenseWithPaginationDto>>
@@ -35,10 +32,27 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<PaginatedResult<GetExpenseWithPaginationDto>> Handle(GetExpenseWithPaginationQuery query, CancellationToken cancellationToken)
         {
-            return await _dataContext.Get<Expense>()
-                   .OrderBy(x => x.Name)
-                   .ProjectTo<GetExpenseWithPaginationDto>(_mapper.ConfigurationProvider)
-                   .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+            var q = _dataContext.Get<Expense>().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Filter))
+            {
+                var f = query.Filter.Trim().ToLower();
+                q = q.Where(e => e.Name.ToLower().Contains(f) ||
+                                 (e.Description != null && e.Description.ToLower().Contains(f)));// ||
+                                 //(e.Notes != null && e.Notes.ToLower().Contains(f)));
+            }
+
+            bool asc = string.IsNullOrEmpty(query.SortOrder) || query.SortOrder.ToLower() != "desc";
+            q = (query.SortBy?.ToLower()) switch
+            {
+                "description" => asc ? q.OrderBy(e => e.Description) : q.OrderByDescending(e => e.Description),
+                "amount"      => asc ? q.OrderBy(e => e.Amount)      : q.OrderByDescending(e => e.Amount),
+                _             => asc ? q.OrderBy(e => e.Name)        : q.OrderByDescending(e => e.Name),
+            };
+
+            return await q
+                .ProjectTo<GetExpenseWithPaginationDto>(_mapper.ConfigurationProvider)
+                .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         }
     }
 }

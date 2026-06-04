@@ -12,15 +12,10 @@ namespace RajMango.Application.Features.Queries
         public int PageSize { get; set; }
         /// <summary>Optional: filter payments for a specific order. 0 = all orders.</summary>
         public int OrderId { get; set; }
+        /// <summary>Optional: free-text search on TransactionId or OrderId.</summary>
+        public string Filter { get; set; }
 
         public GetPaymentWithPaginationQuery() { }
-
-        public GetPaymentWithPaginationQuery(int pageNumber, int pageSize, int orderId = 0)
-        {
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-            OrderId = orderId;
-        }
     }
 
     public class GetPaymentInfoWithPaginationQueryHandler : IRequestHandler<GetPaymentWithPaginationQuery, PaginatedResult<GetPaymentWithPaginationDto>>
@@ -38,6 +33,14 @@ namespace RajMango.Application.Features.Queries
 
             if (query.OrderId > 0)
                 q = q.Where(p => p.OrderId == query.OrderId);
+
+            if (!string.IsNullOrWhiteSpace(query.Filter))
+            {
+                var f = query.Filter.Trim().ToLower();
+                q = q.Where(p =>
+                    (p.TransactionId != null && p.TransactionId.ToLower().Contains(f)) ||
+                    p.OrderId.ToString().Contains(f));
+            }
 
             return await q
                 .OrderByDescending(p => p.CreatedAt)

@@ -14,14 +14,11 @@ namespace RajMango.Application.Features.Queries
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        public string Filter { get; set; }
+        public string SortBy { get; set; }
+        public string SortOrder { get; set; }
 
         public GetRoleWithPaginationQuery() { }
-
-        public GetRoleWithPaginationQuery(int pageNumber, int pageSize)
-        {
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-        }
     }
 
     public class GetRoleInfoWithPaginationQueryHandler : IRequestHandler<GetRoleWithPaginationQuery, PaginatedResult<GetRoleWithPaginationDto>>
@@ -37,10 +34,25 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<PaginatedResult<GetRoleWithPaginationDto>> Handle(GetRoleWithPaginationQuery query, CancellationToken cancellationToken)
         {
-            var paginatedRoles =  await _dataContext.Get<Role>()
-                   .OrderBy(x => x.Name)
-                   .ProjectTo<GetRoleWithPaginationDto>(_mapper.ConfigurationProvider)
-                   .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+            var q = _dataContext.Get<Role>().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Filter))
+            {
+                var f = query.Filter.Trim().ToLower();
+                q = q.Where(r => r.Name.ToLower().Contains(f) ||
+                                 (r.Description != null && r.Description.ToLower().Contains(f)));
+            }
+
+            bool asc = string.IsNullOrEmpty(query.SortOrder) || query.SortOrder.ToLower() != "desc";
+            q = (query.SortBy?.ToLower()) switch
+            {
+                "description" => asc ? q.OrderBy(r => r.Description) : q.OrderByDescending(r => r.Description),
+                _             => asc ? q.OrderBy(r => r.Name)        : q.OrderByDescending(r => r.Name),
+            };
+
+            var paginatedRoles = await q
+                .ProjectTo<GetRoleWithPaginationDto>(_mapper.ConfigurationProvider)
+                .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
 
             foreach (var role in paginatedRoles.Data)
                 role.Permissions = PermissionMigrationHelper.DeserializeToFlatPermissions(role.PermissionJson);

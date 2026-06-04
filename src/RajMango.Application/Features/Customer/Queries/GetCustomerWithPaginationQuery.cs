@@ -12,14 +12,11 @@ namespace RajMango.Application.Features.Queries
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        public string Filter { get; set; }
+        public string SortBy { get; set; }
+        public string SortOrder { get; set; }
 
         public GetCustomerWithPaginationQuery() { }
-
-        public GetCustomerWithPaginationQuery(int pageNumber, int pageSize)
-        {
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-        }
     }
 
     public class GetCustomerInfoWithPaginationQueryHandler : IRequestHandler<GetCustomerWithPaginationQuery, PaginatedResult<GetCustomerWithPaginationDto>>
@@ -35,10 +32,30 @@ namespace RajMango.Application.Features.Queries
 
         public async Task<PaginatedResult<GetCustomerWithPaginationDto>> Handle(GetCustomerWithPaginationQuery query, CancellationToken cancellationToken)
         {
-            return await _dataContext.Get<Customer>()
-                   .OrderBy(x => x.FirstName)
-                   .ProjectTo<GetCustomerWithPaginationDto>(_mapper.ConfigurationProvider)
-                   .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+            var q = _dataContext.Get<Customer>().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Filter))
+            {
+                var f = query.Filter.Trim().ToLower();
+                q = q.Where(c =>
+                    c.FirstName.ToLower().Contains(f) ||
+                    c.LastName.ToLower().Contains(f) ||
+                    c.PhoneNumber1.ToLower().Contains(f) ||
+                    (c.Email != null && c.Email.ToLower().Contains(f)));
+            }
+
+            bool asc = string.IsNullOrEmpty(query.SortOrder) || query.SortOrder.ToLower() != "desc";
+            q = (query.SortBy?.ToLower()) switch
+            {
+                "lastname"    => asc ? q.OrderBy(c => c.LastName)    : q.OrderByDescending(c => c.LastName),
+                "phonenumber" => asc ? q.OrderBy(c => c.PhoneNumber1) : q.OrderByDescending(c => c.PhoneNumber1),
+                "email"       => asc ? q.OrderBy(c => c.Email)       : q.OrderByDescending(c => c.Email),
+                _             => asc ? q.OrderBy(c => c.FirstName)   : q.OrderByDescending(c => c.FirstName),
+            };
+
+            return await q
+                .ProjectTo<GetCustomerWithPaginationDto>(_mapper.ConfigurationProvider)
+                .ToPaginatedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         }
     }
 }
