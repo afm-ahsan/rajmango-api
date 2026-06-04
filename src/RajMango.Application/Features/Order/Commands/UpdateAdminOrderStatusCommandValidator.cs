@@ -22,9 +22,10 @@ namespace RajMango.Application.Features.Commands
             // Delivered requires Paid payment
             When(x => x.DeliveryStatus == DeliveryStatus.Delivered, () =>
             {
-                RuleFor(x => x.PaymentStatus)
-                    .Must(p => p == PaymentStatus.Paid)
-                    .WithMessage("Payment status must be Paid when delivery status is Delivered.");
+                // Will get back later to this rule
+                //RuleFor(x => x.PaymentStatus)
+                //    .Must(p => p == PaymentStatus.Paid)
+                //    .WithMessage("Payment status must be Paid when delivery status is Delivered.");
 
                 RuleFor(x => x.OrderStatus)
                     .Must(s => s != OrderStatus.Cancelled)

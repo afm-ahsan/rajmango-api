@@ -56,9 +56,9 @@ namespace RajMango.Application.Features.Commands
                         "A delivered order cannot be cancelled directly. Use the return/refund workflow.");
 
                 // Guard: delivered requires paid payment
-                if (command.DeliveryStatus == DeliveryStatus.Delivered && command.PaymentStatus != PaymentStatus.Paid)
-                    return await Result<int>.FailureAsync(
-                        "Order cannot be marked as Delivered: payment status must be Paid.");
+                //if (command.DeliveryStatus == DeliveryStatus.Delivered && command.PaymentStatus != PaymentStatus.Paid)
+                //    return await Result<int>.FailureAsync(
+                //        "Order cannot be marked as Delivered: payment status must be Paid.");
 
                 var prevOrderStatus    = order.OrderStatus;
                 var prevPaymentStatus  = order.PaymentStatus;
