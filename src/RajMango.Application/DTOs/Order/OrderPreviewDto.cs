@@ -1,3 +1,5 @@
+using RajMango.Shared.Enums;
+
 namespace RajMango.Application.DTOs.Order
 {
     public class OrderPreviewDto
@@ -8,5 +10,8 @@ namespace RajMango.Application.DTOs.Order
         public decimal TotalAmount { get; set; }
         public string CourierProviderName { get; set; }
         public decimal? CourierRatePerKg { get; set; }
+        public CourierLocationType? CourierLocationType { get; set; }
+        public decimal? MinimumCharge { get; set; }
+        public decimal? CourierChargeCalculated { get; set; }
     }
 }

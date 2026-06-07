@@ -49,6 +49,12 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(new GetCourierAreaDropdownQuery());
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<Result<List<CourierAreaDropdownDto>>>> Search([FromQuery] string q, [FromQuery] int limit = 20)
+        {
+            return await _mediator.Send(new SearchCourierAreaQuery { Q = q, Limit = limit });
+        }
+
         [HttpGet]
         [Route("paged")]
         [RequirePermission(Permissions.CourierAreaMaps.View)]

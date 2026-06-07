@@ -47,6 +47,9 @@ namespace RajMango.Application.Features.Queries
             decimal courierCharge = 0m;
             string courierProviderName = null;
             decimal? ratePerKg = null;
+            CourierLocationType? resolvedLocationType = null;
+            decimal? resolvedMinimumCharge = null;
+            decimal? resolvedChargeCalculated = null;
             bool courierResolved = false;
 
             if (query.CourierStationId.HasValue)
@@ -76,6 +79,9 @@ namespace RajMango.Application.Features.Queries
                         ratePerKg = courierRate.RatePerKg;
                         courierCharge = OrderCalculator.CalculateCourierCharge(totalWeightKg, courierRate.RatePerKg, courierRate.MinimumCharge);
                         courierProviderName = station.CourierProvider?.Name;
+                        resolvedLocationType = locationType;
+                        resolvedMinimumCharge = courierRate.MinimumCharge;
+                        resolvedChargeCalculated = totalWeightKg * courierRate.RatePerKg;
                         courierResolved = true;
                     }
                 }
@@ -85,12 +91,15 @@ namespace RajMango.Application.Features.Queries
 
             return await Result<OrderPreviewDto>.SuccessAsync(new OrderPreviewDto
             {
-                ProductTotalAmount = summary.ProductTotalAmount,
-                TotalWeightKg      = summary.TotalQuantity,
-                CourierCharge      = courierResolved ? courierCharge : (decimal?)null,
-                TotalAmount        = summary.TotalAmount,
-                CourierProviderName = courierProviderName,
-                CourierRatePerKg   = ratePerKg,
+                ProductTotalAmount    = summary.ProductTotalAmount,
+                TotalWeightKg         = summary.TotalQuantity,
+                CourierCharge         = courierResolved ? courierCharge : (decimal?)null,
+                TotalAmount           = summary.TotalAmount,
+                CourierProviderName   = courierProviderName,
+                CourierRatePerKg      = ratePerKg,
+                CourierLocationType   = resolvedLocationType,
+                MinimumCharge         = resolvedMinimumCharge,
+                CourierChargeCalculated = resolvedChargeCalculated,
             });
         }
     }

@@ -4,6 +4,7 @@ using RajMango.Application.DTOs;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
+using RajMango.Shared.Enums;
 
 namespace RajMango.Application.Features
 {
@@ -23,22 +24,27 @@ namespace RajMango.Application.Features
 
         public async Task<Result<List<AvailableCourierStationDto>>> Handle(AvailableCourierStationQuery query, CancellationToken cancellationToken)
         {
-            var courierStations = await _dataContext.Get<CourierStation>()
+            var stations = await _dataContext.Get<CourierStation>()
                 .Include(cs => cs.CourierProvider)
                 .Include(cs => cs.CourierAreaMaps)
                 .Where(cs => cs.IsActive && cs.CourierAreaMaps.Any(m => m.Area == query.Area))
-                .Select(cs => new AvailableCourierStationDto
-                {
-                    StationId = cs.Id,
-                    StationName = cs.Name,
-                    ProviderName = cs.CourierProvider.Name,
-                    City = cs.City,
-                    Area = cs.Area,
-                    Phone = cs.SupportPhone1,
-                    MapUrl = cs.GoogleMapUrl
-                }).ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return await Result<List<AvailableCourierStationDto>>.SuccessAsync(courierStations);
+            var result = stations.Select(cs => new AvailableCourierStationDto
+            {
+                StationId    = cs.Id,
+                StationName  = cs.Name,
+                ProviderName = cs.CourierProvider?.Name,
+                City         = cs.City,
+                Area         = cs.Area,
+                Phone        = cs.SupportPhone1,
+                MapUrl       = cs.GoogleMapUrl,
+                LocationType = string.Equals(cs.City, "Dhaka", StringComparison.OrdinalIgnoreCase)
+                    ? CourierLocationType.InsideDhaka
+                    : CourierLocationType.OutsideDhaka,
+            }).ToList();
+
+            return await Result<List<AvailableCourierStationDto>>.SuccessAsync(result);
         }
     }
 }
