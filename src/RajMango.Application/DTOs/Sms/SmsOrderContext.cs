@@ -23,6 +23,23 @@ namespace RajMango.Application.DTOs.Sms
 
         public bool HasAnyChange =>
             OrderStatusChanged || PaymentStatusChanged || DeliveryStatusChanged || DeliveryDateChanged;
+
+        // ---------------------------------------------------------------------------
+        // Recipient control (admin order status update only)
+        // Defaults preserve existing behaviour for all other callers.
+        // ---------------------------------------------------------------------------
+
+        /// <summary>Send SMS to the delivery receiver (gift recipient's number, or sender's number for self orders).</summary>
+        public bool ShouldNotifyReceiver { get; init; } = true;
+
+        /// <summary>Send SMS to the order placer (customer/sender) instead of the receiver.</summary>
+        public bool ShouldNotifySender { get; init; } = false;
+
+        /// <summary>
+        /// Delivery receiver's mobile number (set for gift orders; null for self orders).
+        /// When null and ShouldNotifyReceiver is true, falls back to the sender's number.
+        /// </summary>
+        public string ReceiverMobileNumber { get; init; }
     }
 
     public class SmsOrderItem

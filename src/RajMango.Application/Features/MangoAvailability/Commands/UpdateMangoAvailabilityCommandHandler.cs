@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Common;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -24,7 +25,10 @@ namespace RajMango.Application.Features.Commands
         {
             try
             {
-                var availability = await _dataContext.Get<MangoAvailability>().FindAsync(new object[] { command.Id }, cancellationToken);
+                // FirstOrDefaultAsync respects the global soft-delete query filter;
+                // FindAsync bypasses it and could match a deleted record.
+                var availability = await _dataContext.Get<MangoAvailability>()
+                    .FirstOrDefaultAsync(a => a.Id == command.Id, cancellationToken);
                 if (availability == null)
                     return await Result<int>.FailureAsync($"Mango availability not found with Id {command.Id}.");
 

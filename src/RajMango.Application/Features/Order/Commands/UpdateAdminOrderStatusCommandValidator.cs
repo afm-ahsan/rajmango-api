@@ -19,6 +19,12 @@ namespace RajMango.Application.Features.Commands
             RuleFor(x => x.DeliveryStatus)
                 .IsInEnum().WithMessage("A valid delivery status must be specified.");
 
+            // Both notify flags cannot be true simultaneously (Rule 4)
+            RuleFor(x => x)
+                .Must(x => !(x.ShouldNotifyReceiver && x.ShouldNotifySender))
+                .WithName("SmsRecipient")
+                .WithMessage("Only one SMS notification recipient (receiver or sender) can be selected at a time.");
+
             // Delivered requires Paid payment
             When(x => x.DeliveryStatus == DeliveryStatus.Delivered, () =>
             {

@@ -59,7 +59,7 @@ namespace RajMango.Infrastructure.Services
 
         public async Task SendOrderUpdateAsync(
             int userId,
-            string mobileNumber,
+            string senderMobileNumber,
             SmsOrderContext context,
             CancellationToken cancellationToken = default)
         {
@@ -70,11 +70,35 @@ namespace RajMango.Infrastructure.Services
                 return;
             }
 
+            // Rule 3: admin explicitly disabled all recipients → log Skipped, no SMS sent.
+            if (!context.ShouldNotifyReceiver && !context.ShouldNotifySender)
+            {
+                await LogSkippedAsync(userId, context.OrderNumber,
+                    "Skipped:AdminDisabled", "SMS notification disabled by admin.", cancellationToken);
+                return;
+            }
+
             if (_settings.SendToCustomer)
             {
                 var (message, triggerEvent) = SelectMessage(context);
-                await SendInternalAsync(userId, mobileNumber, context.OrderNumber,
-                    triggerEvent, message, cancellationToken);
+
+                if (context.ShouldNotifyReceiver)
+                {
+                    // Rule 1 (default): send to delivery receiver.
+                    // For gift orders use ReceiverMobileNumber; for self-orders fall back to sender's number.
+                    var receiverPhone = string.IsNullOrWhiteSpace(context.ReceiverMobileNumber)
+                        ? senderMobileNumber
+                        : context.ReceiverMobileNumber;
+
+                    await SendInternalAsync(userId, receiverPhone, context.OrderNumber,
+                        $"Receiver:{triggerEvent}", message, cancellationToken);
+                }
+                else
+                {
+                    // Rule 2: ShouldNotifySender=true — send to the order placer instead.
+                    await SendInternalAsync(userId, senderMobileNumber, context.OrderNumber,
+                        $"Sender:{triggerEvent}", message, cancellationToken);
+                }
             }
 
             if (_settings.SendToAdmin
@@ -92,6 +116,29 @@ namespace RajMango.Infrastructure.Services
                 await SendInternalAsync(null, _settings.AdminMobileNumber, context.OrderNumber,
                     $"Admin_OrderStatus_{context.OrderStatus}", adminMsg, cancellationToken);
             }
+        }
+
+        private async Task LogSkippedAsync(
+            int? userId,
+            string orderNumber,
+            string triggerEvent,
+            string reason,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation(
+                "SMS skipped: Event={Event}, Order={Order}, Reason={Reason}",
+                triggerEvent, orderNumber, reason);
+
+            var log = new SmsLog
+            {
+                UserId       = userId,
+                OrderNumber  = orderNumber,
+                TriggerEvent = triggerEvent,
+                Message      = string.Empty,
+                Status       = SmsLogStatus.Skipped,
+                ErrorMessage = reason,
+            };
+            await PersistLogAsync(log, cancellationToken);
         }
 
         // ---------------------------------------------------------------------------

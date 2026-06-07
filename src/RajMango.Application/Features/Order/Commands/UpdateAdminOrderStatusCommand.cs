@@ -11,5 +11,11 @@ namespace RajMango.Application.Features.Commands
         public PaymentStatus PaymentStatus { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
         public DateTime? DeliveryDate { get; set; }
+
+        /// <summary>Send SMS to the delivery receiver (gift recipient or self). Default: true.</summary>
+        public bool ShouldNotifyReceiver { get; set; } = true;
+
+        /// <summary>Send SMS to the order placer (sender/customer). Default: false.</summary>
+        public bool ShouldNotifySender { get; set; } = false;
     }
 }

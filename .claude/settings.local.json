@@ -132,7 +132,8 @@
       "Bash(Select-Object -First 40)",
       "Bash(Get-ChildItem -Path \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\" -Directory)",
       "Bash(Get-ChildItem \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-web\\\\src\\\\environments\" -ErrorAction SilentlyContinue)",
-      "PowerShell(\\(Get-Content \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.DataAccess\\\\Migrations\\\\20260604210513_AddSmsLogs.cs\" | Measure-Object -Line\\).Lines)"
+      "PowerShell(\\(Get-Content \"D:\\\\Workspace\\\\Projects\\\\RajMango\\\\rajmango-ai-governance\\\\rajmango-api\\\\src\\\\RajMango.DataAccess\\\\Migrations\\\\20260604210513_AddSmsLogs.cs\" | Measure-Object -Line\\).Lines)",
+      "Bash(Get-Content *)"
     ]
   }
 }

@@ -5,13 +5,23 @@ namespace RajMango.Application.Interfaces
     public interface ISmsService
     {
         /// <summary>
-        /// Selects the correct SMS template from the context, sends one customer SMS,
-        /// and optionally sends an admin alert. Never throws — all failures are logged to SmsLogs.
+        /// Resolves the correct SMS recipient from the context flags, sends the appropriate
+        /// message, and logs every outcome to SmsLogs. Never throws.
+        ///
+        /// Recipient rules (evaluated in order):
+        ///   Rule 3 — ShouldNotifyReceiver=false AND ShouldNotifySender=false:
+        ///             No SMS sent; a Skipped log entry is written.
+        ///   Rule 1 — ShouldNotifyReceiver=true (default):
+        ///             Sends to ReceiverMobileNumber if set (gift order),
+        ///             otherwise falls back to senderMobileNumber (self order).
+        ///   Rule 2 — ShouldNotifySender=true:
+        ///             Sends to senderMobileNumber (the order placer).
+        ///
         /// No SMS is sent when <see cref="SmsOrderContext.HasAnyChange"/> is false.
         /// </summary>
         Task SendOrderUpdateAsync(
             int userId,
-            string mobileNumber,
+            string senderMobileNumber,
             SmsOrderContext context,
             CancellationToken cancellationToken = default);
     }
