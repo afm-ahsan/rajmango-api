@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using RajMango.Application.Common;
 using RajMango.Application.DTOs.Bkash;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
@@ -19,6 +21,9 @@ namespace RajMango.Application.Features.Commands
         private readonly ICurrentUserService _currentUserService;
         private readonly IBkashService _bkash;
         private readonly IPaymentLock _paymentLock;
+        private readonly INotificationService _notification;
+        private readonly IRealtimeService _realtime;
+        private readonly BkashSettings _settings;
         private readonly ILogger<InitiateBkashPaymentCommandHandler> _logger;
 
         public InitiateBkashPaymentCommandHandler(
@@ -26,12 +31,19 @@ namespace RajMango.Application.Features.Commands
             ICurrentUserService currentUserService,
             IBkashService bkash,
             IPaymentLock paymentLock,
+            INotificationService notification,
+            IRealtimeService realtime,
+            IOptions<AppSettings> options,
             ILogger<InitiateBkashPaymentCommandHandler> logger)
         {
             _dataContext = dataContext;
             _currentUserService = currentUserService;
             _bkash = bkash;
             _paymentLock = paymentLock;
+            _notification = notification;
+            _realtime = realtime;
+            _settings = options.Value.Bkash
+                ?? throw new InvalidOperationException("Bkash settings not configured.");
             _logger = logger;
         }
 
@@ -53,7 +65,7 @@ namespace RajMango.Application.Features.Commands
 
             if (order.PaymentStatus == PaymentStatus.Paid)
                 return await Result<BkashInitiateResponseDto>.FailureAsync(
-                    "This order is already fully paid.");
+                    "This order is already paid.");
 
             if (order.TotalAmount <= 0)
                 return await Result<BkashInitiateResponseDto>.FailureAsync(
@@ -72,16 +84,107 @@ namespace RajMango.Application.Features.Commands
 
                 if (order.PaymentStatus == PaymentStatus.Paid || order.DueAmount <= 0)
                     return await Result<BkashInitiateResponseDto>.FailureAsync(
-                        "This order is already fully paid.");
+                        "This order is already paid.");
 
-                // Prevent duplicate concurrent initiation for the same order
-                var hasPending = await _dataContext.Get<Domain.Entities.Payment>()
-                    .AnyAsync(p => p.OrderId == command.OrderId
-                                   && p.PaymentStatus == PaymentStatus.Pending, cancellationToken);
-                if (hasPending)
-                    return await Result<BkashInitiateResponseDto>.FailureAsync(
-                        "A bKash payment is already in progress for this order. " +
-                        "Please complete or wait for it to expire before trying again.");
+                var existingPending = await _dataContext.Get<Domain.Entities.Payment>()
+                    .FirstOrDefaultAsync(p => p.OrderId == command.OrderId
+                                               && p.PaymentStatus == PaymentStatus.Pending, cancellationToken);
+
+                if (existingPending != null)
+                {
+                    var expiry = TimeSpan.FromMinutes(
+                        _settings.PendingPaymentExpiryMinutes > 0 ? _settings.PendingPaymentExpiryMinutes : 15);
+                    var age = Clock.Now() - existingPending.CreatedAt;
+
+                    _logger.LogInformation(
+                        "bKash initiate: existing pending payment for order {OrderId}: paymentId={PaymentId} ageMinutes={AgeMinutes:F1} expiryMinutes={ExpiryMinutes}",
+                        command.OrderId, existingPending.GatewayPaymentId, age.TotalMinutes, expiry.TotalMinutes);
+
+                    if (age < expiry)
+                    {
+                        // Still within the window — ask bKash directly in case the callback was
+                        // lost (customer paid but closed the tab before the redirect landed).
+                        BkashQueryPaymentResponse queryResponse = null;
+                        try
+                        {
+                            queryResponse = await _bkash.QueryPaymentAsync(existingPending.GatewayPaymentId, cancellationToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex,
+                                "bKash initiate: QueryPayment failed while reconciling paymentId={PaymentId} for order {OrderId}; treating as still in progress.",
+                                existingPending.GatewayPaymentId, command.OrderId);
+                        }
+
+                        if (queryResponse != null
+                            && string.Equals(queryResponse.TransactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _logger.LogInformation(
+                                "bKash initiate: reconciliation found paymentId={PaymentId} already Completed at bKash for order {OrderId}; finalizing now.",
+                                existingPending.GatewayPaymentId, command.OrderId);
+
+                            existingPending.PaymentStatus = PaymentStatus.Paid;
+                            existingPending.GatewayTransactionId = queryResponse.TrxId;
+                            existingPending.PaidAmount = existingPending.GrossAmount;
+                            existingPending.PaidAt = Clock.Now();
+
+                            var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
+                                .Where(p => p.OrderId == order.Id).ToListAsync(cancellationToken);
+                            PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                            existingPending.DueAmount = order.DueAmount;
+
+                            if (order.PaymentStatus == PaymentStatus.Paid && order.OrderStatus == OrderStatus.Pending)
+                                order.OrderStatus = OrderStatus.Confirmed;
+
+                            _dataContext.Get<Domain.Entities.Payment>().Update(existingPending);
+                            _dataContext.Get<Order>().Update(order);
+                            await _dataContext.SaveChangesAsync(cancellationToken);
+
+                            _ = _notification.SendPaymentReceivedAsync(
+                                order.UserId, order.OrderNumber, existingPending.PaidAmount, cancellationToken);
+                            var paidPayload = new { PaymentId = existingPending.Id, order.OrderNumber, Amount = existingPending.PaidAmount, order.UserId };
+                            _ = _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, paidPayload, cancellationToken);
+                            _ = _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, paidPayload, cancellationToken);
+
+                            return await Result<BkashInitiateResponseDto>.FailureAsync("This order is already paid.");
+                        }
+
+                        // Still genuinely in progress (or the reconciliation query itself failed) —
+                        // resume the existing checkout session instead of creating a duplicate.
+                        if (!string.IsNullOrEmpty(existingPending.BkashUrl))
+                        {
+                            _logger.LogInformation(
+                                "bKash initiate: resuming existing pending payment for order {OrderId}, paymentId={PaymentId}",
+                                command.OrderId, existingPending.GatewayPaymentId);
+                            return await Result<BkashInitiateResponseDto>.SuccessAsync(
+                                new BkashInitiateResponseDto
+                                {
+                                    BkashUrl = existingPending.BkashUrl,
+                                    GatewayPaymentId = existingPending.GatewayPaymentId,
+                                    MerchantInvoiceNumber = existingPending.MerchantInvoiceNumber,
+                                    IsExistingSession = true,
+                                },
+                                "An active bKash payment session already exists for this order.");
+                        }
+
+                        // No checkout URL on file (e.g. a payment row created before this field
+                        // existed) — fail safe rather than silently creating a duplicate attempt.
+                        _logger.LogWarning(
+                            "bKash initiate: existing pending payment {PaymentId} for order {OrderId} has no stored BkashUrl to resume.",
+                            existingPending.GatewayPaymentId, command.OrderId);
+                        return await Result<BkashInitiateResponseDto>.FailureAsync(
+                            "A bKash payment is already in progress for this order. " +
+                            "Please complete or wait for it to expire before trying again.");
+                    }
+
+                    // Expired — release it so a fresh attempt can proceed below.
+                    _logger.LogInformation(
+                        "bKash initiate: existing pending payment for order {OrderId} expired (ageMinutes={AgeMinutes:F1} >= {ExpiryMinutes}); marking Failed and allowing retry.",
+                        command.OrderId, age.TotalMinutes, expiry.TotalMinutes);
+                    existingPending.PaymentStatus = PaymentStatus.Failed;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(existingPending);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                }
 
                 merchantInvoiceNumber = $"RMG-{command.OrderId}-{Clock.Now():yyMMddHHmmssfff}";
                 var payerRef = order.UserId.ToString();
@@ -136,6 +239,7 @@ namespace RajMango.Application.Features.Commands
                     NetAmount = order.DueAmount,
                     PaidAmount = 0,
                     GatewayPaymentId = gatewayPaymentId,
+                    BkashUrl = bkashUrl,
                     MerchantInvoiceNumber = merchantInvoiceNumber,
                     RawCreateResponse = JsonSerializer.Serialize(bkashResponse),
                 };

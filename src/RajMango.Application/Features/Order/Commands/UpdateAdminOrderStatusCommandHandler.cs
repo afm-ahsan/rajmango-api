@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RajMango.Application.Common;
 using RajMango.Application.DTOs.Sms;
+using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
@@ -74,7 +75,51 @@ namespace RajMango.Application.Features.Commands
                 order.PaymentStatus = command.PaymentStatus;
                 order.DeliveryStatus = command.DeliveryStatus;
 
-                if (command.DeliveryStatus == DeliveryStatus.Dispatched || 
+                // This command lets admins set PaymentStatus directly, bypassing the normal
+                // payment-recording flow (CreatePaymentCommand / bKash callback) — without this sync,
+                // Order.PaidAmount/DueAmount go stale and dashboards (which sum those fields) and
+                // payments/payment-list (which lists the Payments table) silently disagree with the
+                // PaymentStatus badge shown here and on order-list.
+                bool createdManualPayment = false;
+                if (prevPaymentStatus != command.PaymentStatus)
+                {
+                    if (command.PaymentStatus == PaymentStatus.Paid && order.DueAmount > 0)
+                    {
+                        // Record the outstanding balance as a manual payment so payments/payment-list
+                        // reflects it too, then resync from the full payment history (correctly handles
+                        // orders that already had a partial bKash/manual payment on file).
+                        var manualPayment = new Domain.Entities.Payment
+                        {
+                            OrderId       = order.Id,
+                            GrossAmount   = order.DueAmount,
+                            NetAmount     = order.DueAmount,
+                            PaidAmount    = order.DueAmount,
+                            PaymentMethod = PaymentMethod.Cash,
+                            PaymentStatus = PaymentStatus.Paid,
+                            TransactionId = "ADMIN-STATUS-OVERRIDE",
+                            PaidAt        = Clock.Now(),
+                        };
+                        _dataContext.Get<Domain.Entities.Payment>().Add(manualPayment);
+
+                        var existingPayments = await _dataContext.Get<Domain.Entities.Payment>()
+                            .Where(p => p.OrderId == order.Id)
+                            .ToListAsync(cancellationToken);
+                        existingPayments.Add(manualPayment);
+                        PaymentSyncHelper.SyncOrderPaymentState(order, existingPayments);
+                        createdManualPayment = true;
+                    }
+                    else if (command.PaymentStatus is PaymentStatus.Unpaid or PaymentStatus.Pending or PaymentStatus.Failed)
+                    {
+                        // No amount ambiguity here — these states mean nothing is collected.
+                        // Prior payment rows (if any) are kept for audit history, not deleted.
+                        order.PaidAmount = 0;
+                        order.DueAmount = order.TotalAmount;
+                    }
+                    // Partial: this command carries no "amount paid" field, so PaidAmount/DueAmount
+                    // are intentionally left as-is rather than guessing a number.
+                }
+
+                if (command.DeliveryStatus == DeliveryStatus.Dispatched ||
                     command.DeliveryStatus == DeliveryStatus.InTransit || 
                     command.DeliveryStatus == DeliveryStatus.Delivered)
                 {
@@ -191,6 +236,17 @@ namespace RajMango.Application.Features.Commands
                 };
                 await _realtime.SendToUserAsync(order.UserId, RealtimeEvents.OrderStatusUpdated, payload, cancellationToken);
                 await _realtime.SendToAdminsAsync(RealtimeEvents.OrderStatusUpdated, payload, cancellationToken);
+
+                // Dashboards and payments/payment-list listen for PaymentReceived to auto-refresh —
+                // without this, a manual "mark as Paid" override only refreshes order-list (via
+                // OrderStatusUpdated above), leaving payment-list/dashboard totals stale on screen
+                // until the next manual page reload.
+                if (createdManualPayment)
+                {
+                    var paymentPayload = new { OrderId = order.Id, order.OrderNumber, Amount = order.PaidAmount, order.UserId };
+                    await _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, paymentPayload, cancellationToken);
+                    await _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, paymentPayload, cancellationToken);
+                }
 
                 return await Result<int>.SuccessAsync(order.Id, "Order statuses updated successfully.");
             }

@@ -164,31 +164,51 @@ namespace RajMango.Application.Features.Commands
                     return new BkashCallbackResult(false, failureUrl);
                 }
 
-                // Payment confirmed as Completed — update payment + order atomically
+                // Payment confirmed as Completed — update payment + order atomically.
+                // bKash has ALREADY told us this money was taken, so from here on a failure to
+                // persist is a financial reconciliation gap, not a normal "payment failed" case —
+                // it must never be reported back to the customer as a failure.
                 payment.PaymentStatus = PaymentStatus.Paid;
                 payment.GatewayTransactionId = executeResponse.TrxId;
                 payment.PaidAmount = payment.GrossAmount;
                 payment.PaidAt = Clock.Now();
 
                 var order = payment.Order;
-                var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
-                    .Where(p => p.OrderId == order.Id)
-                    .ToListAsync(cancellationToken);
-
-                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
-                payment.DueAmount = order.DueAmount;
-
-                _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-
-                // Promote order status on full payment
-                if (order.PaymentStatus == PaymentStatus.Paid
-                    && order.OrderStatus == OrderStatus.Pending)
+                try
                 {
-                    order.OrderStatus = OrderStatus.Confirmed;
-                }
+                    var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
+                        .Where(p => p.OrderId == order.Id)
+                        .ToListAsync(cancellationToken);
 
-                _dataContext.Get<Order>().Update(order);
-                await _dataContext.SaveChangesAsync(cancellationToken);
+                    PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                    payment.DueAmount = order.DueAmount;
+
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+
+                    // Promote order status on full payment
+                    if (order.PaymentStatus == PaymentStatus.Paid
+                        && order.OrderStatus == OrderStatus.Pending)
+                    {
+                        order.OrderStatus = OrderStatus.Confirmed;
+                    }
+
+                    _dataContext.Get<Order>().Update(order);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    // CRITICAL: bKash confirmed and charged the customer (trxId below), but our
+                    // database failed to record it. Requires manual reconciliation — search this
+                    // trxId/paymentId in bKash's merchant portal and re-apply the payment by hand.
+                    _logger.LogCritical(ex,
+                        "RECONCILIATION REQUIRED: bKash confirmed payment but DB persist failed. " +
+                        "paymentId={PaymentId} orderId={OrderId} trxId={TrxId} amount={Amount}",
+                        command.PaymentId, order.Id, executeResponse.TrxId, payment.GrossAmount);
+
+                    // Still send the customer to the success page — bKash genuinely took the money;
+                    // showing "failed" here would be actively misleading.
+                    return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
+                }
 
                 _logger.LogInformation(
                     "bKash payment completed: orderId={OrderId} trxId={TrxId} amount={Amount}",

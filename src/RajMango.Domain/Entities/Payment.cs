@@ -45,6 +45,11 @@ namespace RajMango.Domain.Entities
         [StringLength(100)]
         public string GatewayPaymentId { get; set; }
 
+        /// <summary>The bKash checkout URL returned by Create Payment — kept so an in-progress
+        /// (Pending, not yet expired) payment can be resumed without calling bKash again.</summary>
+        [StringLength(1000)]
+        public string BkashUrl { get; set; }
+
         [StringLength(100)]
         public string GatewayTransactionId { get; set; }
 

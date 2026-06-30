@@ -138,9 +138,11 @@ namespace RajMango.Application.Features.Queries
                                                                    or OrderStatus.Shipped),
                 DeliveredOrders = orders.Count(o => o.OrderStatus == OrderStatus.Delivered),
                 CancelledOrders = orders.Count(o => o.OrderStatus == OrderStatus.Cancelled),
-                TotalOrderValue = orders.Sum(o => o.TotalAmount),
-                TotalPaid       = orders.Sum(o => o.PaidAmount),
-                TotalDue        = orders.Sum(o => o.DueAmount),
+                // Monetary totals exclude cancelled orders — matches GetAdminDashboardQuery's
+                // activeOrders convention (TotalRevenue/TotalCollected/TotalOutstanding).
+                TotalOrderValue = orders.Where(o => o.OrderStatus != OrderStatus.Cancelled).Sum(o => o.TotalAmount),
+                TotalPaid       = orders.Where(o => o.OrderStatus != OrderStatus.Cancelled).Sum(o => o.PaidAmount),
+                TotalDue        = orders.Where(o => o.OrderStatus != OrderStatus.Cancelled).Sum(o => o.DueAmount),
                 RecentOrders    = orders.Take(5).Select(o => new CustomerRecentOrderDto
                 {
                     Id            = o.Id,

@@ -25,6 +25,8 @@
         public bool SandboxMode { get; set; } = true;
         // HTTP call timeout for all bKash gateway requests (Grant/Create/Execute/Query)
         public int TimeoutSeconds { get; set; } = 15;
+        // How long a Pending bKash payment may sit unconfirmed before it no longer blocks a retry.
+        public int PendingPaymentExpiryMinutes { get; set; } = 15;
     }
 
     public class RedisSettings
