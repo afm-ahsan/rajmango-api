@@ -17,6 +17,8 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

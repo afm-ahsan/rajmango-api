@@ -22,7 +22,7 @@ namespace RajMango.WebApi.Services
             ws.Cell(7, 1).Value = "Outstanding";     ws.Cell(7, 2).Value = report.TotalOutstanding;
 
             // Orders table
-            var headers = new[] { "Order #", "Order Date", "Customer", "Qty", "Total", "Paid", "Due", "Status", "Payment" };
+            var headers = new[] { "Order #", "Order Date", "Mango Type", "Customer", "Qty", "Total", "Paid", "Due", "Status", "Payment" };
             for (int i = 0; i < headers.Length; i++)
             {
                 ws.Cell(9, i + 1).Value = headers[i];
@@ -35,13 +35,14 @@ namespace RajMango.WebApi.Services
             {
                 ws.Cell(row, 1).Value = o.OrderNumber;
                 ws.Cell(row, 2).Value = o.OrderDate.ToString("dd MMM yyyy");
-                ws.Cell(row, 3).Value = o.CustomerName;
-                ws.Cell(row, 4).Value = o.TotalQuantity;
-                ws.Cell(row, 5).Value = (double)o.TotalAmount;
-                ws.Cell(row, 6).Value = (double)o.PaidAmount;
-                ws.Cell(row, 7).Value = (double)o.DueAmount;
-                ws.Cell(row, 8).Value = o.OrderStatus.ToString();
-                ws.Cell(row, 9).Value = o.PaymentStatus.ToString();
+                ws.Cell(row, 3).Value = o.MangoTypeNames;
+                ws.Cell(row, 4).Value = o.CustomerName;
+                ws.Cell(row, 5).Value = o.TotalQuantity;
+                ws.Cell(row, 6).Value = (double)o.TotalAmount;
+                ws.Cell(row, 7).Value = (double)o.PaidAmount;
+                ws.Cell(row, 8).Value = (double)o.DueAmount;
+                ws.Cell(row, 9).Value = o.OrderStatus.ToString();
+                ws.Cell(row, 10).Value = o.PaymentStatus.ToString();
                 row++;
             }
 
