@@ -47,6 +47,7 @@ namespace RajMango.Application.Features.Queries
         {
             var orderQuery = _dataContext.Get<Order>()
                                          .Include(o => o.OrderDetails)
+                                             .ThenInclude(od => od.MangoType)
                                          .AsQueryable();
 
             if (!_currentUserService.IsAdmin)
@@ -98,6 +99,7 @@ namespace RajMango.Application.Features.Queries
                     Id          = d.Id,
                     OrderId     = d.OrderId,
                     MangoTypeId = d.MangoTypeId,
+                    MangoName   = d.MangoType.Name,
                     CrateType   = d.CrateType,
                     Quantity    = d.Quantity,
                     UnitPrice   = d.UnitPrice,
@@ -128,6 +130,9 @@ namespace RajMango.Application.Features.Queries
                 "orderStatus"   => ascending ? query.OrderBy(o => o.OrderStatus)   : query.OrderByDescending(o => o.OrderStatus),
                 "paymentStatus" => ascending ? query.OrderBy(o => o.PaymentStatus) : query.OrderByDescending(o => o.PaymentStatus),
                 "deliveryStatus" => ascending ? query.OrderBy(o => o.DeliveryStatus) : query.OrderByDescending(o => o.DeliveryStatus),
+                "mangoType"     => ascending
+                    ? query.OrderBy(o => o.OrderDetails.OrderBy(d => d.MangoType.Name).Select(d => d.MangoType.Name).FirstOrDefault())
+                    : query.OrderByDescending(o => o.OrderDetails.OrderBy(d => d.MangoType.Name).Select(d => d.MangoType.Name).FirstOrDefault()),
                 _               => query.OrderByDescending(o => o.OrderDate),
             };
 

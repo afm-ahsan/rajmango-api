@@ -47,6 +47,7 @@ namespace RajMango.Application.Features.Queries
         public PaymentStatus PaymentStatus { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public string MangoTypeNames { get; set; }
     }
 
     public record GetAdminDashboardQuery : IRequest<Result<AdminDashboardDto>>;
@@ -76,26 +77,44 @@ namespace RajMango.Application.Features.Queries
                 })
                 .ToListAsync(cancellationToken);
 
-            var recentOrders = await _dataContext.Get<Order>()
+            var recentOrdersRaw = await _dataContext.Get<Order>()
                 .Include(o => o.AppUser)
                 .OrderByDescending(o => o.OrderDate)
                 .Take(10)
-                .Select(o => new AdminRecentOrderDto
+                .Select(o => new
                 {
-                    Id            = o.Id,
-                    OrderNumber   = o.OrderNumber,
-                    OrderDate     = o.OrderDate,
-                    UserId        = o.UserId,
-                    CustomerName  = o.AppUser.FirstName + " " + o.AppUser.LastName,
-                    TotalAmount   = o.TotalAmount,
-                    PaidAmount    = o.PaidAmount,
-                    DueAmount     = o.DueAmount,
-                    OrderStatus    = o.OrderStatus,
-                    PaymentStatus  = o.PaymentStatus,
-                    DeliveryStatus = o.DeliveryStatus,
-                    DeliveryDate   = o.DeliveryDate,
+                    o.Id,
+                    o.OrderNumber,
+                    o.OrderDate,
+                    o.UserId,
+                    CustomerName = o.AppUser.FirstName + " " + o.AppUser.LastName,
+                    o.TotalAmount,
+                    o.PaidAmount,
+                    o.DueAmount,
+                    o.OrderStatus,
+                    o.PaymentStatus,
+                    o.DeliveryStatus,
+                    o.DeliveryDate,
+                    MangoTypeNames = o.OrderDetails.Select(od => od.MangoType.Name),
                 })
                 .ToListAsync(cancellationToken);
+
+            var recentOrders = recentOrdersRaw.Select(o => new AdminRecentOrderDto
+            {
+                Id             = o.Id,
+                OrderNumber    = o.OrderNumber,
+                OrderDate      = o.OrderDate,
+                UserId         = o.UserId,
+                CustomerName   = o.CustomerName,
+                TotalAmount    = o.TotalAmount,
+                PaidAmount     = o.PaidAmount,
+                DueAmount      = o.DueAmount,
+                OrderStatus    = o.OrderStatus,
+                PaymentStatus  = o.PaymentStatus,
+                DeliveryStatus = o.DeliveryStatus,
+                DeliveryDate   = o.DeliveryDate,
+                MangoTypeNames = string.Join(", ", o.MangoTypeNames),
+            }).ToList();
 
             var availableMangoes = await _dataContext.Get<MangoAvailability>()
                 .Include(a => a.MangoType)

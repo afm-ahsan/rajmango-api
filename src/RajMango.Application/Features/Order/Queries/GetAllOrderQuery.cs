@@ -25,6 +25,7 @@ namespace RajMango.Application.Features.Queries
         {
             var orderQuery = _dataContext.Get<Order>()
                                          .Include(o => o.OrderDetails)
+                                             .ThenInclude(od => od.MangoType)
                                          .AsQueryable();
 
             if (!_currentUserService.IsAdmin)
@@ -67,6 +68,7 @@ namespace RajMango.Application.Features.Queries
                         Id          = d.Id,
                         OrderId     = d.OrderId,
                         MangoTypeId = d.MangoTypeId,
+                        MangoName   = d.MangoType.Name,
                         CrateType   = d.CrateType,
                         Quantity    = d.Quantity,
                         UnitPrice   = d.UnitPrice,
