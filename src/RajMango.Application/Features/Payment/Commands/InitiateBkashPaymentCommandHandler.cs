@@ -92,6 +92,21 @@ namespace RajMango.Application.Features.Commands
                     bkashResponse = await _bkash.CreatePaymentAsync(
                         merchantInvoiceNumber, order.DueAmount, payerRef, cancellationToken);
                 }
+                catch (BkashApiException ex)
+                {
+                    // ex.Message is a clean, bKash-reported description — safe to show the customer.
+                    // ex.RawResponse (already logged inside BkashService) is never returned to the client.
+                    _logger.LogError(ex, "bKash CreatePayment failed for order {OrderId}: {Message}",
+                        command.OrderId, ex.Message);
+                    return await Result<BkashInitiateResponseDto>.FailureAsync($"bKash error: {ex.Message}");
+                }
+                catch (OperationCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+                {
+                    // HttpClient.Timeout surfaces as a (non-user-requested) OperationCanceledException.
+                    _logger.LogError(ex, "bKash CreatePayment timed out for order {OrderId}", command.OrderId);
+                    return await Result<BkashInitiateResponseDto>.FailureAsync(
+                        "The bKash payment gateway did not respond in time. Please try again.");
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "bKash CreatePayment failed for order {OrderId}", command.OrderId);

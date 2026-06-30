@@ -61,6 +61,7 @@ namespace RajMango.Application.Features.Queries
                 CourierChargeNote           = order.CourierChargeNote,
                 IsValidOrder     = order.IsValidOrder,
                 IsDelivered      = order.IsDelivered,
+                DeliveryStatus   = order.DeliveryStatus,
                 DeliveryDate     = order.DeliveryDate,
                 TrackingNumber   = order.TrackingNumber,
                 CourierStationId     = order.CourierStationId,

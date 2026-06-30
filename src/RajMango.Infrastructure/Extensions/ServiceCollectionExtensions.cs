@@ -42,6 +42,7 @@ namespace RajMango.Infrastructure.Extensions
                     client.BaseAddress = new Uri(settings.BaseUrl.TrimEnd('/') + "/");
                 client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = TimeSpan.FromSeconds(settings?.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 15);
             });
 
             // Ghonta SMS: GET {BaseUrl}?toNo=...&msg=...

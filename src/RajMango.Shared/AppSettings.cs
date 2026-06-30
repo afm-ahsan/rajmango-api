@@ -21,7 +21,10 @@
         // Frontend pages to redirect to after callback is processed
         public string FrontendSuccessUrl { get; set; }
         public string FrontendFailureUrl { get; set; }
+        public string FrontendCancelUrl { get; set; }
         public bool SandboxMode { get; set; } = true;
+        // HTTP call timeout for all bKash gateway requests (Grant/Create/Execute/Query)
+        public int TimeoutSeconds { get; set; } = 15;
     }
 
     public class RedisSettings

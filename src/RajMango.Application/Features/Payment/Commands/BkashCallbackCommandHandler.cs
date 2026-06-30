@@ -19,6 +19,7 @@ namespace RajMango.Application.Features.Commands
         private readonly IBkashService _bkash;
         private readonly IRealtimeService _realtime;
         private readonly INotificationService _notification;
+        private readonly IPaymentLock _paymentLock;
         private readonly BkashSettings _settings;
         private readonly ILogger<BkashCallbackCommandHandler> _logger;
 
@@ -27,6 +28,7 @@ namespace RajMango.Application.Features.Commands
             IBkashService bkash,
             IRealtimeService realtime,
             INotificationService notification,
+            IPaymentLock paymentLock,
             IOptions<AppSettings> options,
             ILogger<BkashCallbackCommandHandler> logger)
         {
@@ -34,6 +36,7 @@ namespace RajMango.Application.Features.Commands
             _bkash = bkash;
             _realtime = realtime;
             _notification = notification;
+            _paymentLock = paymentLock;
             _settings = options.Value.Bkash
                 ?? throw new InvalidOperationException("Bkash settings not configured.");
             _logger = logger;
@@ -43,6 +46,7 @@ namespace RajMango.Application.Features.Commands
             BkashCallbackCommand command, CancellationToken cancellationToken)
         {
             var failureUrl = BuildUrl(_settings.FrontendFailureUrl, command.PaymentId);
+            var cancelUrl = BuildUrl(_settings.FrontendCancelUrl, command.PaymentId);
 
             if (string.IsNullOrWhiteSpace(command.PaymentId))
             {
@@ -50,135 +54,156 @@ namespace RajMango.Application.Features.Commands
                 return new BkashCallbackResult(false, failureUrl);
             }
 
-            var payment = await _dataContext.Get<Domain.Entities.Payment>()
-                .Include(p => p.Order)
-                .FirstOrDefaultAsync(p => p.GatewayPaymentId == command.PaymentId, cancellationToken);
+            // Pre-lock existence check (no tracking — re-fetched inside the lock)
+            var exists = await _dataContext.Get<Domain.Entities.Payment>()
+                .AsNoTracking()
+                .AnyAsync(p => p.GatewayPaymentId == command.PaymentId, cancellationToken);
 
-            if (payment is null)
+            if (!exists)
             {
                 _logger.LogWarning("bKash callback: no payment record found for paymentID={PaymentId}", command.PaymentId);
                 return new BkashCallbackResult(false, failureUrl);
             }
 
-            // Idempotency guard — already processed
-            if (payment.PaymentStatus != PaymentStatus.Pending)
+            // Everything below — idempotency check through finalization — runs under the global
+            // payment lock so two near-simultaneous deliveries of the same callback (bKash is
+            // known to redeliver) can't both pass the Pending check and double-credit the order.
+            using (await _paymentLock.AcquireAsync())
             {
-                _logger.LogInformation(
-                    "bKash callback: paymentID={PaymentId} already in status={Status}, skipping",
-                    command.PaymentId, payment.PaymentStatus);
-                var alreadyUrl = payment.PaymentStatus == PaymentStatus.Paid
-                    ? BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId)
-                    : failureUrl;
-                return new BkashCallbackResult(payment.PaymentStatus == PaymentStatus.Paid, alreadyUrl);
-            }
+                var payment = await _dataContext.Get<Domain.Entities.Payment>()
+                    .Include(p => p.Order)
+                    .FirstOrDefaultAsync(p => p.GatewayPaymentId == command.PaymentId, cancellationToken);
 
-            var status = (command.Status ?? string.Empty).ToLowerInvariant();
-            payment.BkashCallbackStatus = command.Status;
+                if (payment is null)
+                {
+                    _logger.LogWarning("bKash callback: payment record disappeared for paymentID={PaymentId}", command.PaymentId);
+                    return new BkashCallbackResult(false, failureUrl);
+                }
 
-            if (status == "cancel")
-            {
-                payment.PaymentStatus = PaymentStatus.Cancelled;
-                _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
-                _logger.LogInformation("bKash payment cancelled by customer: paymentID={PaymentId}", command.PaymentId);
-                return new BkashCallbackResult(false, failureUrl);
-            }
+                // Idempotency guard — already processed
+                if (payment.PaymentStatus != PaymentStatus.Pending)
+                {
+                    _logger.LogInformation(
+                        "bKash callback: paymentID={PaymentId} already in status={Status}, skipping",
+                        command.PaymentId, payment.PaymentStatus);
+                    var alreadyUrl = payment.PaymentStatus switch
+                    {
+                        PaymentStatus.Paid => BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId),
+                        PaymentStatus.Cancelled => cancelUrl,
+                        _ => failureUrl,
+                    };
+                    return new BkashCallbackResult(payment.PaymentStatus == PaymentStatus.Paid, alreadyUrl);
+                }
 
-            if (status != "success")
-            {
-                payment.PaymentStatus = PaymentStatus.Failed;
-                _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
-                _logger.LogWarning("bKash payment failed at gateway: paymentID={PaymentId} status={Status}",
-                    command.PaymentId, command.Status);
-                return new BkashCallbackResult(false, failureUrl);
-            }
+                var status = (command.Status ?? string.Empty).ToLowerInvariant();
+                payment.BkashCallbackStatus = command.Status;
 
-            // Callback says success — must execute/verify before trusting it
-            BkashExecutePaymentResponse executeResponse;
-            try
-            {
-                executeResponse = await _bkash.ExecutePaymentAsync(command.PaymentId, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "bKash ExecutePayment threw for paymentID={PaymentId}", command.PaymentId);
-                payment.PaymentStatus = PaymentStatus.Failed;
-                _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-                await _dataContext.SaveChangesAsync(cancellationToken);
-                return new BkashCallbackResult(false, failureUrl);
-            }
+                if (status == "cancel")
+                {
+                    payment.PaymentStatus = PaymentStatus.Cancelled;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                    _logger.LogInformation("bKash payment cancelled by customer: paymentID={PaymentId}", command.PaymentId);
+                    return new BkashCallbackResult(false, cancelUrl);
+                }
 
-            payment.RawExecuteResponse = JsonSerializer.Serialize(executeResponse);
+                if (status != "success")
+                {
+                    payment.PaymentStatus = PaymentStatus.Failed;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                    _logger.LogWarning("bKash payment failed at gateway: paymentID={PaymentId} status={Status}",
+                        command.PaymentId, command.Status);
+                    return new BkashCallbackResult(false, failureUrl);
+                }
 
-            var transactionStatus = executeResponse.TransactionStatus;
-
-            // If execute says anything other than "Completed", query to get ground truth
-            if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
-            {
+                // Callback says success — must execute/verify before trusting it
+                BkashExecutePaymentResponse executeResponse;
                 try
                 {
-                    var queryResponse = await _bkash.QueryPaymentAsync(command.PaymentId, cancellationToken);
-                    transactionStatus = queryResponse.TransactionStatus;
-                    _logger.LogInformation(
-                        "bKash QueryPayment fallback for paymentID={PaymentId} transactionStatus={Status}",
-                        command.PaymentId, transactionStatus);
+                    executeResponse = await _bkash.ExecutePaymentAsync(command.PaymentId, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "bKash QueryPayment threw for paymentID={PaymentId}", command.PaymentId);
+                    _logger.LogError(ex, "bKash ExecutePayment threw for paymentID={PaymentId}", command.PaymentId);
+                    payment.PaymentStatus = PaymentStatus.Failed;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                    return new BkashCallbackResult(false, failureUrl);
                 }
-            }
 
-            if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
-            {
-                payment.PaymentStatus = PaymentStatus.Failed;
+                payment.RawExecuteResponse = JsonSerializer.Serialize(executeResponse);
+
+                var transactionStatus = executeResponse.TransactionStatus;
+
+                // If execute says anything other than "Completed", query to get ground truth
+                if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        var queryResponse = await _bkash.QueryPaymentAsync(command.PaymentId, cancellationToken);
+                        transactionStatus = queryResponse.TransactionStatus;
+                        _logger.LogInformation(
+                            "bKash QueryPayment fallback for paymentID={PaymentId} transactionStatus={Status}",
+                            command.PaymentId, transactionStatus);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "bKash QueryPayment threw for paymentID={PaymentId}", command.PaymentId);
+                    }
+                }
+
+                if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
+                {
+                    payment.PaymentStatus = PaymentStatus.Failed;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                    _logger.LogWarning(
+                        "bKash payment not confirmed as Completed: paymentID={PaymentId} transactionStatus={Status}",
+                        command.PaymentId, transactionStatus);
+                    return new BkashCallbackResult(false, failureUrl);
+                }
+
+                // Payment confirmed as Completed — update payment + order atomically
+                payment.PaymentStatus = PaymentStatus.Paid;
+                payment.GatewayTransactionId = executeResponse.TrxId;
+                payment.PaidAmount = payment.GrossAmount;
+                payment.PaidAt = Clock.Now();
+
+                var order = payment.Order;
+                var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
+                    .Where(p => p.OrderId == order.Id)
+                    .ToListAsync(cancellationToken);
+
+                PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                payment.DueAmount = order.DueAmount;
+
                 _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+
+                // Promote order status on full payment
+                if (order.PaymentStatus == PaymentStatus.Paid
+                    && order.OrderStatus == OrderStatus.Pending)
+                {
+                    order.OrderStatus = OrderStatus.Confirmed;
+                }
+
+                _dataContext.Get<Order>().Update(order);
                 await _dataContext.SaveChangesAsync(cancellationToken);
-                _logger.LogWarning(
-                    "bKash payment not confirmed as Completed: paymentID={PaymentId} transactionStatus={Status}",
-                    command.PaymentId, transactionStatus);
-                return new BkashCallbackResult(false, failureUrl);
+
+                _logger.LogInformation(
+                    "bKash payment completed: orderId={OrderId} trxId={TrxId} amount={Amount}",
+                    order.Id, executeResponse.TrxId, payment.PaidAmount);
+
+                // Notifications (fire-and-forget pattern matches existing handlers)
+                _ = _notification.SendPaymentReceivedAsync(
+                    order.UserId, order.OrderNumber, payment.PaidAmount, cancellationToken);
+
+                var payload = new { PaymentId = payment.Id, order.OrderNumber, Amount = payment.PaidAmount, order.UserId };
+                _ = _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, payload, cancellationToken);
+                _ = _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, payload, cancellationToken);
+
+                return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
             }
-
-            // Payment confirmed as Completed — update payment + order atomically
-            payment.PaymentStatus = PaymentStatus.Paid;
-            payment.GatewayTransactionId = executeResponse.TrxId;
-            payment.PaidAmount = payment.GrossAmount;
-            payment.PaidAt = Clock.Now();
-
-            _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-
-            var order = payment.Order;
-            var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
-                .Where(p => p.OrderId == order.Id)
-                .ToListAsync(cancellationToken);
-
-            PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
-
-            // Promote order status on full payment
-            if (order.PaymentStatus == PaymentStatus.Paid
-                && order.OrderStatus == OrderStatus.Pending)
-            {
-                order.OrderStatus = OrderStatus.Confirmed;
-            }
-
-            _dataContext.Get<Order>().Update(order);
-            await _dataContext.SaveChangesAsync(cancellationToken);
-
-            _logger.LogInformation(
-                "bKash payment completed: orderId={OrderId} trxId={TrxId} amount={Amount}",
-                order.Id, executeResponse.TrxId, payment.PaidAmount);
-
-            // Notifications (fire-and-forget pattern matches existing handlers)
-            _ = _notification.SendPaymentReceivedAsync(
-                order.UserId, order.OrderNumber, payment.PaidAmount, cancellationToken);
-
-            var payload = new { PaymentId = payment.Id, order.OrderNumber, Amount = payment.PaidAmount, order.UserId };
-            _ = _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, payload, cancellationToken);
-            _ = _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, payload, cancellationToken);
-
-            return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
         }
 
         private static string BuildUrl(string baseUrl, string paymentId)
