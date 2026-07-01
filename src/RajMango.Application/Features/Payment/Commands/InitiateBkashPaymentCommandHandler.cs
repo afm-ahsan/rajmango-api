@@ -187,7 +187,23 @@ namespace RajMango.Application.Features.Commands
                 }
 
                 merchantInvoiceNumber = $"RMG-{command.OrderId}-{Clock.Now():yyMMddHHmmssfff}";
-                var payerRef = order.UserId.ToString();
+
+                // bKash's checkout PAGE (not just the Create API) validates payerReference —
+                // a non-phone-like value (e.g. the raw internal UserId) is a well-documented
+                // cause of "Invalid page access request" once the customer is redirected there,
+                // even though Create itself succeeds and returns a bKashURL.
+                var customerPhone = await _dataContext.Get<AppUser>()
+                    .Where(u => u.Id == order.UserId)
+                    .Select(u => u.PhoneNumber)
+                    .FirstOrDefaultAsync(cancellationToken);
+                var payerRef = NormalizeToLocalPhone(customerPhone);
+                if (string.IsNullOrEmpty(payerRef))
+                {
+                    _logger.LogWarning(
+                        "bKash initiate: order {OrderId} customer has no usable phone number; falling back to UserId as payerReference.",
+                        command.OrderId);
+                    payerRef = order.UserId.ToString();
+                }
 
                 BkashCreatePaymentResponse bkashResponse;
                 try
@@ -217,12 +233,16 @@ namespace RajMango.Application.Features.Commands
                         "Could not initiate bKash payment. Please try again later.");
                 }
 
-                if (string.IsNullOrEmpty(bkashResponse.BkashUrl)
+                // Never persist a Pending payment / hand back a checkout URL unless bKash gave us
+                // BOTH a paymentID and a bKashURL — a partial/malformed response is not a usable session.
+                if (string.IsNullOrEmpty(bkashResponse.PaymentId)
+                    || string.IsNullOrEmpty(bkashResponse.BkashUrl)
                     || bkashResponse.StatusCode != "0000")
                 {
                     _logger.LogWarning(
-                        "bKash CreatePayment non-success for order {OrderId}: {StatusCode} {StatusMessage}",
-                        command.OrderId, bkashResponse.StatusCode, bkashResponse.StatusMessage);
+                        "bKash CreatePayment non-success for order {OrderId}: statusCode={StatusCode} statusMessage={StatusMessage} hasPaymentId={HasPaymentId} hasBkashUrl={HasBkashUrl}",
+                        command.OrderId, bkashResponse.StatusCode, bkashResponse.StatusMessage,
+                        !string.IsNullOrEmpty(bkashResponse.PaymentId), !string.IsNullOrEmpty(bkashResponse.BkashUrl));
                     return await Result<BkashInitiateResponseDto>.FailureAsync(
                         $"bKash error: {bkashResponse.StatusMessage}");
                 }
@@ -260,6 +280,22 @@ namespace RajMango.Application.Features.Commands
                     MerchantInvoiceNumber = merchantInvoiceNumber,
                 },
                 "Redirect the customer to BkashUrl to complete payment.");
+        }
+
+        /// <summary>
+        /// bKash expects payerReference in local BD format (01XXXXXXXXX), not +880/0088/880-prefixed —
+        /// mirrors RajMango.Infrastructure.Services.SmsService's NormalizeToLocalPhone (duplicated here
+        /// since Application must not depend on Infrastructure).
+        /// </summary>
+        private static string NormalizeToLocalPhone(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return string.Empty;
+            phone = phone.Trim().Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+            if (phone.StartsWith("+880")) return "0" + phone[4..];
+            if (phone.StartsWith("00880")) return "0" + phone[5..];
+            if (phone.StartsWith("880") && phone.Length >= 13) return "0" + phone[3..];
+            if (phone.StartsWith("0")) return phone;
+            return phone;
         }
     }
 }

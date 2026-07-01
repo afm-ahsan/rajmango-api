@@ -45,7 +45,7 @@ namespace RajMango.Infrastructure.Services
             var client = _httpClientFactory.CreateClient("Bkash");
             ApplyAuthHeaders(client, idToken);
 
-            var response = await client.PostAsJsonAsync("checkout/create", new
+            var requestBody = new
             {
                 mode = "0011",
                 payerReference = payerReference,
@@ -54,9 +54,23 @@ namespace RajMango.Infrastructure.Services
                 currency = "BDT",
                 intent = "sale",
                 merchantInvoiceNumber = merchantInvoiceNumber,
-            }, cancellationToken);
+            };
+
+            // Safe to log in full — none of these fields are credentials (Authorization/X-App-Key
+            // are headers, never part of this body).
+            _logger.LogInformation(
+                "bKash CreatePayment request: invoice={Invoice} mode={Mode} payerReference={PayerReference} " +
+                "callbackURL={CallbackUrl} amount={Amount} currency={Currency} intent={Intent}",
+                merchantInvoiceNumber, requestBody.mode, requestBody.payerReference, requestBody.callbackURL,
+                requestBody.amount, requestBody.currency, requestBody.intent);
+
+            var response = await client.PostAsJsonAsync("checkout/create", requestBody, cancellationToken);
 
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation(
+                "bKash CreatePayment response: invoice={Invoice} httpStatus={HttpStatus} body={Body}",
+                merchantInvoiceNumber, (int)response.StatusCode, body);
+
             var json = TryParseJson(body, "CreatePayment", merchantInvoiceNumber, response.StatusCode);
 
             var paymentId = GetString(json, "paymentID");
