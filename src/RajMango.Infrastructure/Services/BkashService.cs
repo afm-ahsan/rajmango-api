@@ -117,19 +117,23 @@ namespace RajMango.Infrastructure.Services
             }, cancellationToken);
 
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation(
+                "bKash ExecutePayment response: paymentId={PaymentId} httpStatus={HttpStatus} body={Body}",
+                paymentId, (int)response.StatusCode, body);
+
             var json = TryParseJson(body, "ExecutePayment", paymentId, response.StatusCode);
 
             if (!response.IsSuccessStatusCode)
             {
                 var message = ExtractErrorMessage(json, "bKash payment execution failed.");
                 _logger.LogError(
-                    "bKash ExecutePayment failed. paymentId={PaymentId} httpStatus={HttpStatus} message={Message} body={Body}",
-                    paymentId, (int)response.StatusCode, message, body);
+                    "bKash ExecutePayment failed. paymentId={PaymentId} httpStatus={HttpStatus} message={Message}",
+                    paymentId, (int)response.StatusCode, message);
             }
             else
             {
-                _logger.LogInformation("bKash ExecutePayment httpStatus={HttpStatus} transactionStatus={Status} paymentId={PaymentId}",
-                    (int)response.StatusCode, GetString(json, "transactionStatus"), paymentId);
+                _logger.LogInformation("bKash ExecutePayment succeeded. paymentId={PaymentId} transactionStatus={Status} trxId={TrxId}",
+                    paymentId, GetString(json, "transactionStatus"), GetString(json, "trxID"));
             }
 
             return new BkashExecutePaymentResponse(
@@ -180,8 +184,12 @@ namespace RajMango.Infrastructure.Services
         {
             var cached = await _cache.GetAsync<string>(TokenCacheKey, ct);
             if (!string.IsNullOrEmpty(cached))
+            {
+                _logger.LogDebug("bKash token cache hit — reusing cached id_token.");
                 return cached;
+            }
 
+            _logger.LogInformation("bKash token cache miss — requesting new grant token.");
             var token = await GrantTokenInternalAsync(ct);
             await _cache.SetAsync(TokenCacheKey, token, TokenCacheExpiry, ct);
             return token;

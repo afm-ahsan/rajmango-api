@@ -8,7 +8,8 @@
         Failed = 3,       // Payment attempt failed
         Refunded = 4,     // Full or partial refund issued
         Cancelled = 5,    // Payment process was cancelled
-        Pending = 6       // Payment initiated with gateway, awaiting callback confirmation
+        Pending = 6,      // Payment initiated with gateway, awaiting callback confirmation
+        Expired = 7       // Payment session timed out before customer completed checkout
     }
 
 }

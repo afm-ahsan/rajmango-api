@@ -179,9 +179,9 @@ namespace RajMango.Application.Features.Commands
 
                     // Expired — release it so a fresh attempt can proceed below.
                     _logger.LogInformation(
-                        "bKash initiate: existing pending payment for order {OrderId} expired (ageMinutes={AgeMinutes:F1} >= {ExpiryMinutes}); marking Failed and allowing retry.",
+                        "bKash initiate: existing pending payment for order {OrderId} expired (ageMinutes={AgeMinutes:F1} >= {ExpiryMinutes}); marking Expired and allowing retry.",
                         command.OrderId, age.TotalMinutes, expiry.TotalMinutes);
-                    existingPending.PaymentStatus = PaymentStatus.Failed;
+                    existingPending.PaymentStatus = PaymentStatus.Expired;
                     _dataContext.Get<Domain.Entities.Payment>().Update(existingPending);
                     await _dataContext.SaveChangesAsync(cancellationToken);
                 }
