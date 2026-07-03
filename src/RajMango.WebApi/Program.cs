@@ -150,6 +150,20 @@ var app = builder.Build();
 // Startup diagnostics — visible in server logs immediately after launch.
 var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
 startupLogger.LogInformation("Environment: {Env}", app.Environment.EnvironmentName);
+
+// bKash configuration diagnostic — logs presence of credentials without exposing values.
+var bkashSection = app.Configuration.GetSection("Bkash");
+startupLogger.LogInformation(
+    "bKash: SandboxMode={SandboxMode} BaseUrl={BaseUrl} " +
+    "AppKey={AppKeyStatus} AppSecret={AppSecretStatus} " +
+    "Username={UsernameStatus} Password={PasswordStatus}",
+    bkashSection["SandboxMode"],
+    bkashSection["BaseUrl"],
+    string.IsNullOrWhiteSpace(bkashSection["AppKey"])    ? "MISSING" : "set",
+    string.IsNullOrWhiteSpace(bkashSection["AppSecret"]) ? "MISSING" : "set",
+    string.IsNullOrWhiteSpace(bkashSection["Username"])  ? "MISSING" : "set",
+    string.IsNullOrWhiteSpace(bkashSection["Password"])  ? "MISSING" : "set");
+
 var tsConfig = app.Configuration.GetSection("CloudflareTurnstile");
 startupLogger.LogInformation(
     "Turnstile: Enabled={Enabled}, SiteKey={HasSiteKey}",

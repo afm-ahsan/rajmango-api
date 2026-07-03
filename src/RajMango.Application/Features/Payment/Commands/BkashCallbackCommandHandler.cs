@@ -19,6 +19,7 @@ namespace RajMango.Application.Features.Commands
         private readonly IBkashService _bkash;
         private readonly IRealtimeService _realtime;
         private readonly INotificationService _notification;
+        private readonly ISmsService _sms;
         private readonly IPaymentLock _paymentLock;
         private readonly BkashSettings _settings;
         private readonly ILogger<BkashCallbackCommandHandler> _logger;
@@ -28,16 +29,18 @@ namespace RajMango.Application.Features.Commands
             IBkashService bkash,
             IRealtimeService realtime,
             INotificationService notification,
+            ISmsService sms,
             IPaymentLock paymentLock,
-            IOptions<AppSettings> options,
+            IOptions<BkashSettings> options,
             ILogger<BkashCallbackCommandHandler> logger)
         {
             _dataContext = dataContext;
             _bkash = bkash;
             _realtime = realtime;
             _notification = notification;
+            _sms = sms;
             _paymentLock = paymentLock;
-            _settings = options.Value.Bkash
+            _settings = options.Value
                 ?? throw new InvalidOperationException("Bkash settings not configured.");
             _logger = logger;
         }
@@ -211,16 +214,28 @@ namespace RajMango.Application.Features.Commands
                 }
 
                 _logger.LogInformation(
-                    "bKash payment completed: orderId={OrderId} trxId={TrxId} amount={Amount}",
-                    order.Id, executeResponse.TrxId, payment.PaidAmount);
+                    "bKash payment completed: orderId={OrderId} orderNumber={OrderNumber} trxId={TrxId} amount={Amount}",
+                    order.Id, order.OrderNumber, executeResponse.TrxId, payment.PaidAmount);
 
-                // Notifications (fire-and-forget pattern matches existing handlers)
-                _ = _notification.SendPaymentReceivedAsync(
-                    order.UserId, order.OrderNumber, payment.PaidAmount, cancellationToken);
-
+                // In-app notification + real-time push (fire-and-forget — matches existing handlers)
                 var payload = new { PaymentId = payment.Id, order.OrderNumber, Amount = payment.PaidAmount, order.UserId };
+                _ = _notification.SendPaymentReceivedAsync(order.UserId, order.OrderNumber, payment.PaidAmount, cancellationToken);
                 _ = _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, payload, cancellationToken);
                 _ = _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, payload, cancellationToken);
+
+                // SMS — sent only to the customer (order placer / sender), never to the delivery
+                // receiver or admin. Customer phone is loaded here because it is not on the Order entity.
+                var customerPhone = await _dataContext.Get<AppUser>()
+                    .Where(u => u.Id == order.UserId)
+                    .Select(u => u.PhoneNumber)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (!string.IsNullOrWhiteSpace(customerPhone))
+                    _ = _sms.SendPaymentConfirmedSmsAsync(customerPhone, order.OrderNumber, order.UserId, cancellationToken);
+                else
+                    _logger.LogWarning(
+                        "bKash payment SMS skipped: customer has no phone. orderId={OrderId} userId={UserId}",
+                        order.Id, order.UserId);
 
                 return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
             }

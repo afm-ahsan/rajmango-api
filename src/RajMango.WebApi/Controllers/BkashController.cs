@@ -68,5 +68,65 @@ namespace RajMango.WebApi.Controllers
         {
             return await _mediator.Send(new GetOrderPaymentsQuery(orderId), cancellationToken);
         }
+
+        /// <summary>
+        /// Admin: query a payment's current status directly from bKash by paymentID.
+        /// Useful for diagnosing payments where the callback was not received.
+        /// </summary>
+        [Authorize]
+        [HttpPost("bkash/query")]
+        public async Task<ActionResult<Result<BkashQueryResult>>> QueryPayment(
+            [FromBody] BkashQueryRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(request?.PaymentId))
+                return BadRequest("paymentId is required.");
+
+            return await _mediator.Send(new QueryBkashPaymentQuery(request.PaymentId), cancellationToken);
+        }
+
+        /// <summary>
+        /// Admin: search a bKash transaction by trxID.
+        /// </summary>
+        [Authorize]
+        [HttpPost("bkash/search")]
+        public async Task<ActionResult<Result<BkashSearchTransactionResult>>> SearchTransaction(
+            [FromBody] BkashSearchRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(request?.TrxId))
+                return BadRequest("trxId is required.");
+
+            return await _mediator.Send(new SearchBkashTransactionQuery(request.TrxId), cancellationToken);
+        }
+
+        /// <summary>
+        /// Admin: initiate a refund for a completed bKash payment.
+        /// Requires the original paymentID and trxID from the Payments table.
+        /// </summary>
+        [Authorize]
+        [HttpPost("bkash/refund")]
+        public async Task<ActionResult<Result<BkashRefundResult>>> Refund(
+            [FromBody] BkashRefundRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(request?.PaymentId) || string.IsNullOrWhiteSpace(request.TrxId))
+                return BadRequest("paymentId and trxId are required.");
+
+            if (request.Amount <= 0)
+                return BadRequest("amount must be greater than zero.");
+
+            return await _mediator.Send(new RefundBkashPaymentCommand(
+                request.PaymentId,
+                request.TrxId,
+                request.Amount,
+                request.Sku,
+                request.Reason), cancellationToken);
+        }
     }
+
+    // ── Request models (thin, bKash-controller-scoped) ──────────────────────────
+    public record BkashQueryRequest(string PaymentId);
+    public record BkashSearchRequest(string TrxId);
+    public record BkashRefundRequest(string PaymentId, string TrxId, decimal Amount, string Sku, string Reason);
 }

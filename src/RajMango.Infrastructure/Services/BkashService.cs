@@ -23,12 +23,12 @@ namespace RajMango.Infrastructure.Services
         private readonly ILogger<BkashService> _logger;
 
         public BkashService(
-            IOptions<AppSettings> options,
+            IOptions<BkashSettings> options,
             IHttpClientFactory httpClientFactory,
             ICacheService cache,
             ILogger<BkashService> logger)
         {
-            _settings = options.Value.Bkash
+            _settings = options.Value
                 ?? throw new InvalidOperationException("Bkash settings are not configured.");
             _httpClientFactory = httpClientFactory;
             _cache = cache;
@@ -154,7 +154,10 @@ namespace RajMango.Infrastructure.Services
             var client = _httpClientFactory.CreateClient("Bkash");
             ApplyAuthHeaders(client, idToken);
 
-            var response = await client.GetAsync($"checkout/payment/query/{paymentId}", cancellationToken);
+            // bKash Tokenized Checkout v1.2.0-beta query endpoint is POST /checkout/payment/status
+            // with JSON body — NOT GET /checkout/payment/query/{id} which does not exist.
+            var response = await client.PostAsJsonAsync("checkout/payment/status",
+                new { paymentID = paymentId }, cancellationToken);
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             var json = TryParseJson(body, "QueryPayment", paymentId, response.StatusCode);
 
@@ -167,14 +170,111 @@ namespace RajMango.Infrastructure.Services
             }
             else
             {
-                _logger.LogInformation("bKash QueryPayment httpStatus={HttpStatus} transactionStatus={Status} paymentId={PaymentId}",
-                    (int)response.StatusCode, GetString(json, "transactionStatus"), paymentId);
+                _logger.LogInformation(
+                    "bKash QueryPayment response: paymentId={PaymentId} httpStatus={HttpStatus} transactionStatus={Status}",
+                    paymentId, (int)response.StatusCode, GetString(json, "transactionStatus"));
             }
 
             return new BkashQueryPaymentResponse(
                 PaymentId: GetString(json, "paymentID"),
                 TrxId: GetString(json, "trxID"),
                 Amount: GetString(json, "amount"),
+                TransactionStatus: GetString(json, "transactionStatus"),
+                StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+        }
+
+        public async Task<BkashSearchTransactionResponse> SearchTransactionAsync(
+            string trxId,
+            CancellationToken cancellationToken = default)
+        {
+            var idToken = await GetTokenAsync(cancellationToken);
+            var client = _httpClientFactory.CreateClient("Bkash");
+            ApplyAuthHeaders(client, idToken);
+
+            var response = await client.PostAsJsonAsync("checkout/general/searchTran",
+                new { trxID = trxId }, cancellationToken);
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            var json = TryParseJson(body, "SearchTransaction", trxId, response.StatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = ExtractErrorMessage(json, "bKash transaction search failed.");
+                _logger.LogError(
+                    "bKash SearchTransaction failed. trxId={TrxId} httpStatus={HttpStatus} message={Message} body={Body}",
+                    trxId, (int)response.StatusCode, message, body);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "bKash SearchTransaction response: trxId={TrxId} httpStatus={HttpStatus} transactionStatus={Status}",
+                    trxId, (int)response.StatusCode, GetString(json, "transactionStatus"));
+            }
+
+            return new BkashSearchTransactionResponse(
+                TrxId: FirstNonEmpty(GetString(json, "trxID"), trxId),
+                PaymentId: GetString(json, "paymentID"),
+                Amount: GetString(json, "amount"),
+                Currency: FirstNonEmpty(GetString(json, "currency"), "BDT"),
+                TransactionType: GetString(json, "transactionType"),
+                TransactionStatus: GetString(json, "transactionStatus"),
+                InitiationTime: GetString(json, "initiationTime"),
+                CompletionTime: GetString(json, "completionTime"),
+                StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+        }
+
+        public async Task<BkashRefundPaymentResponse> RefundPaymentAsync(
+            string paymentId,
+            string trxId,
+            decimal amount,
+            string sku,
+            string reason,
+            CancellationToken cancellationToken = default)
+        {
+            var idToken = await GetTokenAsync(cancellationToken);
+            var client = _httpClientFactory.CreateClient("Bkash");
+            ApplyAuthHeaders(client, idToken);
+
+            _logger.LogInformation(
+                "bKash RefundPayment request: paymentId={PaymentId} trxId={TrxId} amount={Amount} reason={Reason}",
+                paymentId, trxId, amount.ToString("F2"), reason);
+
+            var response = await client.PostAsJsonAsync("checkout/payment/refund", new
+            {
+                paymentID = paymentId,
+                amount     = amount.ToString("F2"),
+                trxID      = trxId,
+                sku        = sku ?? string.Empty,
+                reason     = reason ?? string.Empty,
+            }, cancellationToken);
+
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation(
+                "bKash RefundPayment response: paymentId={PaymentId} httpStatus={HttpStatus} body={Body}",
+                paymentId, (int)response.StatusCode, body);
+
+            var json = TryParseJson(body, "RefundPayment", paymentId, response.StatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = ExtractErrorMessage(json, "bKash refund failed.");
+                _logger.LogError(
+                    "bKash RefundPayment failed. paymentId={PaymentId} httpStatus={HttpStatus} message={Message}",
+                    paymentId, (int)response.StatusCode, message);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "bKash RefundPayment succeeded. paymentId={PaymentId} refundTrxId={RefundTrxId}",
+                    paymentId, GetString(json, "refundTrxID"));
+            }
+
+            return new BkashRefundPaymentResponse(
+                OriginalPaymentId: FirstNonEmpty(GetString(json, "originalPaymentID"), paymentId),
+                OriginalTrxId: FirstNonEmpty(GetString(json, "trxID"), trxId),
+                RefundTrxId: GetString(json, "refundTrxID"),
+                Amount: FirstNonEmpty(GetString(json, "amount"), amount.ToString("F2")),
                 TransactionStatus: GetString(json, "transactionStatus"),
                 StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
                 StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
@@ -199,7 +299,14 @@ namespace RajMango.Infrastructure.Services
         {
             var client = _httpClientFactory.CreateClient("Bkash");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "checkout/token/grant");
+            const string grantPath = "checkout/token/grant";
+            var fullUrl = client.BaseAddress != null
+                ? new Uri(client.BaseAddress, grantPath).ToString()
+                : grantPath;
+
+            _logger.LogInformation("bKash GrantToken endpoint: {Url}", fullUrl);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, grantPath);
             request.Headers.Add("username", _settings.Username?.Trim());
             request.Headers.Add("password", _settings.Password?.Trim());
             request.Content = JsonContent.Create(new
@@ -211,6 +318,13 @@ namespace RajMango.Infrastructure.Services
             var response = await client.SendAsync(request, ct);
             var body = await response.Content.ReadAsStringAsync(ct);
             var json = TryParseJson(body, "GrantToken", null, response.StatusCode);
+
+            // Log HTTP status + safe response fields only — id_token and refresh_token are never logged.
+            _logger.LogInformation(
+                "bKash GrantToken response: httpStatus={HttpStatus} statusCode={BkashStatusCode} statusMessage={BkashStatusMessage}",
+                (int)response.StatusCode,
+                FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
 
             var idToken = GetString(json, "id_token");
             if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(idToken))

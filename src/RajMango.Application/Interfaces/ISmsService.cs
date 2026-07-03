@@ -24,5 +24,17 @@ namespace RajMango.Application.Interfaces
             string senderMobileNumber,
             SmsOrderContext context,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Send a payment-confirmed SMS directly to the customer (sender/order-placer only).
+        /// Used exclusively by the bKash callback after a successful Execute Payment so that
+        /// the receiver of the delivery does NOT receive a payment notification.
+        /// Never throws — any failure is logged internally.
+        /// </summary>
+        Task SendPaymentConfirmedSmsAsync(
+            string customerPhone,
+            string orderNumber,
+            int userId,
+            CancellationToken cancellationToken = default);
     }
 }

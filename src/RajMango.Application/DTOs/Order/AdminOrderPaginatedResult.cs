@@ -17,6 +17,19 @@ namespace RajMango.Application.DTOs.Order
         /// <summary>Total number of 20 kg crates across all filtered order lines.</summary>
         public int SummaryCrate20KgCount { get; set; }
 
+        /// <summary>Sum of Order.TotalAmount across all filtered orders.</summary>
+        public decimal SummaryTotalAmount { get; set; }
+
+        /// <summary>Sum of Order.PaidAmount across all filtered orders.
+        /// PaidAmount is maintained by PaymentSyncHelper: 0 when Unpaid,
+        /// actual paid amount when Partial, equals TotalAmount when fully Paid.</summary>
+        public decimal SummaryTotalPaid { get; set; }
+
+        /// <summary>Sum of Order.DueAmount across all filtered orders.
+        /// DueAmount is maintained by PaymentSyncHelper and is always >= 0:
+        /// 0 when Paid, TotalAmount-PaidAmount otherwise.</summary>
+        public decimal SummaryTotalDue { get; set; }
+
         public static AdminOrderPaginatedResult Create(
             List<AdminOrderListDto> data,
             int totalCount,
@@ -24,19 +37,25 @@ namespace RajMango.Application.DTOs.Order
             int pageSize,
             int summaryTotalQuantityKg,
             int summaryCrate10KgCount,
-            int summaryCrate20KgCount)
+            int summaryCrate20KgCount,
+            decimal summaryTotalAmount,
+            decimal summaryTotalPaid,
+            decimal summaryTotalDue)
         {
             return new AdminOrderPaginatedResult
             {
-                Data                  = data,
-                Succeeded             = true,
-                CurrentPage           = pageNumber,
-                PageSize              = pageSize,
-                TotalPages            = pageSize > 0 ? (int)Math.Ceiling(totalCount / (double)pageSize) : 0,
-                TotalCount            = totalCount,
+                Data                   = data,
+                Succeeded              = true,
+                CurrentPage            = pageNumber,
+                PageSize               = pageSize,
+                TotalPages             = pageSize > 0 ? (int)Math.Ceiling(totalCount / (double)pageSize) : 0,
+                TotalCount             = totalCount,
                 SummaryTotalQuantityKg = summaryTotalQuantityKg,
                 SummaryCrate10KgCount  = summaryCrate10KgCount,
                 SummaryCrate20KgCount  = summaryCrate20KgCount,
+                SummaryTotalAmount     = summaryTotalAmount,
+                SummaryTotalPaid       = summaryTotalPaid,
+                SummaryTotalDue        = summaryTotalDue,
             };
         }
     }

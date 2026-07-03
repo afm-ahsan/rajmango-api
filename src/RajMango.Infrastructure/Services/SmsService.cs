@@ -57,6 +57,18 @@ namespace RajMango.Infrastructure.Services
         // Public interface
         // ---------------------------------------------------------------------------
 
+        public async Task SendPaymentConfirmedSmsAsync(
+            string customerPhone,
+            string orderNumber,
+            int userId,
+            CancellationToken cancellationToken = default)
+        {
+            // bKash-specific payment confirmation — always goes to the order placer (sender) only.
+            // Receiver and admin are intentionally excluded; this is not a delivery-status update.
+            var message = $"{Brand}: Payment received for order #{orderNumber}. Thank you. Track: {TrackUrl}";
+            await SendInternalAsync(userId, customerPhone, orderNumber, "BkashPaymentConfirmed", message, cancellationToken);
+        }
+
         public async Task SendOrderUpdateAsync(
             int userId,
             string senderMobileNumber,

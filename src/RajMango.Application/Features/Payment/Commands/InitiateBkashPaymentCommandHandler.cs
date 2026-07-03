@@ -33,7 +33,7 @@ namespace RajMango.Application.Features.Commands
             IPaymentLock paymentLock,
             INotificationService notification,
             IRealtimeService realtime,
-            IOptions<AppSettings> options,
+            IOptions<BkashSettings> options,
             ILogger<InitiateBkashPaymentCommandHandler> logger)
         {
             _dataContext = dataContext;
@@ -42,7 +42,7 @@ namespace RajMango.Application.Features.Commands
             _paymentLock = paymentLock;
             _notification = notification;
             _realtime = realtime;
-            _settings = options.Value.Bkash
+            _settings = options.Value
                 ?? throw new InvalidOperationException("Bkash settings not configured.");
             _logger = logger;
         }

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -35,14 +35,33 @@ namespace RajMango.Infrastructure.Extensions
                 .AddTransient<IFileStorageService, LocalFileStorageService>()
                 .AddScoped<IPermissionService, PermissionService>();
 
+            // Register IOptions<BkashSettings> directly so bKash services inject it without
+            // going through the parent AppSettings. ValidateOnStart() ensures the application
+            // fails immediately at startup if any required credential is missing, rather than
+            // failing silently on the first payment attempt.
+            services.AddOptions<BkashSettings>()
+                .Bind(configuration.GetSection("Bkash"))
+                .Validate(
+                    s => !string.IsNullOrWhiteSpace(s.BaseUrl)
+                      && !string.IsNullOrWhiteSpace(s.AppKey)
+                      && !string.IsNullOrWhiteSpace(s.AppSecret)
+                      && !string.IsNullOrWhiteSpace(s.Username)
+                      && !string.IsNullOrWhiteSpace(s.Password)
+                      && !string.IsNullOrWhiteSpace(s.CallbackUrl),
+                    "One or more required bKash settings are missing. " +
+                    "In Production, set the following environment variables on the server: " +
+                    "BKASH__APPKEY, BKASH__APPSECRET, BKASH__USERNAME, BKASH__PASSWORD. " +
+                    "In Development, verify appsettings.Development.json contains the sandbox credentials.")
+                .ValidateOnStart();
+
             services.AddHttpClient("Bkash", (sp, client) =>
             {
-                var settings = sp.GetRequiredService<IOptions<AppSettings>>().Value.Bkash;
-                if (!string.IsNullOrEmpty(settings?.BaseUrl))
+                var settings = sp.GetRequiredService<IOptions<BkashSettings>>().Value;
+                if (!string.IsNullOrEmpty(settings.BaseUrl))
                     client.BaseAddress = new Uri(settings.BaseUrl.TrimEnd('/') + "/");
                 client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                client.Timeout = TimeSpan.FromSeconds(settings?.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 15);
+                client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 15);
             });
 
             // Ghonta SMS: GET {BaseUrl}?toNo=...&msg=...
@@ -61,7 +80,6 @@ namespace RajMango.Infrastructure.Extensions
             else
                 services.AddDistributedMemoryCache();
 
-            //Later
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuditLogService, AuditLogService>();
             services.AddScoped<AuditInterceptor>();

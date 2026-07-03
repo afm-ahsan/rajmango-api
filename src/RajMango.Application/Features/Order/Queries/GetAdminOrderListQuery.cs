@@ -49,7 +49,7 @@ namespace RajMango.Application.Features.Queries
         {
             if (!_currentUserService.IsAdmin && !_currentUserService.IsSuperAdmin)
                 return AdminOrderPaginatedResult.Create(
-                    new List<AdminOrderListDto>(), 0, 1, 10, 0, 0, 0);
+                    new List<AdminOrderListDto>(), 0, 1, 10, 0, 0, 0, 0m, 0m, 0m);
 
             var orderQuery = _dataContext.Get<Order>()
                 .Include(o => o.AppUser)
@@ -126,13 +126,19 @@ namespace RajMango.Application.Features.Queries
             int totalCount = await orderQuery.CountAsync(cancellationToken);
 
             // ── Summary totals across ALL filtered records (not just the current page) ──
-            int summaryTotalQtyKg = 0;
-            int crate10KgCount    = 0;
-            int crate20KgCount    = 0;
+            int     summaryTotalQtyKg  = 0;
+            int     crate10KgCount    = 0;
+            int     crate20KgCount    = 0;
+            decimal summaryTotalAmount = 0m;
+            decimal summaryTotalPaid   = 0m;
+            decimal summaryTotalDue    = 0m;
 
             if (totalCount > 0)
             {
-                summaryTotalQtyKg = await orderQuery.SumAsync(o => o.TotalQuantity, cancellationToken);
+                summaryTotalQtyKg  = await orderQuery.SumAsync(o => o.TotalQuantity, cancellationToken);
+                summaryTotalAmount = await orderQuery.SumAsync(o => o.TotalAmount,   cancellationToken);
+                summaryTotalPaid   = await orderQuery.SumAsync(o => o.PaidAmount,    cancellationToken);
+                summaryTotalDue    = await orderQuery.SumAsync(o => o.DueAmount,     cancellationToken);
 
                 var filteredOrderIds = await orderQuery.Select(o => o.Id).ToListAsync(cancellationToken);
 
@@ -201,7 +207,8 @@ namespace RajMango.Application.Features.Queries
 
             return AdminOrderPaginatedResult.Create(
                 data, totalCount, pageNumber, pageSize,
-                summaryTotalQtyKg, crate10KgCount, crate20KgCount);
+                summaryTotalQtyKg, crate10KgCount, crate20KgCount,
+                summaryTotalAmount, summaryTotalPaid, summaryTotalDue);
         }
     }
 }
