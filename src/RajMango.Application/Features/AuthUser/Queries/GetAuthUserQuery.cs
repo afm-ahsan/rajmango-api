@@ -1,4 +1,3 @@
-using RajMango.Application.Common;
 using RajMango.Application.DTOs;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -62,7 +61,17 @@ namespace RajMango.Application.Features.Queries
                 {
                     roleCode = role.Code;
                     roleId = role.Id;
-                    permissions = PermissionMigrationHelper.DeserializeToFlatPermissions(role.PermissionJson);
+
+                    // Read permissions from the normalised RolePermission → Permission join.
+                    // This is the ground truth: every permission assigned to this role via
+                    // HasData seed and subsequent migrations is correctly represented here.
+                    // It replaces the previous Role.PermissionJson approach which was fragile
+                    // (depended on PermissionJson format staying in sync with the flat-string
+                    // convention and PermissionMigrationHelper.FeatureActionMap being complete).
+                    permissions = await _dataContext.Get<RolePermission>()
+                        .Where(rp => rp.RoleId == role.Id)
+                        .Select(rp => rp.Permission.Name)
+                        .ToListAsync(cancellationToken);
                 }
             }
 

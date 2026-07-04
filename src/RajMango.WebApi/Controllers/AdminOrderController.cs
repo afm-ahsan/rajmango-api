@@ -22,12 +22,46 @@ namespace RajMango.WebApi.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Create an order on behalf of an existing customer.
+        /// The customer owns the order (appears in their dashboard/list/totals);
+        /// the logged-in admin is recorded in PlacedByAdminUserId for audit.
+        /// </summary>
+        [HttpPost("create-for-customer")]
+        [RequirePermission(Permissions.Orders.AdminCreateForCustomer)]
+        public async Task<ActionResult<Result<int>>> CreateForCustomer(
+            [FromBody] CreateOrderForCustomerCommand command)
+        {
+            var validator = new CreateOrderForCustomerCommandValidator();
+            var validation = validator.Validate(command);
+            if (!validation.IsValid)
+            {
+                var errors = validation.Errors.Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
+            return await _mediator.Send(command);
+        }
+
         /// <summary>Paged order list with rich filters for admin management.</summary>
         [HttpGet]
         [RequirePermission(Permissions.Orders.AdminView)]
         public async Task<ActionResult<AdminOrderPaginatedResult>> GetPaged([FromQuery] GetAdminOrderListQuery query)
         {
             return await _mediator.Send(query);
+        }
+
+        /// <summary>
+        /// Typeahead search for customer users (self-register role only).
+        /// Used by admin when placing an order on behalf of a customer.
+        /// Returns up to 20 matches on name, phone, or email.
+        /// </summary>
+        [HttpGet("customer-search")]
+        [RequirePermission(Permissions.Orders.AdminCreateForCustomer)]
+        public async Task<ActionResult<Result<List<AdminCustomerSearchResultDto>>>> CustomerSearch(
+            [FromQuery] string q)
+        {
+            return await _mediator.Send(new AdminCustomerSearchQuery { Q = q });
         }
 
         /// <summary>Full order details including customer, courier, items, and payment history.</summary>
@@ -84,6 +118,33 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>
+        /// Permanently remove an order from all lists, dashboards, and totals
+        /// by soft-deleting it (and its linked payments) with a full audit snapshot.
+        ///
+        /// The admin must supply the exact order number to confirm the action.
+        /// The deletion is irreversible from the UI; a DBA can reverse it via the DB if needed.
+        /// </summary>
+        [HttpDelete("{id}/permanent-delete")]
+        [RequirePermission(Permissions.Orders.AdminDeletePermanent)]
+        public async Task<ActionResult<Result<int>>> PermanentDelete(
+            int id,
+            [FromBody] AdminPermanentDeleteRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request?.ConfirmOrderNumber))
+                return BadRequest("Order number confirmation is required.");
+
+            if (string.IsNullOrWhiteSpace(request.Reason))
+                return BadRequest("A reason for deletion is required.");
+
+            return await _mediator.Send(new AdminPermanentDeleteOrderCommand
+            {
+                OrderId             = id,
+                ConfirmOrderNumber  = request.ConfirmOrderNumber,
+                Reason              = request.Reason,
+            });
+        }
+
+        /// <summary>
         /// Directly set order, payment, and delivery status together.
         /// Use for manual corrections and delivery preparation.
         /// Rules: Delivered requires Paid; cancelled orders cannot be set Delivered;
@@ -112,5 +173,12 @@ namespace RajMango.WebApi.Controllers
     public record ShipOrderRequest
     {
         public string? TrackingNumber { get; set; }
+    }
+
+    public record AdminPermanentDeleteRequest
+    {
+        /// <summary>Admin must type the order number exactly — confirmed server-side too.</summary>
+        public string ConfirmOrderNumber { get; set; }
+        public string Reason { get; set; }
     }
 }

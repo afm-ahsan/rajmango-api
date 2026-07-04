@@ -19,6 +19,19 @@ namespace RajMango.Domain.Entities
         [ForeignKey(nameof(UserId))]
         public AppUser AppUser { get; set; }
 
+        // --- Admin-on-behalf-of audit ---
+
+        /// <summary>
+        /// Set when an admin places this order on behalf of a customer.
+        /// UserId still holds the customer (business owner of the order);
+        /// this field records the admin who actually submitted it.
+        /// CreatedBy (FullAuditedEntity) is also the admin's UserId when IsPlacedByAdmin is true.
+        /// </summary>
+        public int? PlacedByAdminUserId { get; set; }
+
+        /// <summary>True when this order was created by an admin acting on behalf of the customer.</summary>
+        public bool IsPlacedByAdmin { get; set; }
+
         public int? CourierStationId { get; set; }
 
         [ForeignKey(nameof(CourierStationId))]

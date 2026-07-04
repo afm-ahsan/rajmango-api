@@ -74,6 +74,9 @@ namespace RajMango.DataAccess.Contexts
         // 📱 SMS Logs
         public virtual DbSet<SmsLog> SmsLogs => Set<SmsLog>();
 
+        // 🗑️ Order Deletion Audit
+        public virtual DbSet<OrderDeletionAudit> OrderDeletionAudits => Set<OrderDeletionAudit>();
+
         // 🔢 Sequences
         public virtual DbSet<OrderNumberCounter> OrderNumberCounters => Set<OrderNumberCounter>();
 

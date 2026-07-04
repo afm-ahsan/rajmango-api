@@ -202,6 +202,7 @@ namespace RajMango.Application.Features.Queries
 
                     IsCourierEligible    = eligible,
                     MangoTypeName        = o.OrderDetails.FirstOrDefault()?.MangoType?.Name,
+                    DeliveryNote         = o.DeliveryNote,
                 };
             }).ToList();
 

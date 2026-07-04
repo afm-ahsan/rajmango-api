@@ -40,5 +40,13 @@ namespace RajMango.Application.DTOs.Order
         // --- Flags ---
         public bool IsCourierEligible { get; set; }
         public string MangoTypeName { get; set; }
+
+        /// <summary>
+        /// Customer note entered when placing the order (Order.DeliveryNote).
+        /// Null or empty means the customer left no instructions.
+        /// Shown to the admin in the Confirm modal so they are aware of any
+        /// special requests before confirming.
+        /// </summary>
+        public string DeliveryNote { get; set; }
     }
 }

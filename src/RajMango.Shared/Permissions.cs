@@ -24,12 +24,16 @@ namespace RajMango.Shared
 
         public static class Orders
         {
-            public const string View        = "order.view";
-            public const string Create      = "order.create";
-            public const string Update      = "order.update";
-            public const string Delete      = "order.delete";
-            public const string AdminView   = "order.admin.view";
-            public const string AdminManage = "order.admin.manage";
+            public const string View                 = "order.view";
+            public const string Create               = "order.create";
+            public const string Update               = "order.update";
+            public const string Delete               = "order.delete";
+            public const string AdminView            = "order.admin.view";
+            public const string AdminManage          = "order.admin.manage";
+            /// <summary>Admin creates an order on behalf of an existing customer.</summary>
+            public const string AdminCreateForCustomer = "order.admin.create-for-customer";
+            /// <summary>Admin soft-deletes an order with audit trail (irreversible from UI).</summary>
+            public const string AdminDeletePermanent   = "order.admin.delete-permanent";
         }
 
         public static class Payments
@@ -181,6 +185,9 @@ namespace RajMango.Shared
             CourierStations.View, CourierStations.Create, CourierStations.Update, CourierStations.Delete,
             CourierAreaMaps.View, CourierAreaMaps.Create, CourierAreaMaps.Update, CourierAreaMaps.Delete,
             CourierRateConfigurations.View, CourierRateConfigurations.Create, CourierRateConfigurations.Update, CourierRateConfigurations.Delete,
+            // IDs 68–69: Admin order management (appended last to preserve existing ID assignments)
+            Orders.AdminCreateForCustomer,
+            Orders.AdminDeletePermanent,
         };
 
         /// <summary>Permissions granted to the Admin role.</summary>

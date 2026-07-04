@@ -46,11 +46,14 @@ namespace RajMango.Application.Features.Commands
                             $"Order {order.OrderNumber} can no longer be edited. Only pending orders can be modified.");
                 }
 
-                if (order.OrderStatus is OrderStatus.Shipped
-                                      or OrderStatus.Delivered
-                                      or OrderStatus.Cancelled
-                                      or OrderStatus.Returned
-                                      or OrderStatus.Failed)
+                // Admins may edit any order regardless of status (e.g. correcting a delivered order).
+                // Customers are blocked on terminal statuses — they may only edit Pending orders.
+                if (!isPrivileged
+                    && order.OrderStatus is OrderStatus.Shipped
+                                          or OrderStatus.Delivered
+                                          or OrderStatus.Cancelled
+                                          or OrderStatus.Returned
+                                          or OrderStatus.Failed)
                 {
                     return await Result<int>.FailureAsync(
                         $"Order {order.OrderNumber} cannot be modified in {order.OrderStatus} status.");
