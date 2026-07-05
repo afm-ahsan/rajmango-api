@@ -48,18 +48,21 @@ namespace RajMango.Application.Features.Commands
                 if (order.DueAmount <= 0)
                     return await Result<int>.FailureAsync("This order is already fully paid.");
 
-                if (command.PaidAmount > order.DueAmount)
+                var totalCoveredByThisPayment = command.PaidAmount + command.DiscountAmount;
+                if (totalCoveredByThisPayment > order.DueAmount)
                     return await Result<int>.FailureAsync(
-                        $"Payment of {command.PaidAmount:F2} exceeds the outstanding due amount of {order.DueAmount:F2}.");
+                        $"Payment amount ({command.PaidAmount:F2}) plus discount ({command.DiscountAmount:F2}) " +
+                        $"exceeds the outstanding due amount of {order.DueAmount:F2}.");
 
                 payment = new Payment
                 {
-                    OrderId       = command.OrderId,
-                    PaidAmount    = command.PaidAmount,
-                    GrossAmount   = command.PaidAmount,
-                    NetAmount     = command.PaidAmount,
-                    PaymentMethod = command.PaymentMethod,
-                    TransactionId = command.TransactionId,
+                    OrderId        = command.OrderId,
+                    PaidAmount     = command.PaidAmount,
+                    DiscountAmount = command.DiscountAmount,
+                    GrossAmount    = totalCoveredByThisPayment,
+                    NetAmount      = command.PaidAmount,
+                    PaymentMethod  = command.PaymentMethod,
+                    TransactionId  = command.TransactionId,
                 };
 
                 _dataContext.Get<Payment>().Add(payment);

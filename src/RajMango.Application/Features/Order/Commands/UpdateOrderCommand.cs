@@ -24,5 +24,12 @@ namespace RajMango.Application.Features.Commands
         public string DeliveryNote { get; set; }
 
         public IEnumerable<OrderDetailInputDto> OrderDetails { get; set; }
+
+        /// <summary>
+        /// When supplied by an authorised admin, overrides the courier charge calculation and
+        /// marks the order as courier-charge-overridden. Null = preserve existing logic.
+        /// Ignored for non-admin callers.
+        /// </summary>
+        public decimal? ExplicitCourierCharge { get; set; }
     }
 }

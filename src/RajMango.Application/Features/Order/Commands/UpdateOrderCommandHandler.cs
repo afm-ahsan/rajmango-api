@@ -59,29 +59,63 @@ namespace RajMango.Application.Features.Commands
                         $"Order {order.OrderNumber} cannot be modified in {order.OrderStatus} status.");
                 }
 
-                var today = Clock.Now().Date;
                 var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
 
-                var availabilities = await _dataContext.Get<MangoAvailability>()
+                // Admins can edit with any mango type regardless of availability status.
+                // Customers are restricted to Available only.
+                var availQuery = _dataContext.Get<MangoAvailability>()
                     .Include(a => a.MangoType)
-                    .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
-                             && a.Status == MangoAvailabilityStatus.Available)
-                    .ToListAsync(cancellationToken);
+                    .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId));
 
-                var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
-                var unavailableIds = requestedMangoTypeIds.Where(id => !availableMangoTypeIds.Contains(id)).ToList();
+                if (!isPrivileged)
+                    availQuery = availQuery.Where(a => a.Status == MangoAvailabilityStatus.Available);
 
-                if (unavailableIds.Any())
+                var availabilities = await availQuery.ToListAsync(cancellationToken);
+
+                Dictionary<int, decimal> priceMap;
+                if (isPrivileged)
                 {
-                    var names = await _dataContext.Get<MangoType>()
-                        .Where(m => unavailableIds.Contains(m.Id))
-                        .Select(m => m.Name)
-                        .ToListAsync(cancellationToken);
-                    return await Result<int>.FailureAsync(
-                        $"The following mango types are not currently available: {string.Join(", ", names)}.");
-                }
+                    // For admins: prefer Available price, fall back to any configured price.
+                    // If detail.UnitPrice > 0, that explicit value will be used below — this map
+                    // is only the fallback for items that do not carry an explicit price.
+                    priceMap = availabilities
+                        .GroupBy(a => a.MangoTypeId)
+                        .ToDictionary(
+                            g => g.Key,
+                            g => g.OrderByDescending(a => a.Status == MangoAvailabilityStatus.Available ? 1 : 0)
+                                   .ThenByDescending(a => a.StartDate)
+                                   .First().PricePerKg);
 
-                var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+                    var unpricedIds = requestedMangoTypeIds.Where(id => !priceMap.ContainsKey(id)).ToList();
+                    if (unpricedIds.Any())
+                    {
+                        var names = await _dataContext.Get<MangoType>()
+                            .Where(m => unpricedIds.Contains(m.Id))
+                            .Select(m => m.Name)
+                            .ToListAsync(cancellationToken);
+                        return await Result<int>.FailureAsync(
+                            $"The following mango types have no configured price: {string.Join(", ", names)}. " +
+                            "Please set up an availability record before saving.");
+                    }
+                }
+                else
+                {
+                    var unavailableIds = requestedMangoTypeIds
+                        .Where(id => !availabilities.Any(a => a.MangoTypeId == id))
+                        .ToList();
+
+                    if (unavailableIds.Any())
+                    {
+                        var names = await _dataContext.Get<MangoType>()
+                            .Where(m => unavailableIds.Contains(m.Id))
+                            .Select(m => m.Name)
+                            .ToListAsync(cancellationToken);
+                        return await Result<int>.FailureAsync(
+                            $"The following mango types are not currently available: {string.Join(", ", names)}.");
+                    }
+
+                    priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+                }
 
                 // Resolve courier rate from station (if provided)
                 CourierRateConfiguration courierRate = null;
@@ -122,11 +156,25 @@ namespace RajMango.Application.Features.Commands
                     courierCharge = OrderCalculator.CalculateCourierCharge(totalWeightKg, ratePerKg, courierRate.MinimumCharge);
                 }
 
-                // If admin has already set an override, keep the override; recalculate product total only.
-                // The override amount is not touched on a regular update.
-                decimal finalCourierCharge = order.IsCourierChargeOverridden && order.CourierChargeOverrideAmount.HasValue
-                    ? order.CourierChargeOverrideAmount.Value
-                    : courierCharge;
+                // Courier charge resolution (in priority order):
+                // 1. Admin supplies ExplicitCourierCharge → use it, mark as override
+                // 2. Existing admin override is active → preserve it
+                // 3. No override → use freshly calculated charge from current config
+                decimal finalCourierCharge;
+                if (isPrivileged && command.ExplicitCourierCharge.HasValue)
+                {
+                    finalCourierCharge = command.ExplicitCourierCharge.Value;
+                    order.IsCourierChargeOverridden = true;
+                    order.CourierChargeOverrideAmount = finalCourierCharge;
+                }
+                else if (order.IsCourierChargeOverridden && order.CourierChargeOverrideAmount.HasValue)
+                {
+                    finalCourierCharge = order.CourierChargeOverrideAmount.Value;
+                }
+                else
+                {
+                    finalCourierCharge = courierCharge;
+                }
 
                 var orderSummary = OrderCalculator.CalculateTotals(command.OrderDetails, priceMap, finalCourierCharge);
 
@@ -142,7 +190,7 @@ namespace RajMango.Application.Features.Commands
                 order.CourierLocationType  = resolvedLocationType;
                 order.CourierProviderId    = resolvedCourierProviderId;
                 order.CourierRatePerKg     = ratePerKg;
-                order.CourierCharge        = courierCharge;
+                order.CourierCharge        = finalCourierCharge;
                 order.TotalAmount          = orderSummary.TotalAmount;
                 order.DueAmount            = orderSummary.TotalAmount - order.PaidAmount;
                 order.ReceiverType         = command.ReceiverType;
@@ -166,8 +214,12 @@ namespace RajMango.Application.Features.Commands
                 foreach (var detail in command.OrderDetails)
                 {
                     var crateWeight = DomainUtils.GetCrateWeight(detail.CrateType);
-                    var pricePerKg  = priceMap[detail.MangoTypeId];
-                    var lineKg      = detail.Quantity * crateWeight;
+                    // Admin can preserve or override the historical unit price by supplying UnitPrice > 0.
+                    // Customer updates always use the current availability price.
+                    var pricePerKg = (isPrivileged && detail.UnitPrice > 0)
+                        ? detail.UnitPrice
+                        : priceMap[detail.MangoTypeId];
+                    var lineKg = detail.Quantity * crateWeight;
 
                     order.OrderDetails.Add(new OrderDetail
                     {

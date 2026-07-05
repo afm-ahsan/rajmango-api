@@ -55,8 +55,9 @@ namespace RajMango.Application.Features.Queries
                     CustomerName  = p.Order != null && p.Order.AppUser != null
                                         ? (p.Order.AppUser.FirstName + " " + p.Order.AppUser.LastName).Trim()
                                         : string.Empty,
-                    PaidAmount    = p.PaidAmount,
-                    DueAmount     = p.DueAmount,
+                    PaidAmount     = p.PaidAmount,
+                    DiscountAmount = p.DiscountAmount,
+                    DueAmount      = p.DueAmount,
                     PaymentStatus = p.PaymentStatus,
                     PaymentMethod = p.PaymentMethod,
                     TransactionId = p.TransactionId,

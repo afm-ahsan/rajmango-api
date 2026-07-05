@@ -34,6 +34,15 @@ namespace RajMango.Tests.Handlers.User
             return mock.Object;
         }
 
+        private static ICurrentUserService NonAdminCurrentUserService()
+        {
+            var mock = new Mock<ICurrentUserService>();
+            mock.SetupGet(x => x.IsSuperAdmin).Returns(false);
+            mock.SetupGet(x => x.IsAdmin).Returns(false);
+            mock.SetupGet(x => x.UserId).Returns(0);
+            return mock.Object;
+        }
+
         [Fact]
         public async Task UpdateUserHandler_InvalidatesPermissionCacheForUser()
         {
@@ -41,7 +50,7 @@ namespace RajMango.Tests.Handlers.User
             var (user, role) = SeedUserWithRole(db);
             var permSvc = NoOpPermissionService();
 
-            var handler = new UpdateUserCommandHandler(NoOpPasswordHasher(), NoOpErrorHandler(), db, permSvc.Object);
+            var handler = new UpdateUserCommandHandler(NoOpPasswordHasher(), NoOpErrorHandler(), db, permSvc.Object, NonAdminCurrentUserService());
             var command = new UpdateUserCommand
             {
                 Id = user.Id,
@@ -66,7 +75,7 @@ namespace RajMango.Tests.Handlers.User
             using var db = TestDbContextFactory.Create();
             var permSvc = NoOpPermissionService();
 
-            var handler = new UpdateUserCommandHandler(NoOpPasswordHasher(), NoOpErrorHandler(), db, permSvc.Object);
+            var handler = new UpdateUserCommandHandler(NoOpPasswordHasher(), NoOpErrorHandler(), db, permSvc.Object, NonAdminCurrentUserService());
             var command = new UpdateUserCommand
             {
                 Id = 9999,

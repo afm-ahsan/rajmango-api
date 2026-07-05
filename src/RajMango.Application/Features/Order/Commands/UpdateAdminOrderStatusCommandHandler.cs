@@ -88,15 +88,19 @@ namespace RajMango.Application.Features.Commands
                         // Record the outstanding balance as a manual payment so payments/payment-list
                         // reflects it too, then resync from the full payment history (correctly handles
                         // orders that already had a partial bKash/manual payment on file).
+                        var txRef = !string.IsNullOrWhiteSpace(command.AdminPaymentNote)
+                            ? command.AdminPaymentNote.Trim()
+                            : $"ADMIN-ADJ-{Clock.Now():yyyyMMddHHmmss}";
+
                         var manualPayment = new Domain.Entities.Payment
                         {
                             OrderId       = order.Id,
                             GrossAmount   = order.DueAmount,
                             NetAmount     = order.DueAmount,
                             PaidAmount    = order.DueAmount,
-                            PaymentMethod = PaymentMethod.Cash,
+                            PaymentMethod = command.ManualPaymentMethod ?? PaymentMethod.Cash,
                             PaymentStatus = PaymentStatus.Paid,
-                            TransactionId = "ADMIN-STATUS-OVERRIDE",
+                            TransactionId = txRef,
                             PaidAt        = Clock.Now(),
                         };
                         _dataContext.Get<Domain.Entities.Payment>().Add(manualPayment);

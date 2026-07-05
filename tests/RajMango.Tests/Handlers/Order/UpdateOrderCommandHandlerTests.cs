@@ -131,8 +131,10 @@ namespace RajMango.Tests.Handlers.Order
         }
 
         [Fact]
-        public async Task Handle_Admin_ShippedOrder_ReturnsFailure()
+        public async Task Handle_Admin_ShippedOrder_Succeeds()
         {
+            // Admins may edit any order regardless of status, including terminal statuses
+            // such as Shipped — this allows correcting pricing or delivery details post-dispatch.
             using var db = TestDbContextFactory.Create();
             SeedAvailableMango(db);
             var order = SeedOrder(db, userId: 10, OrderStatus.Shipped);
@@ -141,8 +143,7 @@ namespace RajMango.Tests.Handlers.Order
 
             var result = await handler.Handle(ValidCommand(order.Id), CancellationToken.None);
 
-            result.Succeeded.Should().BeFalse();
-            result.Messages.Should().Contain(m => m.Contains("cannot be modified"));
+            result.Succeeded.Should().BeTrue(because: result.Messages?.FirstOrDefault());
         }
     }
 }

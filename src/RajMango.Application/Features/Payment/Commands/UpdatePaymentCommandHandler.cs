@@ -41,17 +41,19 @@ namespace RajMango.Application.Features.Commands
 
                 var otherPaymentsTotal = await _dataContext.Get<Payment>()
                     .Where(p => p.OrderId == payment.OrderId && p.Id != payment.Id)
-                    .SumAsync(p => p.PaidAmount, cancellationToken);
+                    .SumAsync(p => p.PaidAmount + p.DiscountAmount, cancellationToken);
 
-                if (otherPaymentsTotal + command.PaidAmount > order.TotalAmount)
+                var thisPaymentTotal = command.PaidAmount + command.DiscountAmount;
+                if (otherPaymentsTotal + thisPaymentTotal > order.TotalAmount)
                     return await Result<int>.FailureAsync(
-                        $"Updated payment would exceed the order total of {order.TotalAmount:F2}.");
+                        $"Updated payment (including discount) would exceed the order total of {order.TotalAmount:F2}.");
 
-                payment.PaidAmount    = command.PaidAmount;
-                payment.GrossAmount   = command.PaidAmount;
-                payment.NetAmount     = command.PaidAmount;
-                payment.PaymentMethod = command.PaymentMethod;
-                payment.TransactionId = command.TransactionId;
+                payment.PaidAmount     = command.PaidAmount;
+                payment.DiscountAmount = command.DiscountAmount;
+                payment.GrossAmount    = thisPaymentTotal;
+                payment.NetAmount      = command.PaidAmount;
+                payment.PaymentMethod  = command.PaymentMethod;
+                payment.TransactionId  = command.TransactionId;
 
                 _dataContext.Get<Payment>().Update(payment);
                 await _dataContext.SaveChangesAsync(cancellationToken);

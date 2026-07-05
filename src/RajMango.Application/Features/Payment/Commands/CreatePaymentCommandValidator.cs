@@ -12,6 +12,9 @@ namespace RajMango.Application.Features.Commands
             RuleFor(x => x.PaidAmount)
                 .GreaterThan(0).WithMessage("Paid amount must be greater than zero.");
 
+            RuleFor(x => x.DiscountAmount)
+                .GreaterThanOrEqualTo(0).WithMessage("Discount amount cannot be negative.");
+
             RuleFor(x => x.PaymentMethod)
                 .IsInEnum().WithMessage("A valid payment method must be selected.");
         }

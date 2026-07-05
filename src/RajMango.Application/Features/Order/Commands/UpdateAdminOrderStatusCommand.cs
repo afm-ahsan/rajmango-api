@@ -17,5 +17,17 @@ namespace RajMango.Application.Features.Commands
 
         /// <summary>Send SMS to the order placer (sender/customer). Default: false.</summary>
         public bool ShouldNotifySender { get; set; } = false;
+
+        /// <summary>
+        /// Payment method to use when auto-creating a manual payment record for a Paid status transition.
+        /// Defaults to Cash if not specified.
+        /// </summary>
+        public PaymentMethod? ManualPaymentMethod { get; set; }
+
+        /// <summary>
+        /// Optional admin reference note for the auto-created payment record (stored as TransactionId).
+        /// Defaults to a timestamped admin-adjustment reference.
+        /// </summary>
+        public string AdminPaymentNote { get; set; }
     }
 }
