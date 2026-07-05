@@ -31,8 +31,12 @@ namespace RajMango.Application.Features.Queries
                 .Where(p => p.Id == query.Id)
                 .Select(p => new GetPaymentByIdDto
                 {
-                    Id = p.Id,
-                    OrderId = p.OrderId,
+                    Id           = p.Id,
+                    OrderId      = p.OrderId,
+                    OrderNumber  = p.Order != null ? p.Order.OrderNumber : string.Empty,
+                    CustomerName = p.Order != null && p.Order.AppUser != null
+                                       ? (p.Order.AppUser.FirstName + " " + p.Order.AppUser.LastName).Trim()
+                                       : string.Empty,
                     TransactionId = p.TransactionId,
                     GrossAmount = p.GrossAmount,
                     DiscountAmount = p.DiscountAmount,

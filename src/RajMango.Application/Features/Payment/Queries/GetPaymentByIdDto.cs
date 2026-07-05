@@ -7,6 +7,8 @@ namespace RajMango.Application.Features.Queries
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
+        public string OrderNumber { get; set; }
+        public string CustomerName { get; set; }
         public string TransactionId { get; set; }
         public decimal GrossAmount { get; set; }
         public decimal DiscountAmount { get; set; }

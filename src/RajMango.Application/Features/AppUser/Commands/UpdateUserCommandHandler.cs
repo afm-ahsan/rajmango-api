@@ -15,16 +15,21 @@ namespace RajMango.Application.Features.Commands
         private readonly IErrorHandler _errorHandler;
         private readonly IDataContext _dataContext;
         private readonly IPermissionService _permissionService;
+        private readonly ICurrentUserService _currentUserService;
+
+        private const string SystemAdminRoleCode = "system_admin";
 
         public UpdateUserCommandHandler(IPasswordHasher<AppUser> passwordHasher,
                                         IErrorHandler errorHandler,
                                         IDataContext dataContext,
-                                        IPermissionService permissionService)
+                                        IPermissionService permissionService,
+                                        ICurrentUserService currentUserService)
         {
             _passwordHasher = passwordHasher;
             _errorHandler = errorHandler;
             _dataContext = dataContext;
             _permissionService = permissionService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<int>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -34,6 +39,16 @@ namespace RajMango.Application.Features.Commands
                 var user = await _dataContext.Get<AppUser>().FindAsync(command.Id);
                 if (user != null)
                 {
+                    // Check if target user is a System Admin
+                    var targetUserRole = await _dataContext.Get<UserRole>()
+                        .Include(ur => ur.Role)
+                        .FirstOrDefaultAsync(ur => ur.UserId == user.Id, cancellationToken);
+                    bool targetIsSystemAdmin = targetUserRole?.Role?.Code == SystemAdminRoleCode;
+
+                    if (targetIsSystemAdmin && !_currentUserService.IsSuperAdmin)
+                        return await Result<int>.FailureAsync(
+                            "Only a System Admin can edit another System Admin user.");
+
                     user.FirstName = command.FirstName;
                     user.LastName = command.LastName;
                     user.Email = command.Email.Trim();

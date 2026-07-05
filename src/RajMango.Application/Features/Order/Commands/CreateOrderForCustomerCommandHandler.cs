@@ -66,26 +66,32 @@ namespace RajMango.Application.Features.Commands
                 var today = Clock.Now().Date;
                 var requestedMangoTypeIds = command.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
 
+                // Admins can place orders with any mango type regardless of availability status.
+                // Prefer Available price; fall back to any configured price for the type.
                 var availabilities = await _dataContext.Get<MangoAvailability>()
                     .Include(a => a.MangoType)
-                    .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId)
-                             && a.Status == MangoAvailabilityStatus.Available)
+                    .Where(a => requestedMangoTypeIds.Contains(a.MangoTypeId))
                     .ToListAsync(cancellationToken);
 
-                var availableMangoTypeIds = availabilities.Select(a => a.MangoTypeId).ToHashSet();
-                var unavailableIds = requestedMangoTypeIds.Where(id => !availableMangoTypeIds.Contains(id)).ToList();
+                var priceMap = availabilities
+                    .GroupBy(a => a.MangoTypeId)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.OrderByDescending(a => a.Status == MangoAvailabilityStatus.Available ? 1 : 0)
+                               .ThenByDescending(a => a.StartDate)
+                               .First().PricePerKg);
 
-                if (unavailableIds.Any())
+                var unpricedIds = requestedMangoTypeIds.Where(id => !priceMap.ContainsKey(id)).ToList();
+                if (unpricedIds.Any())
                 {
                     var names = await _dataContext.Get<MangoType>()
-                        .Where(m => unavailableIds.Contains(m.Id))
+                        .Where(m => unpricedIds.Contains(m.Id))
                         .Select(m => m.Name)
                         .ToListAsync(cancellationToken);
                     return await Result<int>.FailureAsync(
-                        $"The following mango types are not currently available: {string.Join(", ", names)}.");
+                        $"The following mango types have no configured price: {string.Join(", ", names)}. " +
+                        "Please set up an availability record before placing this order.");
                 }
-
-                var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
 
                 CourierRateConfiguration courierRate = null;
                 CourierLocationType? resolvedLocationType = null;

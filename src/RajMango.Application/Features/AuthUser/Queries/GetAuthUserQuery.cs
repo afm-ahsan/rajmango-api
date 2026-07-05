@@ -89,6 +89,7 @@ namespace RajMango.Application.Features.Queries
                 AuthToken = jwtAuth.AuthToken,
                 JwtAuth = jwtAuth,
                 RoleId = roleId,
+                RoleCode = roleCode,
                 Permissions = permissions ?? new List<string>(),
             });
         }

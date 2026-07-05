@@ -13,6 +13,8 @@ namespace RajMango.Application.Features.Commands
         private readonly IDataContext _dataContext;
         private readonly IPermissionService _permissionService;
 
+        private const string SystemAdminRoleCode = "system_admin";
+
         public DeleteUserCommandHandler(IErrorHandler errorHandler, IDataContext dataContext, IPermissionService permissionService)
         {
             _errorHandler = errorHandler;
@@ -27,7 +29,14 @@ namespace RajMango.Application.Features.Commands
                 var user = await _dataContext.Get<AppUser>().FindAsync(command.Id);
                 if (user != null)
                 {
-                    var role = await _dataContext.Get<UserRole>().FirstOrDefaultAsync(p => p.UserId == command.Id);
+                    var role = await _dataContext.Get<UserRole>()
+                        .Include(ur => ur.Role)
+                        .FirstOrDefaultAsync(p => p.UserId == command.Id, cancellationToken);
+
+                    // System Admin users must never be deleted via the API
+                    if (role?.Role?.Code == SystemAdminRoleCode)
+                        return await Result<int>.FailureAsync(
+                            "System Admin users cannot be deleted.");
                     if (role != null)
                     {
                         _dataContext.Get<UserRole>().Remove(role);

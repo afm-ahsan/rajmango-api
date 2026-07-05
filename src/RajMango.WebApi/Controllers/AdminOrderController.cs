@@ -64,6 +64,20 @@ namespace RajMango.WebApi.Controllers
             return await _mediator.Send(new AdminCustomerSearchQuery { Q = q });
         }
 
+        /// <summary>
+        /// Typeahead order search for the Record Payment flow.
+        /// Searches by Order Number (partial match); returns financials so the modal
+        /// can auto-populate Total, Paid, Due, and PaymentStatus without a second request.
+        /// Returns up to 10 results. Requires payment.create permission.
+        /// </summary>
+        [HttpGet("payment-lookup")]
+        [RequirePermission(Permissions.Payments.Create)]
+        public async Task<ActionResult<Result<List<OrderPaymentLookupDto>>>> PaymentLookup(
+            [FromQuery] string search)
+        {
+            return await _mediator.Send(new GetOrderPaymentLookupQuery { Search = search });
+        }
+
         /// <summary>Full order details including customer, courier, items, and payment history.</summary>
         [HttpGet("{id}")]
         [RequirePermission(Permissions.Orders.AdminView)]

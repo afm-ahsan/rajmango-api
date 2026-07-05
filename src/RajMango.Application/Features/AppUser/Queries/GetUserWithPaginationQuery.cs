@@ -59,6 +59,7 @@ namespace RajMango.Application.Features.Queries
                     UpdatedAt = user.UpdatedAt,
                     RoleId = userRole == null ? 0 : userRole.RoleId,
                     RoleName = role == null ? null : role.Name,
+                    RoleCode = role == null ? null : role.Code,
                 };
 
             if (!string.IsNullOrEmpty(filter))

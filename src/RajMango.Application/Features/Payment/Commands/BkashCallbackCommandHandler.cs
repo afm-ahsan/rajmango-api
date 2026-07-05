@@ -173,6 +173,7 @@ namespace RajMango.Application.Features.Commands
                 // it must never be reported back to the customer as a failure.
                 payment.PaymentStatus = PaymentStatus.Paid;
                 payment.GatewayTransactionId = executeResponse.TrxId;
+                payment.TransactionId = executeResponse.TrxId;
                 payment.PaidAmount = payment.GrossAmount;
                 payment.PaidAt = Clock.Now();
 

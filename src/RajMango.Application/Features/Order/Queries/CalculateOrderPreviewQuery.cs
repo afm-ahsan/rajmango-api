@@ -20,10 +20,12 @@ namespace RajMango.Application.Features.Queries
     internal class CalculateOrderPreviewQueryHandler : IRequestHandler<CalculateOrderPreviewQuery, Result<OrderPreviewDto>>
     {
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CalculateOrderPreviewQueryHandler(IDataContext dataContext)
+        public CalculateOrderPreviewQueryHandler(IDataContext dataContext, ICurrentUserService currentUserService)
         {
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result<OrderPreviewDto>> Handle(CalculateOrderPreviewQuery query, CancellationToken cancellationToken)
@@ -33,16 +35,43 @@ namespace RajMango.Application.Features.Queries
 
             var mangoTypeIds = query.OrderDetails.Select(d => d.MangoTypeId).Distinct().ToList();
 
-            var availabilities = await _dataContext.Get<MangoAvailability>()
-                .AsNoTracking()
-                .Where(a => mangoTypeIds.Contains(a.MangoTypeId) && a.Status == MangoAvailabilityStatus.Available)
-                .ToListAsync(cancellationToken);
+            bool isAdmin = _currentUserService.IsAdmin || _currentUserService.IsSuperAdmin;
 
-            var priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+            // Admins can order any mango type regardless of availability status.
+            // Customers are restricted to status == Available only.
+            var availQuery = _dataContext.Get<MangoAvailability>().AsNoTracking()
+                .Where(a => mangoTypeIds.Contains(a.MangoTypeId));
+
+            if (!isAdmin)
+                availQuery = availQuery.Where(a => a.Status == MangoAvailabilityStatus.Available);
+
+            var availabilities = await availQuery.ToListAsync(cancellationToken);
+
+            // Build price map: for admins prefer Available price, fall back to any configured price.
+            Dictionary<int, decimal> priceMap;
+            if (isAdmin)
+            {
+                priceMap = availabilities
+                    .GroupBy(a => a.MangoTypeId)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.OrderByDescending(a => a.Status == MangoAvailabilityStatus.Available ? 1 : 0)
+                               .ThenByDescending(a => a.StartDate)
+                               .First().PricePerKg);
+            }
+            else
+            {
+                priceMap = availabilities.ToDictionary(a => a.MangoTypeId, a => a.PricePerKg);
+            }
 
             var missingTypeIds = mangoTypeIds.Where(id => !priceMap.ContainsKey(id)).ToList();
             if (missingTypeIds.Any())
-                return await Result<OrderPreviewDto>.FailureAsync("One or more mango types are not currently available.");
+            {
+                var errorMsg = isAdmin
+                    ? "One or more mango types have no configured price. Please set up an availability record first."
+                    : "One or more mango types are not currently available.";
+                return await Result<OrderPreviewDto>.FailureAsync(errorMsg);
+            }
 
             decimal courierCharge = 0m;
             string courierProviderName = null;
