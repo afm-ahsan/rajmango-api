@@ -125,11 +125,25 @@ namespace RajMango.Application.Features.Commands
 
                             existingPending.PaymentStatus = PaymentStatus.Paid;
                             existingPending.GatewayTransactionId = queryResponse.TrxId;
+                            // Was previously missing here — this reconciliation path finalizes a
+                            // payment exactly like the callback handler does, so TransactionId must
+                            // be backfilled the same way or refund eligibility (which requires a
+                            // non-empty TransactionId) silently breaks for payments confirmed via
+                            // this path instead of the callback.
+                            if (string.IsNullOrEmpty(existingPending.TransactionId))
+                            {
+                                existingPending.TransactionId = queryResponse.TrxId;
+                            }
                             existingPending.PaidAmount = existingPending.GrossAmount;
                             existingPending.PaidAt = Clock.Now();
 
+                            // Excludes this payment's row, then adds back the in-memory instance
+                            // just mutated above — under NoTracking a re-query would return a
+                            // stale copy (PaidAmount still 0) since these edits haven't been saved yet.
                             var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
-                                .Where(p => p.OrderId == order.Id).ToListAsync(cancellationToken);
+                                .Where(p => p.OrderId == order.Id && p.Id != existingPending.Id)
+                                .ToListAsync(cancellationToken);
+                            allPayments.Add(existingPending);
                             PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
                             existingPending.DueAmount = order.DueAmount;
 

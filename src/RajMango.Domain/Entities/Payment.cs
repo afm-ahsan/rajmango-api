@@ -59,11 +59,18 @@ namespace RajMango.Domain.Entities
         [StringLength(50)]
         public string BkashCallbackStatus { get; set; }
 
+        /// <summary>Customer-safe description of why a Failed payment failed. Null for non-Failed payments.</summary>
+        [StringLength(500)]
+        public string FailureReason { get; set; }
+
         public string RawCreateResponse { get; set; }
 
         public string RawExecuteResponse { get; set; }
 
         public DateTime? PaidAt { get; set; }
+
+        /// <summary>Cumulative amount refunded so far (full or partial). 0 until a refund is processed.</summary>
+        public decimal RefundedAmount { get; set; }
 
         public ICollection<PaymentAttachment> PaymentAttachments { get; set; } = new List<PaymentAttachment>();
     }

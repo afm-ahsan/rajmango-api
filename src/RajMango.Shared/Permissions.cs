@@ -42,6 +42,10 @@ namespace RajMango.Shared
             public const string Create = "payment.create";
             public const string Update = "payment.update";
             public const string Delete = "payment.delete";
+            /// <summary>Admin/System Admin only — refund a completed bKash payment.</summary>
+            public const string AdminRefund = "payment.admin.refund";
+            /// <summary>Admin/System Admin only — bKash diagnostic/reconciliation tools (Query, Search, token status).</summary>
+            public const string AdminReconcile = "payment.admin.reconcile";
         }
 
         public static class Expenses
@@ -188,6 +192,10 @@ namespace RajMango.Shared
             // IDs 68–69: Admin order management (appended last to preserve existing ID assignments)
             Orders.AdminCreateForCustomer,
             Orders.AdminDeletePermanent,
+            // ID 70: bKash refund (appended last to preserve existing ID assignments)
+            Payments.AdminRefund,
+            // ID 71: bKash reconciliation diagnostics (appended last to preserve existing ID assignments)
+            Payments.AdminReconcile,
         };
 
         /// <summary>Permissions granted to the Admin role.</summary>

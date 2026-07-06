@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using RajMango.Application.DTOs.Bkash;
 using RajMango.Application.Features.Commands;
 using RajMango.Application.Features.Queries;
+using RajMango.Application.Interfaces;
 using RajMango.Shared;
+using RajMango.WebApi.Authorization;
 
 namespace RajMango.WebApi.Controllers
 {
@@ -70,10 +72,31 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>
-        /// Admin: query a payment's current status directly from bKash by paymentID.
-        /// Useful for diagnosing payments where the callback was not received.
+        /// Public — backs the /orders/bkash-success|failed|cancelled result pages, which must
+        /// render even if the customer's session lapsed during their time on bKash's hosted
+        /// checkout page. Read-only "what happened" view keyed by bKash's own paymentID (the only
+        /// reference bKash echoes back on redirect); the payment itself is already fully processed
+        /// server-side by this point via the callback. Never returns OrderId/UserId/internal Payment.Id.
         /// </summary>
-        [Authorize]
+        [AllowAnonymous]
+        [HttpGet("bkash/result")]
+        public async Task<ActionResult<Result<BkashPaymentResultDto>>> GetResult(
+            // Nullable — a missing paymentId is a normal case (e.g. the frontend query string was
+            // stripped/malformed), handled gracefully as a Result<T> failure below rather than an
+            // implicit-required 400 (this project has Nullable enabled, which would otherwise
+            // reject a non-nullable string parameter before this method body ever runs).
+            [FromQuery] string? paymentId,
+            CancellationToken cancellationToken)
+        {
+            return await _mediator.Send(new GetBkashPaymentResultQuery(paymentId ?? string.Empty), cancellationToken);
+        }
+
+        /// <summary>
+        /// System Admin/Admin only: query a payment's current status directly from bKash by
+        /// paymentID. Useful for diagnosing payments where the callback was not received.
+        /// Read-only — see Reconcile below to actually recover a stuck Pending payment.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
         [HttpPost("bkash/query")]
         public async Task<ActionResult<Result<BkashQueryResult>>> QueryPayment(
             [FromBody] BkashQueryRequest request,
@@ -86,9 +109,11 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>
-        /// Admin: search a bKash transaction by trxID.
+        /// System Admin/Admin only: search a bKash transaction by trxID. Read-only diagnostic —
+        /// an arbitrary trxID lookup isn't safely scoped to a specific known payment, so this
+        /// never writes back to our data (use Query + Reconcile for a payment we already track).
         /// </summary>
-        [Authorize]
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
         [HttpPost("bkash/search")]
         public async Task<ActionResult<Result<BkashSearchTransactionResult>>> SearchTransaction(
             [FromBody] BkashSearchRequest request,
@@ -101,32 +126,114 @@ namespace RajMango.WebApi.Controllers
         }
 
         /// <summary>
-        /// Admin: initiate a refund for a completed bKash payment.
-        /// Requires the original paymentID and trxID from the Payments table.
+        /// System Admin/Admin only: explicit, state-changing recovery for a Pending bKash payment
+        /// whose callback was never received (network blip, IIS recycle, gateway timeout, etc.).
+        /// Deliberately separate from the read-only Query/Search diagnostics above — this is the
+        /// only bKash endpoint besides Refund that writes to the database outside the callback.
+        ///
+        /// Provide exactly one of paymentId or trxId:
+        ///   - paymentId: the bKash gateway paymentID (as used by Create/Callback/Query).
+        ///   - trxId: a bKash transaction ID — Search Transaction is used only to discover which
+        ///     paymentID it belongs to; finalization always goes through a direct Query Payment
+        ///     call against that paymentID (Search's own status field is never trusted directly).
+        ///
+        /// If bKash confirms Completed: updates the Payment record, recalculates the Order's
+        /// PaidAmount/DueAmount/PaymentStatus (the same fields dashboards and reports read), and
+        /// returns the resulting payment + order status. Idempotent — calling this again for an
+        /// already-resolved payment is a no-op; it never duplicates payments, audit entries, or
+        /// corrupts totals. Any status other than Completed leaves the payment untouched, since
+        /// the customer's checkout may still be in progress.
         /// </summary>
-        [Authorize]
-        [HttpPost("bkash/refund")]
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
+        [HttpPost("bkash/reconcile")]
+        public async Task<ActionResult<Result<BkashReconcileResult>>> Reconcile(
+            [FromBody] BkashReconcileRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(request?.PaymentId) && string.IsNullOrWhiteSpace(request?.TrxId))
+                return BadRequest("Either paymentId or trxId is required.");
+
+            return await _mediator.Send(new ReconcileBkashPaymentCommand(request.PaymentId, request.TrxId), cancellationToken);
+        }
+
+        /// <summary>
+        /// System Admin/Admin only diagnostic — ensures a bKash token is cached (reuses the cache
+        /// or performs a Grant Token), without ever exposing the token itself.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
+        [HttpPost("bkash/token/ensure")]
+        public async Task<ActionResult<BkashTokenStatusResponse>> EnsureToken(
+            [FromServices] IBkashService bkash, CancellationToken cancellationToken)
+            => await bkash.EnsureTokenAsync(cancellationToken);
+
+        /// <summary>
+        /// System Admin/Admin only diagnostic — forces a bKash token refresh cycle (or falls back
+        /// to a full Grant Token), without ever exposing the token itself.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
+        [HttpPost("bkash/token/refresh")]
+        public async Task<ActionResult<BkashTokenStatusResponse>> RefreshToken(
+            [FromServices] IBkashService bkash, CancellationToken cancellationToken)
+            => await bkash.ForceRefreshTokenAsync(cancellationToken);
+
+        /// <summary>
+        /// System Admin/Admin only: full refund of a completed bKash payment.
+        /// paymentId is the internal Payment.Id (not the bKash gateway paymentID) — the handler
+        /// looks up the gateway identifiers and refunds the full remaining paid amount.
+        /// For a partial amount, use POST {paymentId}/refund/partial instead.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminRefund)]
+        [HttpPost("{paymentId:int}/refund")]
         public async Task<ActionResult<Result<BkashRefundResult>>> Refund(
+            int paymentId,
             [FromBody] BkashRefundRequest request,
             CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request?.PaymentId) || string.IsNullOrWhiteSpace(request.TrxId))
-                return BadRequest("paymentId and trxId are required.");
+            return await _mediator.Send(new RefundBkashPaymentCommand(paymentId, request?.Reason), cancellationToken);
+        }
 
-            if (request.Amount <= 0)
-                return BadRequest("amount must be greater than zero.");
+        /// <summary>
+        /// System Admin/Admin only: partial refund of a completed (or previously
+        /// partially-refunded) bKash payment. paymentId is the internal Payment.Id.
+        /// Multiple partial refunds are allowed as long as their cumulative total never exceeds
+        /// the amount actually paid.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminRefund)]
+        [HttpPost("{paymentId:int}/refund/partial")]
+        public async Task<ActionResult<Result<BkashPartialRefundResult>>> PartialRefund(
+            int paymentId,
+            [FromBody] BkashPartialRefundRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (request is null || request.RefundAmount <= 0)
+                return BadRequest("refundAmount must be greater than zero.");
 
-            return await _mediator.Send(new RefundBkashPaymentCommand(
-                request.PaymentId,
-                request.TrxId,
-                request.Amount,
-                request.Sku,
-                request.Reason), cancellationToken);
+            return await _mediator.Send(
+                new PartialRefundBkashPaymentCommand(paymentId, request.RefundAmount, request.Reason), cancellationToken);
+        }
+
+        /// <summary>
+        /// System Admin/Admin only: refund history + remaining refundable amount for a payment,
+        /// combining our own Refund records with bKash's live refund status.
+        /// </summary>
+        [RequirePermission(Permissions.Payments.AdminReconcile)]
+        [HttpGet("{paymentId:int}/refund/status")]
+        public async Task<ActionResult<Result<BkashRefundStatusDto>>> RefundStatus(
+            int paymentId,
+            CancellationToken cancellationToken)
+        {
+            return await _mediator.Send(new GetBkashRefundStatusQuery(paymentId), cancellationToken);
         }
     }
 
     // ── Request models (thin, bKash-controller-scoped) ──────────────────────────
     public record BkashQueryRequest(string PaymentId);
     public record BkashSearchRequest(string TrxId);
-    public record BkashRefundRequest(string PaymentId, string TrxId, decimal Amount, string Sku, string Reason);
+    // Both nullable — exactly one is required, enforced manually in Reconcile() below. Making
+    // these non-nullable would make ASP.NET Core's implicit-required-for-non-nullable-reference-type
+    // model validation reject any request that omits either field, before the manual "at least
+    // one" check ever runs.
+    public record BkashReconcileRequest(string? PaymentId, string? TrxId);
+    public record BkashRefundRequest(string Reason);
+    public record BkashPartialRefundRequest(decimal RefundAmount, string Reason);
 }

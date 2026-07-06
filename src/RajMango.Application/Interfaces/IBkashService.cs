@@ -64,6 +64,37 @@ namespace RajMango.Application.Interfaces
         string StatusCode,
         string StatusMessage);
 
+    /// <summary>
+    /// Non-sensitive summary of a Grant/Refresh Token attempt — deliberately never carries the
+    /// actual id_token/refresh_token, so it's safe to return from a Swagger-testable diagnostic
+    /// endpoint.
+    /// </summary>
+    public record BkashTokenStatusResponse(
+        bool Acquired,
+        string Source, // "cache" | "grant" | "refresh"
+        string Message);
+
+    /// <summary>Response from POST /v2/tokenized-checkout/refund/payment/transaction.</summary>
+    public record BkashPartialRefundResponse(
+        string OriginalTrxId,
+        string RefundTrxId,
+        string RefundAmount,
+        string CompletedTime,
+        string TransactionStatus,
+        string StatusCode,
+        string StatusMessage);
+
+    /// <summary>Response from POST /v2/tokenized-checkout/refund/payment/status.</summary>
+    public record BkashRefundStatusResponse(
+        string PaymentId,
+        string TrxId,
+        string RefundTrxId,
+        string Amount,
+        string CompletedTime,
+        string TransactionStatus,
+        string StatusCode,
+        string StatusMessage);
+
     public interface IBkashService
     {
         // Token management is internal; callers do not receive or pass tokens.
@@ -106,6 +137,39 @@ namespace RajMango.Application.Interfaces
             decimal amount,
             string sku,
             string reason,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Diagnostic only — ensures a valid token is cached (reusing the cache or granting a new
+        /// one), without ever returning the token itself.
+        /// </summary>
+        Task<BkashTokenStatusResponse> EnsureTokenAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Diagnostic only — forces a token refresh cycle (using the cached refresh_token if one
+        /// exists, falling back to a full Grant Token otherwise), without ever returning the token.
+        /// </summary>
+        Task<BkashTokenStatusResponse> ForceRefreshTokenAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Partial refund of a completed bKash payment — bKash Tokenized Checkout v2 API.
+        /// Uses POST /v2/tokenized-checkout/refund/payment/transaction.
+        /// </summary>
+        Task<BkashPartialRefundResponse> PartialRefundAsync(
+            string paymentId,
+            string trxId,
+            decimal refundAmount,
+            string sku,
+            string reason,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Status of a refund (full or partial) for a payment — bKash Tokenized Checkout v2 API.
+        /// Uses POST /v2/tokenized-checkout/refund/payment/status.
+        /// </summary>
+        Task<BkashRefundStatusResponse> GetRefundStatusAsync(
+            string paymentId,
+            string trxId,
             CancellationToken cancellationToken = default);
     }
 }

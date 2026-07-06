@@ -9,8 +9,14 @@ namespace RajMango.Application.Features.Services
     {
         public static void SyncOrderPaymentState(Order order, IEnumerable<PaymentEntity> allPaymentsForOrder)
         {
-            var totalPaid       = allPaymentsForOrder.Sum(p => p.PaidAmount);
-            var totalDiscounted = allPaymentsForOrder.Sum(p => p.DiscountAmount);
+            // Only Paid/PartiallyRefunded payments count toward the order total — Failed/Cancelled/
+            // Pending/Expired/Refunded rows must not contribute (a fully refunded payment must stop
+            // counting immediately). A PartiallyRefunded payment contributes only what's left after
+            // its cumulative RefundedAmount is netted out.
+            var contributingPayments = allPaymentsForOrder.Where(p =>
+                p.PaymentStatus == PaymentStatus.Paid || p.PaymentStatus == PaymentStatus.PartiallyRefunded);
+            var totalPaid       = contributingPayments.Sum(p => p.PaidAmount - p.RefundedAmount);
+            var totalDiscounted = contributingPayments.Sum(p => p.DiscountAmount);
             var totalCovered    = totalPaid + totalDiscounted;
 
             // PaidAmount = cash received only (used for "collected" reporting on dashboard).

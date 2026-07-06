@@ -45,6 +45,7 @@ namespace RajMango.Application.Extensions
             services.AddTransient<IPaymentLock, PaymentLock>();
             services.AddTransient<IUserAddressLock, UserAddressLock>();
             services.AddScoped<IOrderTrackingHistoryService, OrderTrackingHistoryService>();
+            services.AddScoped<IBkashPaymentFinalizer, BkashPaymentFinalizer>();
         }
     }
 }

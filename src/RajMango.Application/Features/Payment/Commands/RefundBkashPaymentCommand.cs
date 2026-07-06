@@ -1,21 +1,21 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RajMango.Application.Common;
+using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
 using RajMango.Domain.Entities;
 using RajMango.Shared;
 using RajMango.Shared.Enums;
-using System.Text.Json;
 
 namespace RajMango.Application.Features.Commands
 {
-    public record RefundBkashPaymentCommand(
-        string PaymentId,
-        string TrxId,
-        decimal Amount,
-        string Sku,
-        string Reason) : IRequest<Result<BkashRefundResult>>;
+    /// <summary>
+    /// Full refund only — PaymentId identifies the internal Payment row (not a bKash gateway ID),
+    /// so the frontend never needs to know or send bKash's opaque paymentID/trxID/amount fields.
+    /// </summary>
+    public record RefundBkashPaymentCommand(int PaymentId, string Reason) : IRequest<Result<BkashRefundResult>>;
 
     public record BkashRefundResult(
         string OriginalPaymentId,
@@ -31,88 +31,130 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IBkashService _bkash;
         private readonly IDataContext _dataContext;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IPaymentLock _paymentLock;
         private readonly ILogger<RefundBkashPaymentCommandHandler> _logger;
 
         public RefundBkashPaymentCommandHandler(
             IBkashService bkash,
             IDataContext dataContext,
+            ICurrentUserService currentUserService,
+            IPaymentLock paymentLock,
             ILogger<RefundBkashPaymentCommandHandler> logger)
         {
             _bkash = bkash;
             _dataContext = dataContext;
+            _currentUserService = currentUserService;
+            _paymentLock = paymentLock;
             _logger = logger;
         }
 
         public async Task<Result<BkashRefundResult>> Handle(
             RefundBkashPaymentCommand command, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(command.PaymentId) || string.IsNullOrWhiteSpace(command.TrxId))
-                return await Result<BkashRefundResult>.FailureAsync("PaymentId and TrxId are required.");
-
-            if (command.Amount <= 0)
-                return await Result<BkashRefundResult>.FailureAsync("Refund amount must be greater than zero.");
-
-            // Verify the payment exists and is in Paid status before attempting refund.
-            var payment = await _dataContext.Get<Domain.Entities.Payment>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.GatewayPaymentId == command.PaymentId, cancellationToken);
-
-            if (payment is null)
-                return await Result<BkashRefundResult>.FailureAsync(
-                    $"No payment record found for paymentID '{command.PaymentId}'.");
-
-            if (payment.PaymentStatus != PaymentStatus.Paid)
-                return await Result<BkashRefundResult>.FailureAsync(
-                    $"Payment is not in Paid status (current: {payment.PaymentStatus}). Only Paid payments can be refunded.");
-
-            if (command.Amount > payment.PaidAmount)
-                return await Result<BkashRefundResult>.FailureAsync(
-                    $"Refund amount ({command.Amount}) exceeds paid amount ({payment.PaidAmount}).");
-
-            _logger.LogInformation(
-                "bKash refund initiated: paymentId={PaymentId} trxId={TrxId} amount={Amount} reason={Reason}",
-                command.PaymentId, command.TrxId, command.Amount, command.Reason);
-
-            var response = await _bkash.RefundPaymentAsync(
-                command.PaymentId, command.TrxId, command.Amount,
-                command.Sku ?? string.Empty, command.Reason ?? string.Empty, cancellationToken);
-
-            var result = new BkashRefundResult(
-                OriginalPaymentId: response.OriginalPaymentId,
-                OriginalTrxId: response.OriginalTrxId,
-                RefundTrxId: response.RefundTrxId,
-                Amount: response.Amount,
-                TransactionStatus: response.TransactionStatus,
-                StatusCode: response.StatusCode,
-                StatusMessage: response.StatusMessage);
-
-            if (!string.Equals(response.StatusCode, "0000"))
+            // Shares the global payment lock with create/callback so a refund can never race
+            // a concurrent callback (or a double-click double-refund) for the same payment.
+            using (await _paymentLock.AcquireAsync())
             {
-                _logger.LogWarning(
-                    "bKash refund not confirmed: paymentId={PaymentId} statusCode={Code} statusMessage={Message}",
-                    command.PaymentId, response.StatusCode, response.StatusMessage);
-                return await Result<BkashRefundResult>.FailureAsync(
-                    result, response.StatusMessage ?? "Refund was not confirmed by bKash.");
-            }
+                var payment = await _dataContext.Get<Domain.Entities.Payment>()
+                    .Include(p => p.Order)
+                    .FirstOrDefaultAsync(p => p.Id == command.PaymentId, cancellationToken);
 
-            // Update payment record to Refunded so dashboards and reports reflect the change.
-            var tracked = await _dataContext.Get<Domain.Entities.Payment>()
-                .Include(p => p.Order)
-                .FirstOrDefaultAsync(p => p.GatewayPaymentId == command.PaymentId, cancellationToken);
+                if (payment is null)
+                    return await Result<BkashRefundResult>.FailureAsync(
+                        $"Payment {command.PaymentId} not found.");
 
-            if (tracked != null)
-            {
-                tracked.PaymentStatus = PaymentStatus.Refunded;
-                tracked.RawExecuteResponse = JsonSerializer.Serialize(response); // reuse field for refund response
-                _dataContext.Get<Domain.Entities.Payment>().Update(tracked);
+                if (payment.PaymentMethod != PaymentMethod.Bkash)
+                    return await Result<BkashRefundResult>.FailureAsync(
+                        "Only bKash payments can be refunded through this action.");
+
+                // PaymentStatus != Paid also covers "already refunded" (status would be Refunded).
+                if (payment.PaymentStatus != PaymentStatus.Paid)
+                    return await Result<BkashRefundResult>.FailureAsync(
+                        $"Payment is not in a refundable state (current status: {payment.PaymentStatus}).");
+
+                if (string.IsNullOrWhiteSpace(payment.GatewayPaymentId) || string.IsNullOrWhiteSpace(payment.TransactionId))
+                    return await Result<BkashRefundResult>.FailureAsync(
+                        "Payment is missing bKash gateway identifiers and cannot be refunded.");
+
+                var order = payment.Order;
+                var amount = payment.PaidAmount; // full refund only — no partial refund support yet
+
+                _logger.LogInformation(
+                    "bKash refund initiated: paymentId={PaymentId} gatewayPaymentId={GatewayPaymentId} trxId={TrxId} amount={Amount} byUserId={UserId}",
+                    payment.Id, payment.GatewayPaymentId, payment.TransactionId, amount, _currentUserService.UserId);
+
+                var response = await _bkash.RefundPaymentAsync(
+                    payment.GatewayPaymentId,
+                    payment.TransactionId,
+                    amount,
+                    sku: order?.OrderNumber ?? string.Empty,
+                    reason: command.Reason ?? string.Empty,
+                    cancellationToken);
+
+                var result = new BkashRefundResult(
+                    OriginalPaymentId: response.OriginalPaymentId,
+                    OriginalTrxId: response.OriginalTrxId,
+                    RefundTrxId: response.RefundTrxId,
+                    Amount: response.Amount,
+                    TransactionStatus: response.TransactionStatus,
+                    StatusCode: response.StatusCode,
+                    StatusMessage: response.StatusMessage);
+
+                if (!string.Equals(response.StatusCode, "0000"))
+                {
+                    _logger.LogWarning(
+                        "bKash refund not confirmed: paymentId={PaymentId} statusCode={Code} statusMessage={Message}",
+                        payment.Id, response.StatusCode, response.StatusMessage);
+                    return await Result<BkashRefundResult>.FailureAsync(
+                        result, response.StatusMessage ?? "Refund was not confirmed by bKash.");
+                }
+
+                // Confirmed refunded — update payment, recalc order, persist refund audit row.
+                payment.PaymentStatus = PaymentStatus.Refunded;
+                payment.RefundedAmount = amount;
+
+                var refund = new Refund
+                {
+                    PaymentId = payment.Id,
+                    RefundAmount = amount,
+                    RefundDate = Clock.Now(),
+                    RefundReason = command.Reason,
+                    RefundedBy = _currentUserService.UserName,
+                    RefundReference = response.RefundTrxId,
+                    IsGatewayRefunded = true,
+                    RefundStatus = RefundStatus.Completed,
+                    GatewayResponseMessage = response.StatusMessage,
+                    GatewayTransactionId = response.RefundTrxId,
+                };
+
+                if (order != null)
+                {
+                    // Excludes this payment's row, then adds back the in-memory instance just
+                    // mutated above — mirrors the same NoTracking-safe pattern used by the
+                    // bKash callback handler, so the recalculation sees this refund immediately.
+                    var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
+                        .Where(p => p.OrderId == order.Id && p.Id != payment.Id)
+                        .ToListAsync(cancellationToken);
+                    allPayments.Add(payment);
+
+                    PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
+                    payment.DueAmount = order.DueAmount;
+
+                    // Order/Delivery status are intentionally left untouched by a refund.
+                    _dataContext.Get<Order>().Update(order);
+                }
+
+                _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                _dataContext.Get<Refund>().Add(refund);
                 await _dataContext.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation(
                     "bKash refund recorded: paymentId={PaymentId} refundTrxId={RefundTrxId} orderId={OrderId}",
-                    command.PaymentId, response.RefundTrxId, tracked.OrderId);
-            }
+                    payment.Id, response.RefundTrxId, payment.OrderId);
 
-            return await Result<BkashRefundResult>.SuccessAsync(result, "Refund processed successfully.");
+                return await Result<BkashRefundResult>.SuccessAsync(result, "Refund processed successfully.");
+            }
         }
     }
 }

@@ -64,6 +64,22 @@ namespace RajMango.Infrastructure.Extensions
                 client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 15);
             });
 
+            // bKash Tokenized Checkout v2 (partial refund + refund status) lives on a completely
+            // different path than v1.2.0-beta — not a sub-path of BkashSettings.BaseUrl — so it
+            // needs its own BaseAddress derived from just the host.
+            services.AddHttpClient("BkashV2", (sp, client) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<BkashSettings>>().Value;
+                if (!string.IsNullOrEmpty(settings.BaseUrl))
+                {
+                    var host = new Uri(settings.BaseUrl).GetLeftPart(UriPartial.Authority);
+                    client.BaseAddress = new Uri($"{host}/v2/tokenized-checkout/");
+                }
+                client.DefaultRequestHeaders.Accept.Add(
+                    new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds > 0 ? settings.TimeoutSeconds : 15);
+            });
+
             // Ghonta SMS: GET {BaseUrl}?toNo=...&msg=...
             // No BaseAddress — the service builds the full URL per call.
             // No Accept header — the provider is queried with GET, no request body.

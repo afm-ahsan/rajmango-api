@@ -10,7 +10,13 @@ namespace RajMango.Infrastructure.Services
     public class BkashService : IBkashService
     {
         private const string TokenCacheKey = "bkash:token:idtoken";
+        private const string RefreshTokenCacheKey = "bkash:token:refreshtoken";
         private static readonly TimeSpan TokenCacheExpiry = TimeSpan.FromMinutes(55);
+        // bKash does not document a fixed refresh_token lifetime in this project's reference
+        // material; this is a conservative assumption. Any refresh failure (expired, revoked, or
+        // otherwise) falls back to a full Grant Token automatically, so an over/under-estimate
+        // here never breaks the payment flow — confirm against bKash's current docs if possible.
+        private static readonly TimeSpan RefreshTokenCacheExpiry = TimeSpan.FromDays(25);
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
@@ -143,7 +149,7 @@ namespace RajMango.Infrastructure.Services
                 Amount: GetString(json, "amount"),
                 TransactionStatus: GetString(json, "transactionStatus"),
                 StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
-                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
         }
 
         public async Task<BkashQueryPaymentResponse> QueryPaymentAsync(
@@ -181,7 +187,7 @@ namespace RajMango.Infrastructure.Services
                 Amount: GetString(json, "amount"),
                 TransactionStatus: GetString(json, "transactionStatus"),
                 StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
-                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
         }
 
         public async Task<BkashSearchTransactionResponse> SearchTransactionAsync(
@@ -221,7 +227,7 @@ namespace RajMango.Infrastructure.Services
                 InitiationTime: GetString(json, "initiationTime"),
                 CompletionTime: GetString(json, "completionTime"),
                 StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
-                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
         }
 
         public async Task<BkashRefundPaymentResponse> RefundPaymentAsync(
@@ -277,7 +283,104 @@ namespace RajMango.Infrastructure.Services
                 Amount: FirstNonEmpty(GetString(json, "amount"), amount.ToString("F2")),
                 TransactionStatus: GetString(json, "transactionStatus"),
                 StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
-                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage")));
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
+        }
+
+        public async Task<BkashPartialRefundResponse> PartialRefundAsync(
+            string paymentId,
+            string trxId,
+            decimal refundAmount,
+            string sku,
+            string reason,
+            CancellationToken cancellationToken = default)
+        {
+            var idToken = await GetTokenAsync(cancellationToken);
+            var client = _httpClientFactory.CreateClient("BkashV2");
+            ApplyV2AuthHeaders(client, idToken);
+
+            _logger.LogInformation(
+                "bKash PartialRefund request: paymentId={PaymentId} trxId={TrxId} refundAmount={RefundAmount} reason={Reason}",
+                paymentId, trxId, refundAmount.ToString("F2"), reason);
+
+            var response = await client.PostAsJsonAsync("refund/payment/transaction", new
+            {
+                paymentID = paymentId,
+                trxID = trxId,
+                refundAmount = refundAmount.ToString("F2"),
+                sku = sku ?? string.Empty,
+                reason = reason ?? string.Empty,
+            }, cancellationToken);
+
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation(
+                "bKash PartialRefund response: paymentId={PaymentId} httpStatus={HttpStatus} body={Body}",
+                paymentId, (int)response.StatusCode, body);
+
+            var json = TryParseJson(body, "PartialRefund", paymentId, response.StatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = ExtractErrorMessage(json, "bKash partial refund failed.");
+                _logger.LogError(
+                    "bKash PartialRefund failed. paymentId={PaymentId} httpStatus={HttpStatus} message={Message}",
+                    paymentId, (int)response.StatusCode, message);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "bKash PartialRefund succeeded. paymentId={PaymentId} refundTrxId={RefundTrxId}",
+                    paymentId, GetString(json, "refundTrxID"));
+            }
+
+            return new BkashPartialRefundResponse(
+                OriginalTrxId: FirstNonEmpty(GetString(json, "trxID"), trxId),
+                RefundTrxId: GetString(json, "refundTrxID"),
+                RefundAmount: FirstNonEmpty(GetString(json, "refundAmount"), refundAmount.ToString("F2")),
+                CompletedTime: GetString(json, "completedTime"),
+                TransactionStatus: GetString(json, "transactionStatus"),
+                StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
+        }
+
+        public async Task<BkashRefundStatusResponse> GetRefundStatusAsync(
+            string paymentId,
+            string trxId,
+            CancellationToken cancellationToken = default)
+        {
+            var idToken = await GetTokenAsync(cancellationToken);
+            var client = _httpClientFactory.CreateClient("BkashV2");
+            ApplyV2AuthHeaders(client, idToken);
+
+            var response = await client.PostAsJsonAsync("refund/payment/status", new
+            {
+                paymentID = paymentId,
+                trxID = trxId,
+            }, cancellationToken);
+
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            _logger.LogInformation(
+                "bKash RefundStatus response: paymentId={PaymentId} httpStatus={HttpStatus} body={Body}",
+                paymentId, (int)response.StatusCode, body);
+
+            var json = TryParseJson(body, "RefundStatus", paymentId, response.StatusCode);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = ExtractErrorMessage(json, "bKash refund status query failed.");
+                _logger.LogError(
+                    "bKash RefundStatus failed. paymentId={PaymentId} httpStatus={HttpStatus} message={Message}",
+                    paymentId, (int)response.StatusCode, message);
+            }
+
+            return new BkashRefundStatusResponse(
+                PaymentId: FirstNonEmpty(GetString(json, "paymentID"), paymentId),
+                TrxId: FirstNonEmpty(GetString(json, "trxID"), trxId),
+                RefundTrxId: GetString(json, "refundTrxID"),
+                Amount: GetString(json, "amount"),
+                CompletedTime: GetString(json, "completedTime"),
+                TransactionStatus: GetString(json, "transactionStatus"),
+                StatusCode: FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                StatusMessage: FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
         }
 
         private async Task<string> GetTokenAsync(CancellationToken ct)
@@ -289,13 +392,40 @@ namespace RajMango.Infrastructure.Services
                 return cached;
             }
 
+            // Try a lightweight refresh before falling back to a full re-grant (which resends
+            // username/password/app_secret on every call).
+            var cachedRefreshToken = await _cache.GetAsync<string>(RefreshTokenCacheKey, ct);
+            if (!string.IsNullOrEmpty(cachedRefreshToken))
+            {
+                try
+                {
+                    _logger.LogInformation("bKash id_token cache miss — attempting refresh via cached refresh_token.");
+                    var (refreshedIdToken, refreshedRefreshToken) = await RefreshTokenInternalAsync(cachedRefreshToken, ct);
+                    await CacheTokensAsync(refreshedIdToken, refreshedRefreshToken, ct);
+                    return refreshedIdToken;
+                }
+                catch (Exception ex)
+                {
+                    // Any refresh failure (expired/revoked/network) falls back to a full grant —
+                    // refresh is purely an optimization, never a hard dependency.
+                    _logger.LogWarning(ex, "bKash token refresh failed; falling back to full Grant Token.");
+                }
+            }
+
             _logger.LogInformation("bKash token cache miss — requesting new grant token.");
-            var token = await GrantTokenInternalAsync(ct);
-            await _cache.SetAsync(TokenCacheKey, token, TokenCacheExpiry, ct);
-            return token;
+            var (idToken, refreshToken) = await GrantTokenInternalAsync(ct);
+            await CacheTokensAsync(idToken, refreshToken, ct);
+            return idToken;
         }
 
-        private async Task<string> GrantTokenInternalAsync(CancellationToken ct)
+        private async Task CacheTokensAsync(string idToken, string refreshToken, CancellationToken ct)
+        {
+            await _cache.SetAsync(TokenCacheKey, idToken, TokenCacheExpiry, ct);
+            if (!string.IsNullOrEmpty(refreshToken))
+                await _cache.SetAsync(RefreshTokenCacheKey, refreshToken, RefreshTokenCacheExpiry, ct);
+        }
+
+        private async Task<(string IdToken, string RefreshToken)> GrantTokenInternalAsync(CancellationToken ct)
         {
             var client = _httpClientFactory.CreateClient("Bkash");
 
@@ -337,7 +467,112 @@ namespace RajMango.Infrastructure.Services
             }
 
             _logger.LogInformation("bKash GrantToken succeeded.");
-            return idToken;
+            return (idToken, GetString(json, "refresh_token"));
+        }
+
+        private async Task<(string IdToken, string RefreshToken)> RefreshTokenInternalAsync(string refreshToken, CancellationToken ct)
+        {
+            var client = _httpClientFactory.CreateClient("Bkash");
+
+            // Confirmed via live sandbox testing: this endpoint rejects the request with
+            // "Missing required request parameters: [password, username]" unless username/password
+            // are also sent as headers — same requirement as Grant Token, even though the request
+            // body already carries app_key/app_secret/refresh_token.
+            var request = new HttpRequestMessage(HttpMethod.Post, "checkout/token/refresh");
+            request.Headers.Add("username", _settings.Username?.Trim());
+            request.Headers.Add("password", _settings.Password?.Trim());
+            request.Content = JsonContent.Create(new
+            {
+                app_key = _settings.AppKey?.Trim(),
+                app_secret = _settings.AppSecret?.Trim(),
+                refresh_token = refreshToken,
+            });
+
+            var response = await client.SendAsync(request, ct);
+            var body = await response.Content.ReadAsStringAsync(ct);
+            var json = TryParseJson(body, "RefreshToken", null, response.StatusCode);
+
+            _logger.LogInformation(
+                "bKash RefreshToken response: httpStatus={HttpStatus} statusCode={BkashStatusCode} statusMessage={BkashStatusMessage}",
+                (int)response.StatusCode,
+                FirstNonEmpty(GetString(json, "statusCode"), GetString(json, "errorCode")),
+                FirstNonEmpty(GetString(json, "statusMessage"), GetString(json, "errorMessage"), GetString(json, "message")));
+
+            var idToken = GetString(json, "id_token");
+            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(idToken))
+            {
+                var message = ExtractErrorMessage(json, "bKash token refresh failed.");
+                _logger.LogError(
+                    "bKash RefreshToken failed. httpStatus={HttpStatus} message={Message} body={Body}",
+                    (int)response.StatusCode, message, body);
+                throw new BkashApiException(message, body);
+            }
+
+            _logger.LogInformation("bKash RefreshToken succeeded.");
+            // bKash may or may not rotate the refresh_token itself — reuse the existing one if a
+            // new one isn't returned.
+            return (idToken, FirstNonEmpty(GetString(json, "refresh_token"), refreshToken));
+        }
+
+        public async Task<BkashTokenStatusResponse> EnsureTokenAsync(CancellationToken cancellationToken = default)
+        {
+            var cachedBefore = await _cache.GetAsync<string>(TokenCacheKey, cancellationToken);
+            if (!string.IsNullOrEmpty(cachedBefore))
+                return new BkashTokenStatusResponse(true, "cache", "A valid token is already cached.");
+
+            try
+            {
+                await GetTokenAsync(cancellationToken);
+                var refreshCached = await _cache.GetAsync<string>(RefreshTokenCacheKey, cancellationToken);
+                return new BkashTokenStatusResponse(true,
+                    !string.IsNullOrEmpty(refreshCached) ? "refresh-or-grant" : "grant",
+                    "Token acquired successfully.");
+            }
+            catch (BkashApiException ex)
+            {
+                return new BkashTokenStatusResponse(false, "grant", ex.Message);
+            }
+        }
+
+        public async Task<BkashTokenStatusResponse> ForceRefreshTokenAsync(CancellationToken cancellationToken = default)
+        {
+            var cachedRefreshToken = await _cache.GetAsync<string>(RefreshTokenCacheKey, cancellationToken);
+            if (string.IsNullOrEmpty(cachedRefreshToken))
+            {
+                // Nothing to refresh yet — fall back to a full grant so the diagnostic endpoint
+                // always leaves the system with a usable token.
+                try
+                {
+                    var (idToken, refreshToken) = await GrantTokenInternalAsync(cancellationToken);
+                    await CacheTokensAsync(idToken, refreshToken, cancellationToken);
+                    return new BkashTokenStatusResponse(true, "grant", "No cached refresh_token; performed a full Grant Token instead.");
+                }
+                catch (BkashApiException ex)
+                {
+                    return new BkashTokenStatusResponse(false, "grant", ex.Message);
+                }
+            }
+
+            try
+            {
+                var (idToken, refreshToken) = await RefreshTokenInternalAsync(cachedRefreshToken, cancellationToken);
+                await CacheTokensAsync(idToken, refreshToken, cancellationToken);
+                return new BkashTokenStatusResponse(true, "refresh", "Token refreshed successfully.");
+            }
+            catch (BkashApiException ex)
+            {
+                _logger.LogWarning("bKash forced refresh failed; falling back to full Grant Token. {Message}", ex.Message);
+                try
+                {
+                    var (idToken, refreshToken) = await GrantTokenInternalAsync(cancellationToken);
+                    await CacheTokensAsync(idToken, refreshToken, cancellationToken);
+                    return new BkashTokenStatusResponse(true, "grant", "Refresh failed; fell back to a full Grant Token.");
+                }
+                catch (BkashApiException grantEx)
+                {
+                    return new BkashTokenStatusResponse(false, "grant", grantEx.Message);
+                }
+            }
         }
 
         /// <summary>
@@ -350,6 +585,22 @@ namespace RajMango.Infrastructure.Services
         {
             client.DefaultRequestHeaders.Remove("Authorization");
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", idToken);
+            client.DefaultRequestHeaders.Remove("X-App-Key");
+            client.DefaultRequestHeaders.Add("X-App-Key", _settings.AppKey?.Trim());
+        }
+
+        /// <summary>
+        /// bKash's Tokenized Checkout v2 refund endpoints use a standard OAuth-style
+        /// "Bearer {token}" Authorization header — unlike v1, which takes the raw id_token
+        /// (see <see cref="ApplyAuthHeaders"/>). This is based on the reference Postman capture
+        /// for these endpoints; confirm against bKash's live v2 docs/sandbox before relying on it
+        /// in production, since a mismatched auth scheme would fail silently as an auth error.
+        /// </summary>
+        private void ApplyV2AuthHeaders(HttpClient client, string idToken)
+        {
+            client.DefaultRequestHeaders.Remove("Authorization");
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", idToken);
             client.DefaultRequestHeaders.Remove("X-App-Key");
             client.DefaultRequestHeaders.Add("X-App-Key", _settings.AppKey?.Trim());
         }

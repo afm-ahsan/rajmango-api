@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RajMango.Application.Common;
 using RajMango.Application.Features.Services;
 using RajMango.Application.Interfaces;
 using RajMango.Application.Interfaces.Repositories;
@@ -17,9 +16,7 @@ namespace RajMango.Application.Features.Commands
     {
         private readonly IDataContext _dataContext;
         private readonly IBkashService _bkash;
-        private readonly IRealtimeService _realtime;
-        private readonly INotificationService _notification;
-        private readonly ISmsService _sms;
+        private readonly IBkashPaymentFinalizer _finalizer;
         private readonly IPaymentLock _paymentLock;
         private readonly BkashSettings _settings;
         private readonly ILogger<BkashCallbackCommandHandler> _logger;
@@ -27,18 +24,14 @@ namespace RajMango.Application.Features.Commands
         public BkashCallbackCommandHandler(
             IDataContext dataContext,
             IBkashService bkash,
-            IRealtimeService realtime,
-            INotificationService notification,
-            ISmsService sms,
+            IBkashPaymentFinalizer finalizer,
             IPaymentLock paymentLock,
             IOptions<BkashSettings> options,
             ILogger<BkashCallbackCommandHandler> logger)
         {
             _dataContext = dataContext;
             _bkash = bkash;
-            _realtime = realtime;
-            _notification = notification;
-            _sms = sms;
+            _finalizer = finalizer;
             _paymentLock = paymentLock;
             _settings = options.Value
                 ?? throw new InvalidOperationException("Bkash settings not configured.");
@@ -113,6 +106,7 @@ namespace RajMango.Application.Features.Commands
                 if (status != "success")
                 {
                     payment.PaymentStatus = PaymentStatus.Failed;
+                    payment.FailureReason = $"bKash reported payment status \"{command.Status}\".";
                     _dataContext.Get<Domain.Entities.Payment>().Update(payment);
                     await _dataContext.SaveChangesAsync(cancellationToken);
                     _logger.LogWarning("bKash payment failed at gateway: paymentID={PaymentId} status={Status}",
@@ -126,10 +120,21 @@ namespace RajMango.Application.Features.Commands
                 {
                     executeResponse = await _bkash.ExecutePaymentAsync(command.PaymentId, cancellationToken);
                 }
+                catch (BkashApiException ex)
+                {
+                    // ex.Message is documented as a clean, safe-to-display bKash-reported description.
+                    _logger.LogError(ex, "bKash ExecutePayment threw for paymentID={PaymentId}", command.PaymentId);
+                    payment.PaymentStatus = PaymentStatus.Failed;
+                    payment.FailureReason = ex.Message;
+                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
+                    await _dataContext.SaveChangesAsync(cancellationToken);
+                    return new BkashCallbackResult(false, failureUrl);
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "bKash ExecutePayment threw for paymentID={PaymentId}", command.PaymentId);
                     payment.PaymentStatus = PaymentStatus.Failed;
+                    payment.FailureReason = "Unable to confirm payment with bKash. Please try again or contact support.";
                     _dataContext.Get<Domain.Entities.Payment>().Update(payment);
                     await _dataContext.SaveChangesAsync(cancellationToken);
                     return new BkashCallbackResult(false, failureUrl);
@@ -138,6 +143,7 @@ namespace RajMango.Application.Features.Commands
                 payment.RawExecuteResponse = JsonSerializer.Serialize(executeResponse);
 
                 var transactionStatus = executeResponse.TransactionStatus;
+                var failureMessage = executeResponse.StatusMessage;
 
                 // If execute says anything other than "Completed", query to get ground truth
                 if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
@@ -146,6 +152,8 @@ namespace RajMango.Application.Features.Commands
                     {
                         var queryResponse = await _bkash.QueryPaymentAsync(command.PaymentId, cancellationToken);
                         transactionStatus = queryResponse.TransactionStatus;
+                        if (!string.IsNullOrWhiteSpace(queryResponse.StatusMessage))
+                            failureMessage = queryResponse.StatusMessage;
                         _logger.LogInformation(
                             "bKash QueryPayment fallback for paymentID={PaymentId} transactionStatus={Status}",
                             command.PaymentId, transactionStatus);
@@ -159,6 +167,9 @@ namespace RajMango.Application.Features.Commands
                 if (!string.Equals(transactionStatus, "Completed", StringComparison.OrdinalIgnoreCase))
                 {
                     payment.PaymentStatus = PaymentStatus.Failed;
+                    payment.FailureReason = !string.IsNullOrWhiteSpace(failureMessage)
+                        ? failureMessage
+                        : $"Payment could not be confirmed (status: {transactionStatus}).";
                     _dataContext.Get<Domain.Entities.Payment>().Update(payment);
                     await _dataContext.SaveChangesAsync(cancellationToken);
                     _logger.LogWarning(
@@ -167,76 +178,12 @@ namespace RajMango.Application.Features.Commands
                     return new BkashCallbackResult(false, failureUrl);
                 }
 
-                // Payment confirmed as Completed — update payment + order atomically.
-                // bKash has ALREADY told us this money was taken, so from here on a failure to
-                // persist is a financial reconciliation gap, not a normal "payment failed" case —
-                // it must never be reported back to the customer as a failure.
-                payment.PaymentStatus = PaymentStatus.Paid;
-                payment.GatewayTransactionId = executeResponse.TrxId;
-                payment.TransactionId = executeResponse.TrxId;
-                payment.PaidAmount = payment.GrossAmount;
-                payment.PaidAt = Clock.Now();
-
-                var order = payment.Order;
-                try
-                {
-                    var allPayments = await _dataContext.Get<Domain.Entities.Payment>()
-                        .Where(p => p.OrderId == order.Id)
-                        .ToListAsync(cancellationToken);
-
-                    PaymentSyncHelper.SyncOrderPaymentState(order, allPayments);
-                    payment.DueAmount = order.DueAmount;
-
-                    _dataContext.Get<Domain.Entities.Payment>().Update(payment);
-
-                    // Promote order status on full payment
-                    if (order.PaymentStatus == PaymentStatus.Paid
-                        && order.OrderStatus == OrderStatus.Pending)
-                    {
-                        order.OrderStatus = OrderStatus.Confirmed;
-                    }
-
-                    _dataContext.Get<Order>().Update(order);
-                    await _dataContext.SaveChangesAsync(cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    // CRITICAL: bKash confirmed and charged the customer (trxId below), but our
-                    // database failed to record it. Requires manual reconciliation — search this
-                    // trxId/paymentId in bKash's merchant portal and re-apply the payment by hand.
-                    _logger.LogCritical(ex,
-                        "RECONCILIATION REQUIRED: bKash confirmed payment but DB persist failed. " +
-                        "paymentId={PaymentId} orderId={OrderId} trxId={TrxId} amount={Amount}",
-                        command.PaymentId, order.Id, executeResponse.TrxId, payment.GrossAmount);
-
-                    // Still send the customer to the success page — bKash genuinely took the money;
-                    // showing "failed" here would be actively misleading.
-                    return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
-                }
-
-                _logger.LogInformation(
-                    "bKash payment completed: orderId={OrderId} orderNumber={OrderNumber} trxId={TrxId} amount={Amount}",
-                    order.Id, order.OrderNumber, executeResponse.TrxId, payment.PaidAmount);
-
-                // In-app notification + real-time push (fire-and-forget — matches existing handlers)
-                var payload = new { PaymentId = payment.Id, order.OrderNumber, Amount = payment.PaidAmount, order.UserId };
-                _ = _notification.SendPaymentReceivedAsync(order.UserId, order.OrderNumber, payment.PaidAmount, cancellationToken);
-                _ = _realtime.SendToUserAsync(order.UserId, RealtimeEvents.PaymentReceived, payload, cancellationToken);
-                _ = _realtime.SendToAdminsAsync(RealtimeEvents.PaymentReceived, payload, cancellationToken);
-
-                // SMS — sent only to the customer (order placer / sender), never to the delivery
-                // receiver or admin. Customer phone is loaded here because it is not on the Order entity.
-                var customerPhone = await _dataContext.Get<AppUser>()
-                    .Where(u => u.Id == order.UserId)
-                    .Select(u => u.PhoneNumber)
-                    .FirstOrDefaultAsync(cancellationToken);
-
-                if (!string.IsNullOrWhiteSpace(customerPhone))
-                    _ = _sms.SendPaymentConfirmedSmsAsync(customerPhone, order.OrderNumber, order.UserId, cancellationToken);
-                else
-                    _logger.LogWarning(
-                        "bKash payment SMS skipped: customer has no phone. orderId={OrderId} userId={UserId}",
-                        order.Id, order.UserId);
+                // Payment confirmed as Completed — bKash has ALREADY told us this money was taken,
+                // so from here on a failure to persist is a financial reconciliation gap, not a
+                // normal "payment failed" case — it must never be reported back to the customer
+                // as a failure. Shared with the admin reconciliation command so both entry points
+                // finalize a payment identically.
+                await _finalizer.FinalizeAsPaidAsync(payment, executeResponse.TrxId, cancellationToken);
 
                 return new BkashCallbackResult(true, BuildUrl(_settings.FrontendSuccessUrl, command.PaymentId));
             }
